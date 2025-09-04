@@ -1,0 +1,51 @@
+name: Upload to host
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initiate Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.1.0
+      # - name: Generate Web version
+      #   run: |
+      #     npm i && npm run build
+      #     rm -rf dbwp/wp-content/themes/dbands/assets_dev
+
+      - name: Setup Rclone
+        run: |
+          curl -o rclone.zip https://downloads.rclone.org/rclone-current-linux-amd64.zip
+          unzip rclone.zip
+          cd rclone-*-linux-amd64
+          mkdir -p ~/.local/bin
+          cp rclone ~/.local/bin/
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Run copy
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.private_key
+          chmod 600 ~/.private_key
+          rclone config create remote sftp host=${{ secrets.FTP_HOST }} user=${{ vars.SERVER_USER }} key_file=~/.private_key -vv
+          rclone copyto cavwp/ remote:${{ vars.SERVER_FOLDER }} -vv
+
+      - name: Send Email
+        uses: hilarion5/send-mail@v1
+        with:
+          smtp-server: ${{vars.SMTP_HOST}}
+          from-email: ${{vars.SMTP_USER}}
+          to-email: fagnerjb@gmail.com
+          username: ${{vars.SMTP_USER}}
+          password: ${{secrets.SMTP_PASS}}
+          subject: Deploy done
+          html: |
+            <p>Deploy done of ${{github.ref_name}} in ${{github.repository}}</p>

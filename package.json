@@ -1,0 +1,21 @@
+{
+   "name": "cav_wp_site_assets",
+   "version": "1.0.0",
+   "main": "index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "author": "CtrlAltVerse",
+   "license": "GPL-3.0-or-later",
+   "description": "",
+   "devDependencies": {
+      "@ctrlaltvers/alpine": "^1.1.2",
+      "@tailwindcss/cli": "^4.1.8",
+      "@types/alpinejs": "^3.13.11",
+      "alpinejs": "^3.14.9",
+      "nodemon": "^3.1.10",
+      "tailwindcss": "^4.1.8",
+      "webpack": "^5.99.9",
+      "webpack-cli": "^6.0.1"
+   }
+}
