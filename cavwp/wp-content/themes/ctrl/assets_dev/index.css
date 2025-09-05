@@ -1,0 +1,84 @@
+@import 'tailwindcss' source(none);
+@import '@ctrlaltvers/tailwind/dist/remixicon';
+@import './fonts';
+
+@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill");
+@source "../";
+
+@theme {
+   --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif,
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+      'Noto Color Emoji';
+   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+   --aspect-poster: 2 / 3;
+
+   --color-*: initial;
+   --color-neutral-900: #000;
+   --color-neutral-800: #131314;
+   --color-neutral-700: #262629;
+   --color-neutral-600: #5e5e66;
+   --color-neutral-500: #a9a9b8;
+   --color-neutral-300: #ddddf0;
+   --color-neutral-100: #fff;
+   --color-blue-50: oklch(94.14% 0.03 287.95);
+   --color-blue-100: oklch(89.12% 0.055 288.7);
+   --color-blue-200: oklch(78.37% 0.114 287.42);
+   --color-blue-300: oklch(67.75% 0.175 285.59);
+   --color-blue-400: oklch(57.51% 0.237 282.47);
+   --color-blue-500: oklch(47.08% 0.287 277.19);
+   --color-blue-600: oklch(41.02% 0.25 277.1);
+   --color-blue-700: oklch(34.56% 0.21 277.14);
+   --color-blue-800: oklch(27.92% 0.17 277);
+   --color-blue-900: oklch(21.42% 0.131 276.72);
+   --color-blue-950: oklch(16.07% 0.099 277.49);
+}
+
+@utility container {
+   margin-inline: auto;
+   padding-inline: calc(var(--spacing) * 3);
+   min-width: 360px;
+}
+
+*,
+*::before,
+*::after {
+   font-optical-sizing: auto;
+}
+
+[x-cloak] {
+   @apply hidden;
+}
+
+.bg-space {
+   background: linear-gradient(
+      -45deg,
+      var(--color-blue-900),
+      var(--color-neutral-800),
+      var(--color-blue-950),
+      var(--color-neutral-800),
+      var(--color-blue-900)
+   );
+   background-size: 616% 616%;
+   animation: spacing 15s ease infinite;
+   height: 100vh;
+}
+
+@keyframes spacing {
+   0% {
+      background-position: 0% 50%;
+   }
+   50% {
+      background-position: 100% 50%;
+   }
+   100% {
+      background-position: 0% 50%;
+   }
+}
+
+.link {
+   @apply block py-2 px-4 text-lg sm:text-xl whitespace-nowrap transition-colors focus-visible:bg-neutral-100 focus-visible:text-neutral-900 hover:bg-neutral-100 hover:text-neutral-900;
+}

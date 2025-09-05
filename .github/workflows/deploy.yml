@@ -18,10 +18,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.1.0
-      # - name: Generate Web version
-      #   run: |
-      #     npm i && npm run build
-      #     rm -rf dbwp/wp-content/themes/dbands/assets_dev
+      - name: Generate Web version
+        run: |
+          npm i && npm run build
+          rm -rf cavwp/wp-content/themes/ctrl/assets_dev
 
       - name: Setup Rclone
         run: |

@@ -3,19 +3,24 @@
    "version": "1.0.0",
    "main": "index.js",
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "start": "nodemon",
+      "css-ctrl": "npx @tailwindcss/cli -i ./cavwp/wp-content/themes/ctrl/assets_dev/index.css -o ./cavwp/wp-content/themes/ctrl/assets/main.min.css",
+      "js": "webpack",
+      "build": "npm run js -- --mode=production && npm run css-ctrl -- --minify"
    },
    "author": "CtrlAltVerse",
    "license": "GPL-3.0-or-later",
    "description": "",
    "devDependencies": {
       "@ctrlaltvers/alpine": "^1.1.2",
-      "@tailwindcss/cli": "^4.1.8",
+      "@ctrlaltvers/tailwind": "^1.1.2",
+      "@tailwindcss/cli": "^4.1.13",
       "@types/alpinejs": "^3.13.11",
-      "alpinejs": "^3.14.9",
+      "alpinejs": "^3.15.0",
       "nodemon": "^3.1.10",
-      "tailwindcss": "^4.1.8",
-      "webpack": "^5.99.9",
+      "tailwindcss": "^4.1.13",
+      "terser-webpack-plugin": "^5.3.14",
+      "webpack": "^5.101.3",
       "webpack-cli": "^6.0.1"
    }
 }
