@@ -2,7 +2,7 @@
 @import '@ctrlaltvers/tailwind/dist/remixicon';
 @import './fonts';
 
-@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill");
+@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill");
 @source "../";
 
 @theme {
