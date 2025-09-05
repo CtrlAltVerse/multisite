@@ -29,18 +29,18 @@ $post_type_object = get_post_type_object($post_type);
             ?>
          <article id="<?php echo $Post->get('slug'); ?>"
                   class="relative w-screen h-screen">
-            <div class="relative z-5 flex flex-col gap-8 py-12 px-6">
-               <hgroup class="flex flex-col gap-1">
-                  <h3 class="text-3xl font-semibold uppercase">
+            <div class="relative z-5 flex flex-col gap-7 py-8 px-6">
+               <hgroup class="flex flex-col gap-2">
+                  <h3 class="text-xl sm:text-3xl font-semibold uppercase">
                      <?php echo $Post->get('title'); ?>
                   </h3>
-                  <p class="text-2xl font-medium">
+                  <p class="text-lg sm:text-2xl font-medium">
                      <?php echo $Post->get('author:name'); ?>
                   </p>
                </hgroup>
-               <div class="text-base font-medium max-w-lg">
-                  <?php echo $Post->get('summary'); ?>
-               </div>
+               <p class="line-clamp-6 text-base font-medium max-w-xl">
+                  <?php echo $Post->get('summary', apply_filter: false); ?>
+               </p>
                <?php if (have_rows('links', $item->ID)) { ?>
                <ul class="flex gap-3 w-full overflow-x-auto">
                   <?php while (have_rows('links', $item->ID)) {
@@ -80,7 +80,7 @@ $post_type_object = get_post_type_object($post_type);
          </article>
          <?php } ?>
       </div>
-      <ul class="absolute left-6 right-6 bottom-6 z-4 flex gap-2 w-min h-45 sm:h-60 overflow-x-auto">
+      <ul class="absolute left-6 right-6 bottom-5 z-4 flex gap-2 w-min h-45 sm:h-60 overflow-x-auto">
          <?php foreach ($all_posts as $key => $item) { ?>
          <?php $Post = new Post($item); ?>
          <li
@@ -90,7 +90,7 @@ $post_type_object = get_post_type_object($post_type);
                     type="button"
                     x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">
                <?php echo $Post->get('thumb', with_html: true, attrs: [
-                  'class' => 'rounded object-cover',
+                  'class' => 'rounded object-cover size-full',
                ]); ?>
             </button>
          </li>
