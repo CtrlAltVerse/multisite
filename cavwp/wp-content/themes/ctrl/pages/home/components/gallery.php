@@ -34,11 +34,11 @@ $post_type_object = get_post_type_object($post_type);
                   <h3 class="text-xl sm:text-3xl font-semibold uppercase">
                      <?php echo $Post->get('title'); ?>
                   </h3>
-                  <p class="text-lg sm:text-2xl font-medium">
+                  <p class="text-base sm:text-xl font-medium">
                      <?php echo $Post->get('author:name'); ?>
                   </p>
                </hgroup>
-               <p class="line-clamp-6 text-base font-medium max-w-xl">
+               <p class="line-clamp-8 hyphens-auto text-sm sm:text-base font-medium max-w-xl">
                   <?php echo $Post->get('summary', apply_filter: false); ?>
                </p>
                <?php if (have_rows('links', $item->ID)) { ?>
@@ -46,7 +46,7 @@ $post_type_object = get_post_type_object($post_type);
                   <?php while (have_rows('links', $item->ID)) {
                      the_row(); ?>
                   <li class="flex flex-col gap-1">
-                     <span class="uppercase text-base">
+                     <span class="uppercase text-sm sm:text-base">
                         <?php echo get_sub_field('title'); ?>
                      </span>
                      <?php if (have_rows('group', $item->ID)) { ?>
@@ -85,7 +85,7 @@ $post_type_object = get_post_type_object($post_type);
          <?php $Post = new Post($item); ?>
          <li
              class="h-11/12 w-auto <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>">
-            <button class="cursor-pointer"
+            <button class="cursor-pointer h-full"
                     title="<?php echo $Post->get('title'); ?>"
                     type="button"
                     x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">

@@ -80,5 +80,5 @@
 }
 
 .link {
-   @apply block py-2 px-4 text-lg sm:text-xl whitespace-nowrap transition-colors focus-visible:bg-neutral-100 focus-visible:text-neutral-900 hover:bg-neutral-100 hover:text-neutral-900;
+   @apply block py-2 px-4 text-base sm:text-xl whitespace-nowrap transition-colors focus-visible:bg-neutral-100 focus-visible:text-neutral-900 hover:bg-neutral-100 hover:text-neutral-900;
 }

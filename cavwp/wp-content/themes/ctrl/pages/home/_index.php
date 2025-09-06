@@ -35,7 +35,7 @@ $portfolio = ['tabletop', 'web', 'print'];
             <?php while (have_rows('links', 'option')) {
                the_row(); ?>
             <li class="flex flex-col gap-1">
-               <span class="uppercase text-base">
+               <span class="uppercase text-sm sm:text-base">
                   <?php echo get_sub_field('title'); ?>
                </span>
                <?php if (have_rows('group', 'option')) { ?>
