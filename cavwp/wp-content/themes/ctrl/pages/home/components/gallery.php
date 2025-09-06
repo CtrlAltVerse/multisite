@@ -34,11 +34,13 @@ $post_type_object = get_post_type_object($post_type);
                   <h3 class="text-xl sm:text-3xl font-semibold uppercase">
                      <?php echo $Post->get('title'); ?>
                   </h3>
+                  <?php if ('print' === $post_type) { ?>
                   <p class="text-base sm:text-xl font-medium">
                      <?php echo $Post->get('author:name'); ?>
                   </p>
+                  <?php } ?>
                </hgroup>
-               <p class="line-clamp-8 hyphens-auto text-sm sm:text-base font-medium max-w-xl">
+               <p class="line-clamp-8 hyphens-auto sm:hyphens-none text-sm sm:text-base max-w-xl">
                   <?php echo $Post->get('summary', apply_filter: false); ?>
                </p>
                <?php if (have_rows('links', $item->ID)) { ?>
@@ -69,32 +71,36 @@ $post_type_object = get_post_type_object($post_type);
                   <?php } ?>
                </ul>
                <?php } ?>
+               <?php if (!empty($Bg->ID)) { ?>
                <div class="text-sm">Foto:
                   <?php echo $Bg->get('summary', apply_filter: false); ?>
                </div>
+               <?php } ?>
             </div>
             <div class="absolute inset-0 z-1 w-screen h-screen bg-neutral-800/65"></div>
-            <?php echo $Bg->get('thumb', size: 'full', with_html: true, attrs: [
+            <?php echo $Bg->get('thumb', size: 'large', with_html: true, attrs: [
                'class' => 'absolute inset-0 z-0 w-screen h-screen object-cover object-center',
             ]); ?>
          </article>
          <?php } ?>
       </div>
-      <ul class="absolute left-6 right-6 bottom-5 z-4 flex gap-2 w-min h-45 sm:h-60 overflow-x-auto">
-         <?php foreach ($all_posts as $key => $item) { ?>
-         <?php $Post = new Post($item); ?>
-         <li
-             class="h-11/12 w-auto <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>">
-            <button class="cursor-pointer h-full"
-                    title="<?php echo $Post->get('title'); ?>"
-                    type="button"
-                    x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">
-               <?php echo $Post->get('thumb', with_html: true, attrs: [
-                  'class' => 'rounded object-cover size-full',
-               ]); ?>
-            </button>
-         </li>
-         <?php } ?>
-      </ul>
+      <div class="absolute left-6 right-6 bottom-6 z-4 w-full h-51 sm:h-61 overflow-x-auto">
+         <ul class="flex items-start gap-2 w-min h-45 sm:h-55">
+            <?php foreach ($all_posts as $key => $item) { ?>
+            <?php $Post = new Post($item); ?>
+            <li class="poster"
+                x-bind:class="{active:<?php echo $post_type; ?>===<?php echo $key; ?>}">
+               <button class="grow h-full cursor-pointer <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>"
+                       title="<?php echo $Post->get('title'); ?>"
+                       type="button"
+                       x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">
+                  <?php echo $Post->get('thumb', with_html: true, attrs: [
+                     'class' => 'rounded object-cover size-full',
+                  ]); ?>
+               </button>
+            </li>
+            <?php } ?>
+         </ul>
+      </div>
    </section>
 </div>

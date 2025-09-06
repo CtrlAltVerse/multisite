@@ -1,0 +1,15 @@
+::-webkit-scrollbar {
+   @apply w-2.5 h-2.5;
+}
+
+::-webkit-scrollbar-track {
+   @apply py-2 bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+   @apply rounded bg-neutral-600;
+}
+
+::-webkit-scrollbar-thumb:hover {
+   @apply bg-neutral-500;
+}
