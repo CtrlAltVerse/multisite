@@ -5,8 +5,8 @@ get_component('header');
 $portfolio = ['tabletop', 'web', 'print'];
 
 ?>
-<div class="snap-y snap-mandatory overflow-y-auto h-screen scroll-smooth bg-space">
-   <header class="relative snap-start flex flex-col items-center justify-center h-screen">
+<div class="snap-y snap-mandatory overflow-y-auto h-dvh scroll-smooth bg-space">
+   <header class="relative snap-start flex flex-col items-center justify-center h-dvh">
       <h1 class="sr-only">
          <?php bloginfo('name'); ?>
       </h1>
@@ -28,7 +28,7 @@ $portfolio = ['tabletop', 'web', 'print'];
          'post_type' => $item,
       ]);
    } ?>
-   <footer class="relative snap-start flex flex-col items-center justify-center h-screen">
+   <footer class="relative snap-start flex flex-col items-center justify-center h-dvh">
       <?php if (have_rows('links', 'option')) { ?>
       <div class="grow flex items-center justify-center">
          <ul class="flex gap-3">

@@ -16,19 +16,19 @@ if (empty($all_posts)) {
 $post_type_object = get_post_type_object($post_type);
 
 ?>
-<div class="relative snap-start overflow-hidden h-screen">
+<div class="relative snap-start overflow-hidden h-dvh">
    <section id="<?php echo $post_type; ?>">
       <h2 class="sr-only absolute z-5 top-6 left-6 text-base uppercase">
          <?php echo $post_type_object->label; ?>
       </h2>
       <div id="<?php echo $post_type; ?>-list"
-           class="absolute top-0 left-0 flex items-end h-screen w-min transition-[left]">
+           class="absolute top-0 left-0 flex items-end h-dvh w-min transition-[left]">
          <?php foreach ($all_posts as $item) { ?>
          <?php $Post = new Post($item); ?>
          <?php $Bg   = new Post($Post->get_meta('background'));
             ?>
          <article id="<?php echo $Post->get('slug'); ?>"
-                  class="relative w-screen h-screen">
+                  class="relative w-screen h-dvh">
             <div class="relative z-5 flex flex-col gap-7 py-8 px-6">
                <hgroup class="flex flex-col gap-2">
                   <h3 class="text-xl sm:text-3xl font-semibold uppercase">
@@ -77,9 +77,9 @@ $post_type_object = get_post_type_object($post_type);
                </div>
                <?php } ?>
             </div>
-            <div class="absolute inset-0 z-1 w-screen h-screen bg-neutral-800/65"></div>
+            <div class="absolute inset-0 z-1 w-screen h-dvh bg-neutral-800/65"></div>
             <?php echo $Bg->get('thumb', size: 'large', with_html: true, attrs: [
-               'class' => 'absolute inset-0 z-0 w-screen h-screen object-cover object-center',
+               'class' => 'absolute inset-0 z-0 w-screen h-dvh object-cover object-center',
             ]); ?>
          </article>
          <?php } ?>
