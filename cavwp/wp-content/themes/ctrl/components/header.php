@@ -10,7 +10,7 @@ do_action('get_header');
    <?php wp_head(); ?>
 </head>
 
-<body id="top" x-data="cav" <?php body_class('select-none text-neutral-100 bg-neutral-800 font-mono text-base overflow-hidden'); ?>>
+<body id="top" x-data="cav" <?php body_class('select-none text-neutral-100 bg-space font-mono text-base overflow-hidden'); ?>>
    <?php wp_body_open(); ?>
 
    <nav class="absolute top-3 left-3 z-20">

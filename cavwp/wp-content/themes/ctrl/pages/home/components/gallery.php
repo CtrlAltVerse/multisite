@@ -85,7 +85,7 @@ $post_type_object = get_post_type_object($post_type);
          <?php } ?>
       </div>
       <div class="absolute left-6 right-6 bottom-6 z-4 w-full h-51 sm:h-61 overflow-x-auto">
-         <ul class="flex items-start gap-2 w-min h-45 sm:h-55">
+         <ul class="flex items-start gap-2 w-min h-45 sm:h-55 mr-13">
             <?php foreach ($all_posts as $key => $item) { ?>
             <?php $Post = new Post($item); ?>
             <li class="poster"

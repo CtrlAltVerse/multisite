@@ -5,7 +5,7 @@ get_component('header');
 $portfolio = ['tabletop', 'web', 'print'];
 
 ?>
-<div class="snap-y snap-mandatory overflow-y-auto h-dvh scroll-smooth bg-space">
+<div class="snap-y snap-mandatory overflow-y-auto h-dvh scroll-smooth">
    <header class="relative snap-start flex flex-col items-center justify-center h-dvh">
       <h1 class="sr-only">
          <?php bloginfo('name'); ?>
@@ -63,5 +63,6 @@ $portfolio = ['tabletop', 'web', 'print'];
          <?php the_custom_logo(); ?>
       </div>
    </footer>
+   <div class="min-h-[calc(100lvw-100svw)]"></div>
 </div>
 <?php get_component('footer'); ?>
