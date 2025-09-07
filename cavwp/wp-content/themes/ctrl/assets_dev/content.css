@@ -1,0 +1,21 @@
+.hentry {
+   h2 {
+      @apply text-xl font-semibold;
+   }
+
+   code {
+      @apply border-l-3 border-neutral-300 pl-3 py-1 text-neutral-300;
+   }
+
+   ul {
+      @apply list-[square] list-inside;
+
+      li {
+         @apply mb-2;
+      }
+   }
+
+   hr {
+      @apply text-neutral-300 my-8 mx-auto max-w-66;
+   }
+}

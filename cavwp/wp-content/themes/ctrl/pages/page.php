@@ -3,8 +3,8 @@
 get_component('header');
 
 ?>
-<main class="max-w-xl mx-auto pt-30">
-   <h1 class="text-2xl font-semibold">
+<main class="max-w-xl mx-auto py-30">
+   <h1 class="text-3xl font-semibold uppercase">
       <?php the_title(); ?>
    </h1>
    <div <?php post_class('my-12 *:mb-6'); ?>>
