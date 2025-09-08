@@ -4,7 +4,7 @@
 @import './scroll';
 @import './content';
 
-@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill");
+@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill");
 @source "../";
 
 @theme {

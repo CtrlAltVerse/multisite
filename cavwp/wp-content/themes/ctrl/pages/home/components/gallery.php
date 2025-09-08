@@ -5,8 +5,9 @@ use cavWP\Models\Post;
 $post_type = $args['post_type'];
 
 $all_posts = get_posts([
-   'post_type'     => $post_type,
-   'post_per_page' => -1,
+   'post_type'      => $post_type,
+   'post_status'    => ['future', 'publish'],
+   'posts_per_page' => -1,
 ]);
 
 if (empty($all_posts)) {
@@ -25,8 +26,7 @@ $post_type_object = get_post_type_object($post_type);
            class="absolute top-0 left-0 flex items-end h-dvh w-min transition-[left]">
          <?php foreach ($all_posts as $item) { ?>
          <?php $Post = new Post($item); ?>
-         <?php $Bg   = new Post($Post->get_meta('background'));
-            ?>
+         <?php $Bg   = new Post($Post->get_meta('background')); ?>
          <article id="<?php echo $Post->get('slug'); ?>"
                   class="relative w-screen h-dvh">
             <div class="relative z-5 flex flex-col gap-7 py-8 px-6">
@@ -79,13 +79,13 @@ $post_type_object = get_post_type_object($post_type);
             </div>
             <div class="absolute inset-0 z-1 w-screen h-dvh bg-neutral-800/65"></div>
             <?php echo $Bg->get('thumb', size: 'large', with_html: true, attrs: [
-               'class' => 'absolute inset-0 z-0 w-screen h-dvh object-cover object-center',
+               'class' => 'absolute inset-0 z-0 w-screen h-dvh object-cover object-center grayscale-50',
             ]); ?>
          </article>
          <?php } ?>
       </div>
       <div class="absolute left-6 right-6 bottom-6 z-4 w-full">
-         <ul class="h-50 sm:h-60 flex items-start gap-2 mr-13 snap-y snap-mandatory overflow-x-auto scroll-smooth">
+         <ul class="h-52 flex items-start gap-2 mr-13 snap-y snap-mandatory overflow-x-auto scroll-smooth">
             <?php foreach ($all_posts as $key => $item) { ?>
             <?php $Post = new Post($item); ?>
             <li class="snap-start poster"
