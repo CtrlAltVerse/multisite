@@ -89,12 +89,12 @@
 .poster {
    @apply flex flex-col gap-1 h-19/20;
 
-   &::after {
+   &::before {
       content: '';
       @apply block shrink-0  rounded w-full h-1.5;
    }
 
-   &.active::after {
+   &.active::before {
       @apply bg-neutral-100;
    }
 }

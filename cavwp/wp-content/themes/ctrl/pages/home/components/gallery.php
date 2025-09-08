@@ -85,7 +85,7 @@ $post_type_object = get_post_type_object($post_type);
          <?php } ?>
       </div>
       <div class="absolute left-6 right-6 bottom-6 z-4 w-full">
-         <ul class="h-52 flex items-start gap-2 mr-13 snap-y snap-mandatory overflow-x-auto scroll-smooth">
+         <ul class="h-52 flex items-start gap-2 mr-13 pb-1 snap-y snap-mandatory overflow-x-auto scroll-smooth">
             <?php foreach ($all_posts as $key => $item) { ?>
             <?php $Post = new Post($item); ?>
             <li class="snap-start poster"
