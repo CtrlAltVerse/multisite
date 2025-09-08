@@ -84,11 +84,11 @@ $post_type_object = get_post_type_object($post_type);
          </article>
          <?php } ?>
       </div>
-      <div class="absolute left-6 right-6 bottom-6 z-4 w-full h-51 sm:h-61 overflow-x-auto">
-         <ul class="flex items-start gap-2 w-min h-45 sm:h-55 mr-13">
+      <div class="absolute left-6 right-6 bottom-6 z-4 w-full">
+         <ul class="h-50 sm:h-60 flex items-start gap-2 mr-13 snap-y snap-mandatory overflow-x-auto scroll-smooth">
             <?php foreach ($all_posts as $key => $item) { ?>
             <?php $Post = new Post($item); ?>
-            <li class="poster"
+            <li class="snap-start poster"
                 x-bind:class="{active:<?php echo $post_type; ?>===<?php echo $key; ?>}">
                <button class="grow h-full cursor-pointer <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>"
                        title="<?php echo $Post->get('title'); ?>"

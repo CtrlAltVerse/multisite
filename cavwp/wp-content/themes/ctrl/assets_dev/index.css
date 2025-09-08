@@ -87,7 +87,7 @@
 }
 
 .poster {
-   @apply flex flex-col gap-1 h-full;
+   @apply flex flex-col gap-1 h-19/20;
 
    &::after {
       content: '';
