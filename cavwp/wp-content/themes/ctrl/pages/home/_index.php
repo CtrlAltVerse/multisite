@@ -66,5 +66,4 @@ $portfolio = ['tabletop', 'web', 'print'];
       </div>
    </footer>
 </div>
-<div class="min-h-[calc(100lvw-100svw)]"></div>
 <?php get_component('footer'); ?>
