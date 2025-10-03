@@ -4,14 +4,14 @@
 @import './scroll';
 @import './content';
 
-@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill");
+@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill");
 @source "../";
 
 @theme {
    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
       'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif,
-      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+   --font-serif: 'Gelasio', ui-serif, Georgia, Cambria, 'Times New Roman', Times,
+      serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
       'Noto Color Emoji';
    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
       Consolas, 'Liberation Mono', 'Courier New', monospace;
@@ -26,6 +26,7 @@
    --color-neutral-600: #5e5e66;
    --color-neutral-500: #a9a9b8;
    --color-neutral-300: #ddddf0;
+   --color-neutral-200: #dfdfd7;
    --color-neutral-100: #fff;
    --color-blue-50: oklch(94.14% 0.03 287.95);
    --color-blue-100: oklch(89.12% 0.055 288.7);

@@ -9,7 +9,21 @@ final class Register
    public function __construct()
    {
       add_action('wp_enqueue_scripts', [$this, 'handle_assets']);
+      add_action('wp_resource_hints', [$this, 'add_resources'], 10, 2);
+
       add_filter('get_custom_logo', [$this, 'set_logo']);
+   }
+
+   public function add_resources($urls, $type)
+   {
+      if ('preconnect' === $type) {
+         $urls[] = [
+            'href' => 'https://fonts.gstatic.com',
+            'crossorigin',
+         ];
+      }
+
+      return $urls;
    }
 
    public function handle_assets()

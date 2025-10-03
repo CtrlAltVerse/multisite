@@ -2,10 +2,18 @@
 
 do_action('get_header');
 
-$body_classes = 'bg-space text-neutral-100 font-mono text-base';
+$body_classes = '';
+
+if (is_home() || is_page() || is_singular(['web'])) {
+   $body_classes .= ' bg-space text-neutral-100 font-mono text-base';
+}
 
 if (is_home()) {
    $body_classes .= ' select-none overflow-hidden';
+}
+
+if (is_singular('chapter')) {
+   $body_classes .= ' bg-neutral-200 text-neutral-800 select-none';
 }
 
 ?>

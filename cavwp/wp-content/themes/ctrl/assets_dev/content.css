@@ -1,4 +1,4 @@
-.hentry {
+body.page .hentry {
    h2 {
       @apply text-xl font-semibold;
    }
@@ -18,4 +18,90 @@
    hr {
       @apply text-neutral-300 my-8 mx-auto max-w-66;
    }
+}
+
+body.single-chapter .hentry {
+   @apply text-lg leading-relaxed;
+
+   p {
+      min-height: 1ch;
+   }
+
+   & > * + * {
+      @apply mt-2;
+   }
+
+   h2 {
+      @apply font-semibold text-xl;
+   }
+
+   * + h2 {
+      @apply mt-7;
+   }
+
+   blockquote {
+      @apply border-l-3 border-current pl-6 py-1.5;
+   }
+
+   hr {
+      @apply border-0 flex justify-center h-auto mt-6 mb-4.5 font-bold text-xl tracking-wider;
+   }
+
+   hr::before {
+      content: '* * *';
+   }
+}
+
+body.single-web .hentry {
+   & > * + * {
+      @apply mt-3;
+   }
+
+   h2 {
+      @apply uppercase text-xl font-semibold mt-12;
+   }
+
+   code {
+      @apply border-l-3 border-neutral-300 pl-3 py-1 text-neutral-300;
+   }
+
+   ul {
+      @apply list-[square] list-inside;
+
+      li {
+         @apply my-1.5;
+      }
+   }
+
+   hr {
+      @apply text-neutral-300 my-8 mx-auto max-w-66;
+   }
+}
+
+body.single-chapter.single-format-standard .hentry {
+   p:not(.has-text-align-left, .has-text-align-right, .has-text-align-center) {
+      @apply text-justify;
+   }
+
+   > p:not(
+         .has-text-align-left,
+         .has-text-align-right,
+         .has-text-align-center
+      ) {
+      @apply indent-7;
+   }
+
+   > p.has-drop-cap {
+      @apply indent-0;
+   }
+}
+
+body.single-chapter.single-format-aside .hentry {
+   & > * + *:not(:last-of-type.has-text-align-right) {
+      @apply mt-6;
+   }
+}
+
+.container-chapter {
+   @apply min-w-xs max-w-xl mx-3 sm:mx-auto;
 }
