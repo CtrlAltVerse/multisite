@@ -38,14 +38,14 @@ jobs:
           rclone config create remote sftp host=${{ secrets.FTP_HOST }} user=${{ vars.SERVER_USER }} key_file=~/.private_key -vv
           rclone copyto cavwp/ remote:${{ vars.SERVER_FOLDER }} -vv
 
-      - name: Send Email
-        uses: hilarion5/send-mail@v1
-        with:
-          smtp-server: ${{vars.SMTP_HOST}}
-          from-email: ${{vars.SMTP_USER}}
-          to-email: fagnerjb@gmail.com
-          username: ${{vars.SMTP_USER}}
-          password: ${{secrets.SMTP_PASS}}
-          subject: Deploy done
-          html: |
-            <p>Deploy done of ${{github.ref_name}} in ${{github.repository}}</p>
+      # - name: Send Email
+      #   uses: hilarion5/send-mail@v1
+      #   with:
+      #     smtp-server: ${{vars.SMTP_HOST}}
+      #     from-email: ${{vars.SMTP_USER}}
+      #     to-email: fagnerjb@gmail.com
+      #     username: ${{vars.SMTP_USER}}
+      #     password: ${{secrets.SMTP_PASS}}
+      #     subject: Deploy done
+      #     html: |
+      #       <p>Deploy done of ${{github.ref_name}} in ${{github.repository}}</p>

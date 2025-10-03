@@ -38,7 +38,8 @@ $content = get_extended($post->post_content);
             &rsaquo;
          </li>
          <li>
-            <a href="<?php echo home_url('#web-list'); ?>>">
+            <a
+               href="<?php echo home_url('#web-list'); ?>>">
                Web
             </a>
          </li>
@@ -86,15 +87,17 @@ $content = get_extended($post->post_content);
       </p>
       <?php } ?>
    </div>
-   <div class="shrink-0">
+   <div class="shrink-0 max-w-sm">
       <?php if (has_post_thumbnail()) { ?>
       <?php the_post_thumbnail('thumbnail', [
          'class' => 'mx-auto',
       ]); ?>
       <?php } ?>
-
+      <div class="mt-3">
+      <?php the_excerpt(); ?>
+      </div>
       <?php if (have_rows('links')) { ?>
-      <ul class="flex flex-col gap-6 mt-6 w-full">
+      <ul class="flex flex-col gap-6 mt-6">
          <?php while (have_rows('links')) {
             the_row(); ?>
          <li class="flex flex-col gap-1">
