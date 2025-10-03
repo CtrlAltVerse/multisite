@@ -3,3 +3,4 @@ vendor/
 **/cache/
 uploads/
 **/assets/*.min.*
+cavwp/ctrl_altvers_net.php

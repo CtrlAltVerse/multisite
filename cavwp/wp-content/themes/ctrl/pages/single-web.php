@@ -5,6 +5,7 @@ use cavEx\services\GitHub;
 get_component('header');
 
 the_post();
+global $post;
 
 $bg   = get_field('background');
 $repo = get_field('repo');
@@ -18,8 +19,10 @@ if (!empty($repo)) {
    }
 }
 
+$content = get_extended($post->post_content);
+
 ?>
-<header class="relative py-15 font-mono text-base text-neutral-100">
+<header class="relative py-15 font-mono text-neutral-100">
    <?php if (!empty($bg)) { ?>
    <div class="absolute inset-0 z-1 bg-neutral-900/65"></div>
    <img class="absolute inset-0 z-0 size-full object-cover"
@@ -29,8 +32,7 @@ if (!empty($repo)) {
    <div class="container relative z-5 flex flex-col gap-1.5 w-full">
       <ul class="flex items-center gap-1.5 font-medium">
          <li>
-            <a
-               href="<?php echo home_url(); ?>">Início</a>
+            <a href="<?php echo home_url(); ?>">Início</a>
          </li>
          <li>
             &rsaquo;
@@ -47,8 +49,15 @@ if (!empty($repo)) {
    </div>
 </header>
 <main class="container my-25 flex flex-col md:flex-row gap-12">
-   <div <?php post_class(); ?>>
-      <?php the_content(); ?>
+   <div <?php post_class('grow'); ?>>
+      <?php if (!empty($content['extended'])) { ?>
+      <div class="text-2xl">
+         <?php echo $content['main']; ?>
+      </div>
+      <?php echo $content['extended']; ?>
+      <?php } else { ?>
+      <?php echo $content['main']; ?>
+      <?php } ?>
       <?php if (!empty($commits)) { ?>
       <h2>Últimas atualizações</h2>
       <ul class="!list-none">
