@@ -87,14 +87,14 @@ $content = get_extended($post->post_content);
       </p>
       <?php } ?>
    </div>
-   <div class="shrink-0 max-w-sm">
+   <div class="shrink-0 max-w-sm mx-auto">
       <?php if (has_post_thumbnail()) { ?>
       <?php the_post_thumbnail('thumbnail', [
-         'class' => 'mx-auto',
+         'class' => 'w-full rounded-sm',
       ]); ?>
       <?php } ?>
       <div class="mt-3">
-      <?php the_excerpt(); ?>
+         <?php the_excerpt(); ?>
       </div>
       <?php if (have_rows('links')) { ?>
       <ul class="flex flex-col gap-6 mt-6">
@@ -124,7 +124,6 @@ $content = get_extended($post->post_content);
          <?php } ?>
       </ul>
       <?php } ?>
-
    </div>
 </main>
 <footer>

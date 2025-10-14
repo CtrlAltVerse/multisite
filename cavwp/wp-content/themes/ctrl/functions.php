@@ -13,4 +13,13 @@ function load_theme(): void
    $AutoLoader->add_namespace('ctrl', implode(DIRECTORY_SEPARATOR, [__DIR__, 'classes']));
 
    new Register();
+   new Tasks_Page();
 }
+
+add_action('init', function() {
+   add_theme_support('post-formats', ['gallery', 'video', 'audio', 'aside']);
+
+   add_post_type_support('chapter', 'post-formats');
+}, 11);
+
+include_once 'classes/CAV_Entity_Rest_API.php';

@@ -3,9 +3,11 @@
 @import './fonts';
 @import './scroll';
 @import './content';
+@import './toast';
 
 @source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill");
 @source "../";
+@source '../../../plugins/cav-exclusive';
 
 @theme {
    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
@@ -84,7 +86,7 @@
 }
 
 .link {
-   @apply block py-2 px-4 text-base sm:text-xl whitespace-nowrap transition-colors focus-visible:bg-neutral-100 focus-visible:text-neutral-900 hover:bg-neutral-100 hover:text-neutral-900;
+   @apply block rounded py-2 px-4 w-full text-base sm:text-xl whitespace-nowrap transition-colors cursor-pointer focus-visible:bg-neutral-100 focus-visible:text-neutral-900 hover:bg-neutral-100 hover:text-neutral-900;
 }
 
 .poster {

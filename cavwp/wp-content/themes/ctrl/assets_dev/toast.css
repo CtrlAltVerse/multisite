@@ -1,0 +1,22 @@
+#toasts {
+   @apply flex flex-col-reverse gap-1 ml-auto mt-auto mb-2 mr-2 bg-transparent sm:max-w-96;
+}
+
+.toast {
+   @apply relative rounded py-3 px-4 bg-neutral-700 text-neutral-200 text-lg font-medium transition duration-100 ease-linear;
+
+   .toast-bar {
+      @apply absolute bottom-0 left-0 h-0.5 bg-neutral-100/60;
+      width: 0%;
+      transition-property: width;
+      transition-timing-function: linear;
+   }
+}
+
+.toast-hidden {
+   @apply opacity-0 translate-y-full scale-50;
+
+   .toast-bar {
+      @apply w-full;
+   }
+}

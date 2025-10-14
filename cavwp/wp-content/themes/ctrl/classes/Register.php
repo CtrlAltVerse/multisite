@@ -28,8 +28,14 @@ final class Register
 
    public function handle_assets()
    {
+      $deps = [];
+
+      if (is_page('ganhando-xp') || is_singular('print')) {
+         $deps[] = 'rewards';
+      }
+
       wp_enqueue_style('main', get_theme_file_uri('assets/main.min.css'));
-      wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), [], false, [
+      wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), $deps, false, [
          'strategy' => 'defer',
       ]);
    }

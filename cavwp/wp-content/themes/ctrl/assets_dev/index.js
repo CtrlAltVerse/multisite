@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs'
-// import cav from '@ctrlaltvers/alpine'
+import cav from '@ctrlaltvers/alpine'
 
-// Alpine.plugin(cav)
+Alpine.plugin(cav)
 
 window.Alpine = Alpine
 

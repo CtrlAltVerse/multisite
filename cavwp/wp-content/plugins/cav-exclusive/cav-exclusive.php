@@ -14,6 +14,8 @@ namespace cavEx;
  * Text Domain:       cavex
  */
 
+define('CAV_EX_FILE', __FILE__);
+
 add_action('wp_loaded', 'cavEx\load_theme');
 function load_theme(): void
 {
@@ -23,4 +25,6 @@ function load_theme(): void
 
    $AutoLoader = \cav_autoloader();
    $AutoLoader->add_namespace('cavEx', implode(DIRECTORY_SEPARATOR, [__DIR__, 'classes']));
+
+   new Rewards\Register();
 }

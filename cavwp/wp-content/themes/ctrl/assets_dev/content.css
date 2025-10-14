@@ -1,3 +1,17 @@
+.hentry {
+   p {
+      min-height: 1ch;
+   }
+
+   & > * + * {
+      @apply mt-2.5;
+   }
+
+   :where(p, li) a:hover {
+      @apply underline underline-offset-2;
+   }
+}
+
 body.page .hentry {
    h2 {
       @apply text-xl font-semibold;
@@ -23,13 +37,29 @@ body.page .hentry {
 body.single-chapter .hentry {
    @apply text-lg leading-relaxed;
 
-   p {
-      min-height: 1ch;
+   h2 {
+      @apply font-semibold text-xl;
    }
 
-   & > * + * {
-      @apply mt-2;
+   * + h2 {
+      @apply mt-7;
    }
+
+   blockquote {
+      @apply border-l-3 border-current pl-6 py-1.5;
+   }
+
+   hr {
+      @apply border-0 flex justify-center h-auto mt-8 mb-4.5 font-bold text-xl tracking-wider;
+   }
+
+   hr::before {
+      content: '* * *';
+   }
+}
+
+body.single-print .hentry {
+   @apply text-lg leading-relaxed;
 
    h2 {
       @apply font-semibold text-xl;
@@ -41,6 +71,19 @@ body.single-chapter .hentry {
 
    blockquote {
       @apply border-l-3 border-current pl-6 py-1.5;
+   }
+
+   ul,
+   ol {
+      @apply list-[square] list-inside;
+
+      li {
+         @apply my-1.5;
+      }
+   }
+
+   ol {
+      @apply list-decimal;
    }
 
    hr {

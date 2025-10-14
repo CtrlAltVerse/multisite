@@ -12,7 +12,7 @@ if (is_home()) {
    $body_classes .= ' select-none overflow-hidden';
 }
 
-if (is_singular('chapter')) {
+if (is_singular(['print', 'chapter'])) {
    $body_classes .= ' bg-neutral-200 text-neutral-800 select-none';
 }
 
