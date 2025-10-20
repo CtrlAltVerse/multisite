@@ -27,4 +27,5 @@ function load_theme(): void
    $AutoLoader->add_namespace('cavEx', implode(DIRECTORY_SEPARATOR, [__DIR__, 'classes']));
 
    new Rewards\Register();
+   new Shortlink\Register();
 }

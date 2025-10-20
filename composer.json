@@ -1,0 +1,20 @@
+{
+   "name": "ctrlaltverse/cav_sites",
+   "require": {
+      "chillerlan/php-qrcode": "^5.0"
+   },
+   "autoload": {
+      "psr-4": {
+         "Ctrlaltverse\\CavSites\\": "src/"
+      }
+   },
+   "config": {
+      "vendor-dir": "cavwp/vendor"
+   },
+   "authors": [
+      {
+         "name": "CtrlAltVersœ",
+         "email": "ctrl@altvers.net"
+      }
+   ]
+}

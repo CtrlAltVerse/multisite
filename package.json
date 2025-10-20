@@ -5,13 +5,14 @@
    "scripts": {
       "start": "nodemon",
       "css-ctrl": "npx @tailwindcss/cli -i ./cavwp/wp-content/themes/ctrl/assets_dev/index.css -o ./cavwp/wp-content/themes/ctrl/assets/main.min.css",
-      "js": "webpack",
-      "build": "npm run js -- --mode=production && npm run css-ctrl -- --minify"
+      "_js": "webpack",
+      "build": "npm run _js -- --mode=production && npm run css-ctrl -- --minify"
    },
    "author": "CtrlAltVerse",
    "license": "GPL-3.0-or-later",
    "description": "",
    "devDependencies": {
+      "@alpinejs/mask": "^3.15.0",
       "@ctrlaltvers/alpine": "^1.1.2",
       "@ctrlaltvers/tailwind": "^1.1.2",
       "@tailwindcss/cli": "^4.1.13",

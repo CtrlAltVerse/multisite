@@ -22,6 +22,7 @@ jobs:
         run: |
           npm i && npm run build
           rm -rf cavwp/wp-content/themes/ctrl/assets_dev
+          rm -rf cavwp/wp-content/plugins/cav-exclusive/assets_dev
 
       - name: Setup Rclone
         run: |
