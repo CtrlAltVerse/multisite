@@ -29,9 +29,13 @@ $post_slug = $post->post_name;
          </main>
       </div>
       <footer class="text-sm text-center my-4">
-            <a href="<?php bloginfo('url'); ?>">
-               <?php bloginfo('name'); ?>
-            </a>
+         <a href="<?php echo get_post_type_archive_link('tool') ?>">
+            Todas as ferramentas
+         </a>
+         &bull;
+         <a href="<?php bloginfo('url'); ?>">
+            <?php bloginfo('name'); ?>
+         </a>
       </footer>
    </div>
 </div>
