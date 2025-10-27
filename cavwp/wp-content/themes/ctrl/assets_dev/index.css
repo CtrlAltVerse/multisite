@@ -4,6 +4,7 @@
 @import './scroll';
 @import './content';
 @import './toast';
+@import './tools';
 
 @source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill");
 @source "../";
@@ -100,4 +101,8 @@
    &.active::before {
       @apply bg-neutral-100;
    }
+}
+
+button {
+   @apply cursor-pointer;
 }

@@ -1,6 +1,10 @@
 import Alpine from 'alpinejs'
 import cav from '@ctrlaltvers/alpine'
+import persist from '@alpinejs/persist'
+import mask from '@alpinejs/mask'
 
+Alpine.plugin(mask)
+Alpine.plugin(persist)
 Alpine.plugin(cav)
 
 window.Alpine = Alpine

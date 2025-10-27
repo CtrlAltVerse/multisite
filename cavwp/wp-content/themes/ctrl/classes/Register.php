@@ -12,6 +12,8 @@ final class Register
       add_action('wp_resource_hints', [$this, 'add_resources'], 10, 2);
 
       add_filter('get_custom_logo', [$this, 'set_logo']);
+
+      new tools\Register();
    }
 
    public function add_resources($urls, $type)

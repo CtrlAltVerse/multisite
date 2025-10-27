@@ -10,7 +10,7 @@ class Register
    public function __construct()
    {
       add_action('save_post_shortlink', [$this, 'update_slug'], 5, 2);
-      add_action('save_post_shortlink', [$this, 'update_qrcode'], 55, 2);
+      add_action('save_post_shortlink', [$this, 'update_qrcode'], 15, 2);
    }
 
    public function update_qrcode($post_ID, $post_obj)
@@ -25,9 +25,9 @@ class Register
          return;
       }
 
-      update_post_meta($post_ID, 'has_qrcode', 1);
+      $this->create_qrcode($post_ID);
 
-      $this->create_qrcode($post_ID, get_permalink($post_ID));
+      update_post_meta($post_ID, 'has_qrcode', 1);
    }
 
    public function update_slug($post_ID, $post_obj)
@@ -50,9 +50,9 @@ class Register
       ]);
    }
 
-   private function create_code($length = 3)
+   private function create_code($length = 4)
    {
-      $chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXYZ0123456789-_';
+      $chars = 'abcdefghijkmnpqrstuvwxyz0123456789-_';
 
       $code = '';
 
@@ -63,11 +63,14 @@ class Register
       return $code;
    }
 
-   private function create_qrcode($post_ID, $data)
+   private function create_qrcode($post_ID)
    {
       require_once ABSPATH . 'vendor/autoload.php';
 
       $uploads = wp_upload_dir()['basedir'] . '/';
+
+      $post_obj = get_post($post_ID);
+      $data     = home_url($post_obj->post_name);
 
       $options                = new QROptions();
       $options->version       = 3;

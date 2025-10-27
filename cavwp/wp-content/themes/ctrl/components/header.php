@@ -16,6 +16,10 @@ if (is_singular(['print', 'chapter'])) {
    $body_classes .= ' bg-neutral-200 text-neutral-800 select-none';
 }
 
+if (is_singular('tool') || is_post_type_archive('tool')) {
+   $body_classes .= ' bg-neutral-200 text-neutral-800 dark:text-neutral-200 dark:bg-neutral-800 font-mono text-base';
+}
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>

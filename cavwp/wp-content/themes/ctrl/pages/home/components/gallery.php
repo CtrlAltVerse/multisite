@@ -90,7 +90,7 @@ $post_type_object = get_post_type_object($post_type);
             <?php $Post = new Post($item); ?>
             <li class="snap-start poster"
                 x-bind:class="{active:<?php echo $post_type; ?>===<?php echo $key; ?>}">
-               <button class="grow h-full cursor-pointer <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>"
+               <button class="grow h-full <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>"
                        title="<?php echo $Post->get('title'); ?>"
                        type="button"
                        x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">

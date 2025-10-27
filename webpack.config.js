@@ -3,6 +3,8 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
    entry: {
+      'themes/ctrl/assets/tools.min.js':
+         './cavwp/wp-content/themes/ctrl/assets_dev/tools/index.js',
       'themes/ctrl/assets/main.min.js':
          './cavwp/wp-content/themes/ctrl/assets_dev/index.js',
       'plugins/cav-exclusive/assets/rewards.min.js':
