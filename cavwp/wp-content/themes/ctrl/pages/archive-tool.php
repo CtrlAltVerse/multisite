@@ -5,7 +5,7 @@ get_component('header');
 ?>
 <div x-data="tools" class="text-base min-w-xs">
    <div class="container mx-auto flex flex-col min-h-dvh">
-      <header class="flex gap-2 justify-between items-center px-4 py-3">
+      <header class="flex gap-2 justify-between px-4 py-3">
          <hgroup>
             <h1>Ferramentas</h1>
             <p></p>
@@ -19,12 +19,12 @@ get_component('header');
       </header>
       <div class="grow">
          <main class="my-6 px-3.5">
-            <ul class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3">
+            <ul class="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3">
                <template x-for="tool in tools">
                   <li>
-                     <a class="block rounded py-3 px-5 size-full aspect-video bg-neutral-300/30 dark:bg-neutral-500/30" x-bind:href="tool.link">
+                     <a class="block rounded py-3 px-5 size-full bg-neutral-300/30 dark:bg-neutral-500/30" x-bind:href="tool.link">
                         <h2 class="line-clamp-2 font-semibold text-lg mb-2" x-text="tool.title"></h2>
-                        <p class="line-clamp-3" x-text="tool.description"></p>
+                        <p class="line-clamp-4" x-text="tool.description"></p>
                      </a>
                   </li>
                </template>
