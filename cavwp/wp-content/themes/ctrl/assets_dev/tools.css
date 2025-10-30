@@ -40,8 +40,13 @@ body.single-tool {
       }
    }
 
-   .btn {
-      @apply py-1.5 px-3 rounded-sm bg-blue-600 shadow;
+   .btn,
+   .btn-alt {
+      @apply py-1.5 px-3 rounded-sm bg-blue-600 hover:bg-blue-500 shadow;
+   }
+
+   .btn-alt {
+      @apply bg-neutral-700 hover:bg-neutral-600;
    }
 
    details {
@@ -103,5 +108,76 @@ body.single-tool {
       background-color: #fff;
       color: #1f1f1f;
       --color-inherent: #dadde1;
+   }
+
+   .flipseven-card {
+      --x: -120px;
+      --y: -188px;
+      background-position-x: calc(var(--x) * var(--c, 0));
+      background-position-y: calc(var(--y) * var(--r, 0));
+      aspect-ratio: 65 / 102;
+      background-size: 700%;
+      background-image: url(https://cdn.altvers.net/sites/3/2025/10/flipseven.webp);
+      @apply rounded-md size-full bg-no-repeat;
+   }
+
+   .flipseven-1,
+   .flipseven-4,
+   .flipseven-x2 {
+      --c: 1;
+   }
+
+   .flipseven-10,
+   .flipseven-5,
+   .flipseven-\+10 {
+      --c: 2;
+   }
+
+   .flipseven-11,
+   .flipseven-6,
+   .flipseven-\+2 {
+      --c: 3;
+   }
+
+   .flipseven-12,
+   .flipseven-7,
+   .flipseven-\+4 {
+      --c: 4;
+   }
+
+   .flipseven-2,
+   .flipseven-8,
+   .flipseven-\+6 {
+      --c: 5;
+   }
+
+   .flipseven-\+8,
+   .flipseven-second-chance,
+   .flipseven-freeze {
+      --c: 6;
+   }
+
+   .flipseven-3,
+   .flipseven-4,
+   .flipseven-5,
+   .flipseven-6,
+   .flipseven-7,
+   .flipseven-8,
+   .flipseven-second-chance {
+      --r: 1;
+   }
+
+   .flipseven-9,
+   .flipseven-\+10,
+   .flipseven-\+2,
+   .flipseven-\+4,
+   .flipseven-\+6,
+   .flipseven-freeze {
+      --r: 2;
+   }
+
+   .flipseven-flip-three,
+   .flipseven-x2 {
+      --r: 3;
    }
 }

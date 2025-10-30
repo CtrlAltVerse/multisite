@@ -103,6 +103,7 @@
    }
 }
 
-button {
+button,
+label {
    @apply cursor-pointer;
 }
