@@ -5,6 +5,7 @@
             current: 0,
             initial: 10,
             increment: 0,
+            wakeLock: null,
             isFullscreen: false,
             timer: {
                p1: 0,
@@ -24,6 +25,7 @@
 
                   if (this.timer[`p${this.current}`] === 0) {
                      this.current = this.current * -1
+                     this.doScreenLock(false)
                      return
                   }
 
@@ -43,7 +45,7 @@
 
             setTimer() {
                const secs = this.initial * 60
-               this.timer.p1 = this.timer.p2 =secs
+               this.timer.p1 = this.timer.p2 = secs
             },
 
             parseSec(time) {
@@ -52,13 +54,31 @@
                return `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`
             },
 
-            toggleFullscreen() {
+             toggleFullscreen() {
                if (this.isFullscreen) {
                   document.exitFullscreen()
+                  this.doScreenLock(false)
                } else {
                   document.getElementById('Timer').requestFullscreen()
+                  this.doScreenLock()
                }
                this.isFullscreen = !this.isFullscreen
+            },
+
+            async doScreenLock(lock = true) {
+               try {
+                  if(lock){
+                  this.wakeLock = await navigator.wakeLock.request("screen");
+
+                  }else{
+
+
+
+                  this.wakeLock.release().then(() => {
+                     this.wakeLock = null;
+                  });
+                  }
+               } catch (e) {}
             },
 
             reset() {
@@ -94,8 +114,8 @@
                <span class="items-center gap-1 whitespace-nowrap"><i class="ri-time-line"></i> <input class="w-8 sm:w-12" type="number" min="1" max="99" x-model.number="initial" aria-label="Tempo inicial em minutos" />min</span>
             </label>
             <label class="input flex flex-col" x-show="current<=0">
-                <span class="whitespace-nowrap text-sm">Incremento</span>
-                <span class="items-center gap-1 whitespace-nowrap"><i class="ri-add-box-line"></i> <input class="w-8 sm:w-12" type="number" min="0" max="60" step="15" x-model.number="increment" aria-label="Incremento em segundos" />seg</span>
+               <span class="whitespace-nowrap text-sm">Incremento</span>
+               <span class="items-center gap-1 whitespace-nowrap"><i class="ri-add-box-line"></i> <input class="w-8 sm:w-12" type="number" min="0" max="60" step="15" x-model.number="increment" aria-label="Incremento em segundos" />seg</span>
             </label>
             <button class="btn" x-on:click.prevent="toggleFullscreen()" aria-label="Alternar tela cheia">
                <i x-bind:class="isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-fill'"></i>
