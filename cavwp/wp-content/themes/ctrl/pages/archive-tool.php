@@ -30,7 +30,7 @@ get_component('header');
                      </li>
                   </template>
                </ul>
-               <hr>
+               <hr class="my-4">
             </div>
             <ul class="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3">
                <template x-for="tool in tools">
