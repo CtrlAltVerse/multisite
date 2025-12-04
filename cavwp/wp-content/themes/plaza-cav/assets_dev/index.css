@@ -1,0 +1,30 @@
+@import 'tailwindcss' source(none);
+
+@source "../";
+
+@theme {
+   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+   /* interface: */
+   --color-white: #dad0c5;
+   --color-light: #6f6f6f;
+   --color-gray: #44475a;
+   --color-dark: #282a36;
+   --color-black: #131314;
+   --color-rust: #af610e;
+
+   /* hints: https://coolors.co/0077b6-2de65b-ee9820-f15050 */
+   --color-orange: #ee9820;
+   --color-blue: #0077b6;
+   --color-green: #2de65b;
+   --color-red: #f15050;
+
+   /* details: https://coolors.co/335b59-fa6bbc-02a9ca-642f7b */
+   --color-teal: #335b59;
+   --color-pink: #fa6bbc;
+   --color-cyan: #02a9ca;
+   --color-purple: #642f7b;
+
+   --aspect-bar: 21 / 5;
+}
