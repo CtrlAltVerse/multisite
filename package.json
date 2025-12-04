@@ -7,7 +7,7 @@
       "css-plaza": "npx @tailwindcss/cli -i ./cavwp/wp-content/themes/plaza-cav/assets_dev/index.css -o ./cavwp/wp-content/themes/plaza-cav/assets/main.min.css",
       "start": "nodemon",
       "js": "webpack",
-      "build": "npm run js -- --mode=production && npm run css-ctrl -- --minify && npm run plaza-ctrl -- --minify"
+      "build": "npm run js -- --mode=production && npm run css-ctrl -- --minify && npm run css-plaza -- --minify"
    },
    "author": "CtrlAltVerse",
    "license": "GPL-3.0-or-later",
