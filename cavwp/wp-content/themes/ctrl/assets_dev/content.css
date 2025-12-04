@@ -19,7 +19,7 @@
       @apply mt-8;
    }
 
-   ul,
+   ul:not(.post-categories),
    ol {
       @apply list-[square] list-inside;
 
@@ -103,15 +103,23 @@ body.single-post .hentry {
       @apply text-neutral-100;
    }
 
-   code {
-      @apply rounded;
-   }
-
    .wp-block-code {
       @apply relative;
 
+      code {
+         @apply rounded pr-10;
+      }
+
       .code-copy {
          @apply absolute top-3 right-4;
+      }
+   }
+
+   .post-categories {
+      @apply flex gap-4 mt-12 text-base;
+
+      a {
+         @apply py-1 px-2.5 rounded bg-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:no-underline;
       }
    }
 }

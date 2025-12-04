@@ -42,7 +42,7 @@ Alpine.data('cav', function () {
 
          this.$do(
             'before',
-            'code',
+            '.wp-block-code code',
             '<button class="code-copy" x-on:click="copyCode"><i class="ri-file-copy-line pointer-events-none"></i></button>'
          )
       },

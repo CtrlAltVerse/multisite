@@ -41,7 +41,7 @@ $portfolio = ['tabletop', 'web', 'print'];
                </span>
                <?php if (have_rows('group', 'option')) { ?>
                <ul
-                   class="flex flex-col md:flex-row rounded border border-neutral-100 divide-y sm:divide-y-0 sm:divide-x">
+                   class="flex flex-col lg:flex-row rounded border border-neutral-100 divide-y lg:divide-y-0 sm:divide-x">
                   <?php while (have_rows('group', 'option')) {
                      the_row(); ?>
                   <li>

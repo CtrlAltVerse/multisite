@@ -22,7 +22,7 @@ the_post();
    <h1 class="text-2xl sm:text-4xl font-semibold">
       <?php the_title(); ?>
    </h1>
-   <div>
+   <div class="text-xl sm-text-2xl">
       <?php the_excerpt(); ?>
    </div>
    <div class="font-medium">
@@ -42,20 +42,18 @@ the_post();
    </div>
    <?php } ?>
    <?php the_content(); ?>
-   <div>
-      categorias
-   </div>
+   <?php the_category('', ''); ?>
 </main>
 <footer class="container mt-20 font-mono text-lg">
    <section id="list">
       <?php
 
-      $others = get_posts([
-         'post_status' => 'publish',
-         'nopaging'    => true,
-         'order'       => 'ASC',
-         'orderby'     => 'title',
-      ]);
+$others = get_posts([
+   'post_status' => 'publish',
+   'nopaging'    => true,
+   'order'       => 'ASC',
+   'orderby'     => 'title',
+]);
 
 $others     = array_values(array_filter($others, fn($other) => get_the_ID() !== $other->ID));
 $per_column = ceil(count($others) / 4);
