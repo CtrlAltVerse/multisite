@@ -1,6 +1,6 @@
 {
    "verbose": false,
    "watch": ["/cavwp/wp-content/"],
-   "exec": "npm run _js -- --mode=development",
+   "exec": "npm run js -- --mode=development",
    "ext": "*.js,*.ts,*.tsx"
 }

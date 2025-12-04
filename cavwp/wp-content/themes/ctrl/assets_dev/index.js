@@ -25,12 +25,32 @@ Alpine.data('cav', function () {
          this.$watch('print', (position) => {
             this.shiftLeft('print', position)
          })
+
+         if (typeof hljs !== 'undefined') {
+            this.highlight()
+         }
       },
 
       shiftLeft(element, position) {
          const el = document.getElementById(`${element}-list`)
 
          el.style.left = `-${position * 100}vw`
+      },
+
+      highlight() {
+         hljs.highlightAll()
+
+         this.$do(
+            'before',
+            'code',
+            '<button class="code-copy" x-on:click="copyCode"><i class="ri-file-copy-line pointer-events-none"></i></button>'
+         )
+      },
+
+      copyCode(e) {
+         const content = e.target.nextSibling.textContent
+         this.$do({ action: 'copy', content })
+         this.$do({ action: 'toast', content: 'Código copiado' })
       },
    }
 })

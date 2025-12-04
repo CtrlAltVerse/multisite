@@ -30,14 +30,33 @@ final class Register
 
    public function handle_assets()
    {
-      $deps = [];
+      wp_register_script('highlight', 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js');
+      wp_register_style('highlight', 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css');
 
-      if (is_page('ganhando-xp') || is_singular('print')) {
-         $deps[] = 'rewards';
+      $languages = ['php', 'css', 'js', 'html'];
+
+      foreach ($languages as $language) {
+         wp_register_script('highlight-' . $language, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/' . $language . '.min.js');
       }
 
-      wp_enqueue_style('main', get_theme_file_uri('assets/main.min.css'));
-      wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), $deps, false, [
+      $deps_js  = [];
+      $deps_css = [];
+
+      if (is_page('ganhando-xp') || is_singular('print')) {
+         $deps_js[] = 'rewards';
+      }
+
+      if (is_single()) {
+         $deps_css[] = 'highlight';
+         $deps_js[]  = 'highlight';
+
+         foreach ($languages as $language) {
+            $deps_js[] = 'highlight-' . $language;
+         }
+      }
+
+      wp_enqueue_style('main', get_theme_file_uri('assets/main.min.css'), $deps_css);
+      wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), $deps_js, false, [
          'strategy' => 'defer',
       ]);
    }

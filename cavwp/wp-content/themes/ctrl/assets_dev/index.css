@@ -6,7 +6,7 @@
 @import './toast';
 @import './tools';
 
-@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill");
+@source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill ri-tools-fill ri-article-line");
 @source "../";
 @source '../../../plugins/cav-exclusive';
 
@@ -50,6 +50,26 @@
    min-width: 360px;
 }
 
+@utility container-post {
+   margin-inline: auto;
+   padding-inline: calc(var(--spacing) * 3.75);
+   width: 100%;
+   max-width: 840px;
+   min-width: 360px;
+}
+
+@utility gap-var-* {
+   --gap: --value(number);
+   gap: calc(var(--gap) * var(--spacing));
+}
+
+@utility cols-* {
+   width: calc(
+      100% * 1 / --value(integer) - var(--spacing) * var(--gap) *
+         (--value(integer) - 1) / --value(integer)
+   );
+}
+
 *,
 *::before,
 *::after {
@@ -60,7 +80,7 @@
    @apply hidden;
 }
 
-.bg-space {
+@utility bg-space {
    background: linear-gradient(
       -45deg,
       var(--color-blue-900),
@@ -71,7 +91,6 @@
    );
    background-size: 616% 616%;
    animation: spacing 15s ease infinite;
-   height: 100vh;
 }
 
 @keyframes spacing {

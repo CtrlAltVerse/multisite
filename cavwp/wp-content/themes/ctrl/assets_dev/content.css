@@ -10,67 +10,13 @@
    :where(p, li) a:hover {
       @apply underline underline-offset-2;
    }
-}
-
-body.page .hentry {
-   h2 {
-      @apply text-xl font-semibold;
-   }
-
-   code {
-      @apply border-l-3 border-neutral-300 pl-3 py-1 text-neutral-300;
-   }
-
-   ul {
-      @apply list-[square] list-inside;
-
-      li {
-         @apply mb-2;
-      }
-   }
-
-   hr {
-      @apply text-neutral-300 my-8 mx-auto max-w-66;
-   }
-}
-
-body.single-chapter .hentry {
-   @apply text-lg leading-relaxed;
 
    h2 {
-      @apply font-semibold text-xl;
+      @apply text-2xl font-semibold;
    }
 
    * + h2 {
-      @apply mt-7;
-   }
-
-   blockquote {
-      @apply border-l-3 border-current pl-6 py-1.5;
-   }
-
-   hr {
-      @apply border-0 flex justify-center h-auto mt-8 mb-4.5 font-bold text-xl tracking-wider;
-   }
-
-   hr::before {
-      content: '* * *';
-   }
-}
-
-body.single-print .hentry {
-   @apply text-lg leading-relaxed;
-
-   h2 {
-      @apply font-semibold text-xl;
-   }
-
-   * + h2 {
-      @apply mt-7;
-   }
-
-   blockquote {
-      @apply border-l-3 border-current pl-6 py-1.5;
+      @apply mt-8;
    }
 
    ul,
@@ -85,9 +31,28 @@ body.single-print .hentry {
    ol {
       @apply list-decimal;
    }
+}
+
+body.page .hentry {
+   code {
+      @apply border-l-3 border-neutral-300 pl-3 py-1 text-neutral-300;
+   }
 
    hr {
-      @apply border-0 flex justify-center h-auto mt-6 mb-4.5 font-bold text-xl tracking-wider;
+      @apply text-neutral-300 my-8 mx-auto max-w-66;
+   }
+}
+
+body.single-print .hentry,
+body.single-chapter .hentry {
+   @apply text-lg leading-relaxed;
+
+   blockquote {
+      @apply border-l-3 border-current pl-6 py-1.5;
+   }
+
+   hr {
+      @apply border-0 flex justify-center h-auto mt-8 mb-4.5 font-bold text-xl tracking-wider;
    }
 
    hr::before {
@@ -96,24 +61,12 @@ body.single-print .hentry {
 }
 
 body.single-web .hentry {
-   & > * + * {
-      @apply mt-3;
-   }
-
    h2 {
-      @apply uppercase text-xl font-semibold mt-12;
+      @apply uppercase;
    }
 
    code {
       @apply border-l-3 border-neutral-300 pl-3 py-1 text-neutral-300;
-   }
-
-   ul {
-      @apply list-[square] list-inside;
-
-      li {
-         @apply my-1.5;
-      }
    }
 
    hr {
@@ -142,6 +95,24 @@ body.single-chapter.single-format-standard .hentry {
 body.single-chapter.single-format-aside .hentry {
    & > * + *:not(:last-of-type.has-text-align-right) {
       @apply mt-6;
+   }
+}
+
+body.single-post .hentry {
+   h2 {
+      @apply text-neutral-100;
+   }
+
+   code {
+      @apply rounded;
+   }
+
+   .wp-block-code {
+      @apply relative;
+
+      .code-copy {
+         @apply absolute top-3 right-4;
+      }
    }
 }
 
