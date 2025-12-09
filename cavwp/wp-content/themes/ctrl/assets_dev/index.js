@@ -29,6 +29,10 @@ Alpine.data('cav', function () {
          if (typeof hljs !== 'undefined') {
             this.highlight()
          }
+
+         document.querySelectorAll('.code-to-copy code').forEach((code) => {
+            code.addEventListener('click', (e) => this.copyCode(e))
+         })
       },
 
       shiftLeft(element, position) {
@@ -48,7 +52,10 @@ Alpine.data('cav', function () {
       },
 
       copyCode(e) {
-         const content = e.target.nextSibling.textContent
+         const content =
+            e.target.tagName === 'BUTTON'
+               ? e.target.nextSibling.textContent
+               : e.target.textContent
          this.$do({ action: 'copy', content })
          this.$do({ action: 'toast', content: 'Código copiado' })
       },

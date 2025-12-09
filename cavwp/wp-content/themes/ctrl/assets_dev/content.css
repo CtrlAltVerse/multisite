@@ -127,3 +127,16 @@ body.single-post .hentry {
 .container-chapter {
    @apply min-w-xs max-w-xl mx-3 sm:mx-auto;
 }
+
+.card-main,
+.card-alt {
+   @apply flex flex-col border border-neutral-400/50 py-1.5 px-2.5 rounded;
+}
+
+.card-main {
+   @apply bg-neutral-700;
+}
+
+.card-alt {
+   @apply bg-neutral-400 text-neutral-700;
+}

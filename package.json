@@ -5,7 +5,7 @@
    "scripts": {
       "css-ctrl": "npx @tailwindcss/cli -i ./cavwp/wp-content/themes/ctrl/assets_dev/index.css -o ./cavwp/wp-content/themes/ctrl/assets/main.min.css",
       "css-plaza": "npx @tailwindcss/cli -i ./cavwp/wp-content/themes/plaza-cav/assets_dev/index.css -o ./cavwp/wp-content/themes/plaza-cav/assets/main.min.css",
-      "start": "nodemon",
+      "js-watch": "nodemon",
       "js": "webpack",
       "build": "npm run js -- --mode=production && npm run css-ctrl -- --minify && npm run css-plaza -- --minify"
    },

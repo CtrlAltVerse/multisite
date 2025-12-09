@@ -10,6 +10,7 @@ final class Register
    {
       add_action('wp_enqueue_scripts', [$this, 'handle_assets']);
       add_action('wp_resource_hints', [$this, 'add_resources'], 10, 2);
+      add_shortcode('wp_hierarchy', [$this, 'sc_wp_hierarchy']);
 
       add_filter('get_custom_logo', [$this, 'set_logo']);
 
@@ -59,6 +60,15 @@ final class Register
       wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), $deps_js, false, [
          'strategy' => 'defer',
       ]);
+   }
+
+   public function sc_wp_hierarchy()
+   {
+      ob_start();
+
+      get_component('sc-hierarchy');
+
+      return ob_get_clean();
    }
 
    public function set_logo($logo)
