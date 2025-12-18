@@ -71,22 +71,25 @@ $chapters    = Utils::get_chapters(get_the_ID());
       <h2>
          <?php the_title(); ?><br><?php echo get_the_author_meta('display_name'); ?>
       </h2>
-      <?php echo $content['extended']; ?>
+      <?php echo apply_filters('the_content', $content['extended']); ?>
       <?php } else { ?>
-      <?php echo $content['main']; ?>
+      <?php echo apply_filters('the_content', $content['main']); ?>
       <?php } ?>
       <?php if (!empty($chapters) && $is_unlocked) { ?>
       <h2>Sumário</h2>
       <ol>
          <?php foreach ($chapters as $chapter) { ?>
-         <li><a href="<?php echo get_the_permalink($chapter->ID); ?>"
-               title="Ler <?php echo $part_type; ?>"><?php echo get_the_title($chapter); ?></a>
+         <li>
+            <a href="<?php echo get_the_permalink($chapter->ID); ?>"
+               title="Ler <?php echo $part_type; ?>">
+               <?php echo get_the_title($chapter); ?>
+               </a>
          </li>
          <?php } ?>
       </ol>
       <?php } ?>
    </div>
-   <div class="shrink-0 max-w-sm mx-auto font-mono">
+   <div class="flex-0 max-w-sm mx-auto font-mono">
       <?php if (has_post_thumbnail()) { ?>
       <?php the_post_thumbnail('thumbnail', [
          'class' => 'w-full rounded-sm',
@@ -166,7 +169,7 @@ $chapters    = Utils::get_chapters(get_the_ID());
       <?php } ?>
    </div>
 </main>
-<footer class="text-neutral-700">
+<footer class="text-neutral-800">
    <?php get_component('footer-logo'); ?>
 </footer>
 <?php get_component('footer'); ?>

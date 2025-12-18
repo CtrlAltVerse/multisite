@@ -43,8 +43,23 @@ $post_type_object = get_post_type_object($post_type);
                <p class="line-clamp-8 hyphens-auto sm:hyphens-none text-sm sm:text-base max-w-xl">
                   <?php echo $Post->get('summary', apply_filter: false); ?>
                </p>
-               <?php if (have_rows('links', $item->ID)) { ?>
+
                <ul class="flex gap-3 w-full overflow-x-auto">
+                  <li class="flex flex-col gap-1">
+                     <span class="uppercase text-sm sm:text-base">
+                        Informações
+                     </span>
+                     <ul class="flex flex-col rounded border border-neutral-100 divide-x">
+                        <li>
+                           <a class="link"
+                              href="<?php echo get_permalink($item->ID); ?>">
+                              <i class="ri-information-2-fill"></i>
+                              Mais detalhes
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <?php if (have_rows('links', $item->ID)) { ?>
                   <?php while (have_rows('links', $item->ID)) {
                      the_row(); ?>
                   <li class="flex flex-col gap-1">
@@ -69,8 +84,8 @@ $post_type_object = get_post_type_object($post_type);
                      <?php } ?>
                   </li>
                   <?php } ?>
+                  <?php } ?>
                </ul>
-               <?php } ?>
                <?php if (!empty($Bg->ID)) { ?>
                <div class="text-sm">Foto:
                   <?php echo $Bg->get('summary', apply_filter: false); ?>
@@ -93,7 +108,9 @@ $post_type_object = get_post_type_object($post_type);
                <button class="grow h-full <?php echo 'print' === $post_type ? 'aspect-poster' : 'aspect-video'; ?>"
                        title="<?php echo $Post->get('title'); ?>"
                        type="button"
-                       x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>">
+                       x-on:click="<?php echo $post_type; ?>=<?php echo $key; ?>"
+                       x-on:dblclick="location.href='<?php echo get_permalink($item->ID); ?>'"
+                       >
                   <?php echo $Post->get('thumb', with_html: true, attrs: [
                      'class' => 'rounded object-cover size-full',
                   ]); ?>

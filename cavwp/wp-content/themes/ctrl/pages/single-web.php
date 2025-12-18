@@ -39,7 +39,7 @@ $content = get_extended($post->post_content);
          </li>
          <li>
             <a
-               href="<?php echo home_url('#web-list'); ?>>">
+               href="<?php echo home_url('#web-list'); ?>">
                Web
             </a>
          </li>
