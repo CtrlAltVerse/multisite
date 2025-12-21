@@ -8,7 +8,7 @@ if (is_home() || is_page() || is_singular(['web'])) {
    $body_classes .= ' bg-space text-neutral-100 font-mono text-base';
 }
 
-if (is_home()) {
+if (is_front_page()) {
    $body_classes .= ' select-none overflow-hidden';
 }
 

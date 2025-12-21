@@ -20,7 +20,7 @@ $portfolio = ['tabletop', 'web', 'print'];
             <?php bloginfo('description'); ?>
          </p>
          <div class="flex items-center text-3xl border-2 rounded-3xl aspect-poster">
-            <i class="ri-arrow-down-double-line"></i>
+            <i class="ri-arrow-down-double-line top-down"></i>
          </div>
       </div>
    </header>

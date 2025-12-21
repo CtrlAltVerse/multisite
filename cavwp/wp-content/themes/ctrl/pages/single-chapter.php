@@ -75,8 +75,8 @@ foreach ($chapters as $chapter) {
 </header>
 <main <?php post_class('container-chapter py-25 font-serif'); ?>>
    <h1 class="text-2xl sm:text-4xl font-semibold mb-30 ">
-         <?php the_title(); ?>
-      </h1>
+      <?php the_title(); ?>
+   </h1>
 
    <?php the_content(); ?>
 </main>
@@ -131,7 +131,9 @@ foreach ($chapters as $chapter) {
       </div>
    </div>
    <div class="text-neutral-700">
-      <?php get_component('footer-logo'); ?>
+      <?php get_component('footer-logo', [
+         'home_url' => '#print-list',
+      ]); ?>
    </div>
 </footer>
 <?php get_component('footer'); ?>

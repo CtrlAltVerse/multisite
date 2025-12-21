@@ -127,6 +127,8 @@ $content = get_extended($post->post_content);
    </div>
 </main>
 <footer>
-   <?php get_component('footer-logo'); ?>
+   <?php get_component('footer-logo', [
+      'home_url' => '#web-list',
+   ]); ?>
 </footer>
 <?php get_component('footer'); ?>

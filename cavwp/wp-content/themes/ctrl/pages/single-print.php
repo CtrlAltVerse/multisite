@@ -83,13 +83,13 @@ $chapters    = Utils::get_chapters(get_the_ID());
             <a href="<?php echo get_the_permalink($chapter->ID); ?>"
                title="Ler <?php echo $part_type; ?>">
                <?php echo get_the_title($chapter); ?>
-               </a>
+            </a>
          </li>
          <?php } ?>
       </ol>
       <?php } ?>
    </div>
-   <div class="flex-0 max-w-sm mx-auto font-mono">
+   <div class="flex-0 w-sm mx-auto font-mono">
       <?php if (has_post_thumbnail()) { ?>
       <?php the_post_thumbnail('thumbnail', [
          'class' => 'w-full rounded-sm',
@@ -170,6 +170,8 @@ $chapters    = Utils::get_chapters(get_the_ID());
    </div>
 </main>
 <footer class="text-neutral-800">
-   <?php get_component('footer-logo'); ?>
+   <?php get_component('footer-logo', [
+      'home_url' => '#print-list',
+   ]); ?>
 </footer>
 <?php get_component('footer'); ?>

@@ -44,10 +44,8 @@ get_component('header');
             </ul>
          </main>
       </div>
-      <footer class="text-sm text-center my-4">
-         <a href="<?php bloginfo('url'); ?>">
-            <?php bloginfo('name'); ?>
-         </a>
+      <footer class="my-4">
+         <?php get_component('footer-logo'); ?>
       </footer>
    </div>
 </div>

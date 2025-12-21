@@ -15,7 +15,8 @@ the_post();
             &rsaquo;
          </li>
          <li>
-            <a href="#list">Publicações</a>
+            <a
+               href="<?php echo home_url('artigos'); ?>">Publicações</a>
          </li>
       </ul>
    </nav>
@@ -82,7 +83,9 @@ $columns    = range(0, 3);
 
    </section>
    <div class="text-neutral-100">
-      <?php get_component('footer-logo'); ?>
+      <?php get_component('footer-logo', [
+         'home_url' => 'artigos',
+      ]); ?>
    </div>
 </footer>
 <?php get_component('footer'); ?>

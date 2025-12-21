@@ -1,0 +1,38 @@
+.top-down {
+   animation: top-down ease-in-out 1s infinite;
+}
+
+@keyframes top-down {
+   0%,
+   100% {
+      transform: translateY(-9%);
+   }
+   50% {
+      transform: translateY(9%);
+   }
+}
+
+@utility bg-space {
+   background: linear-gradient(
+      -45deg,
+      var(--color-blue-900),
+      var(--color-neutral-800),
+      var(--color-blue-950),
+      var(--color-neutral-800),
+      var(--color-blue-900)
+   );
+   background-size: 616% 616%;
+   animation: spacing 15s ease infinite;
+}
+
+@keyframes spacing {
+   0% {
+      background-position: 0% 50%;
+   }
+   50% {
+      background-position: 100% 50%;
+   }
+   100% {
+      background-position: 0% 50%;
+   }
+}
