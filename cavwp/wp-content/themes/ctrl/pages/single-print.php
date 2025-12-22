@@ -89,7 +89,7 @@ $chapters    = Utils::get_chapters(get_the_ID());
       </ol>
       <?php } ?>
    </div>
-   <div class="flex-0 w-sm mx-auto font-mono">
+   <div class="shrink-0 w-60 mx-auto font-mono">
       <?php if (has_post_thumbnail()) { ?>
       <?php the_post_thumbnail('thumbnail', [
          'class' => 'w-full rounded-sm',

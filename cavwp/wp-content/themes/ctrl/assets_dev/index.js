@@ -37,13 +37,16 @@ Alpine.data('cav', function () {
 
       shiftLeft(element, position) {
          const container = document.getElementById(`${element}-list`)
-         const gallery = document.querySelector(`#${element} .gallery-index`)
-         const item = gallery.querySelectorAll('li')[position]
-
          container.style.left = `-${position * 100}vw`
-         gallery.scrollLeft = Math.floor(
-            item.offsetLeft - window.innerWidth / 2
-         )
+
+         const gallery = document.querySelector(`#${element} .gallery-index`)
+         if (gallery) {
+            const item = gallery.querySelectorAll('li')[position]
+
+            gallery.scrollLeft = Math.floor(
+               item.offsetLeft - window.innerWidth / 2
+            )
+         }
       },
 
       highlight() {
