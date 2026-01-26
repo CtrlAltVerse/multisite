@@ -113,18 +113,22 @@
             </button>
             <span class="shrink-0 size-8 rounded-sm" x-bind:style="`background: ${color}`"></span>
             <span class="shrink-0 grow sm:text-xl truncate" x-text="name"></span>
-            <button class="btn-alt hidden sm:inline" type="button" x-on:click.prevent="editPlayer(index,-5)">
-               -5
+            <button class="btn-alt hidden sm:flex" type="button" x-on:click.prevent="editPlayer(index,-5)">
+               <i class="ri-subtract-line"></i>
+               5
             </button>
-            <button class="btn-alt" type="button" x-on:click.prevent="editPlayer(index,-1)">
-               -<span class="hidden sm:inline">1</span>
+            <button class="btn-alt flex" type="button" x-on:click.prevent="editPlayer(index,-1)">
+               <i class="ri-subtract-line"></i>
+               <span class="hidden sm:inline">1</span>
             </button>
             <input class="py-1.5 px-3 w-16 sm:w-20 text-center font-bold sm:text-2xl rounded border dark:border-neutral-100" type="number" step="1" x-bind:value="points" x-on:input.prevent="editPlayer(index,0,$el.value)" />
-            <button class="btn-alt" type="button" x-on:click.prevent="editPlayer(index)">
-               +<span class="hidden sm:inline">1</span>
+            <button class="btn-alt flex" type="button" x-on:click.prevent="editPlayer(index)">
+               <i class="ri-add-line"></i>
+               <span class="hidden sm:inline">1</span>
             </button>
-            <button class="btn-alt hidden sm:inline" type="button" x-on:click.prevent="editPlayer(index,10)">
-               +10
+            <button class="btn-alt hidden sm:flex" type="button" x-on:click.prevent="editPlayer(index,10)">
+               <i class="ri-add-line"></i>
+               10
             </button>
          </li>
       </template>
