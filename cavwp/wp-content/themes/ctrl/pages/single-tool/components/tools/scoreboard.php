@@ -69,7 +69,7 @@
             addPlayer(e) {
                const form = new FormData(e.target)
                const name = form.get('name')
-               const points = form.get('points')
+               const points = Number.parseInt( form.get('points'))
                const color = this.colors[this.nextColor].hex
 
                this.players.push({
