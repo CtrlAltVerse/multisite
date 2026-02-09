@@ -60,6 +60,12 @@ final class Register
       wp_enqueue_script('main', get_theme_file_uri('assets/main.min.js'), $deps_js, false, [
          'strategy' => 'defer',
       ]);
+
+      $cav_template = get_query_var('cav', false);
+
+      if ('links' !== $cav_template && !is_admin()) {
+         remove_theme_support('custom-background');
+      }
    }
 
    public function sc_wp_hierarchy()
