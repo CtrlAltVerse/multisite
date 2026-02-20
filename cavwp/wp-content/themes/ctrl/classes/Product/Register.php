@@ -73,6 +73,6 @@ class Register
 
       $product = wc_get_product($product_parent);
 
-      return $product->get_name() . ' — ' . $title;
+      return '— ' . $product->get_name() . ' > ' . $title;
    }
 }
