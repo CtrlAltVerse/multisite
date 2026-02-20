@@ -7,6 +7,7 @@ class Register
    public function __construct()
    {
       add_filter('the_title', [$this, 'set_title_children'], 10, 2);
+      add_filter('woocommerce_search_products_post_statuses', [$this, 'set_search_product_statuses'], 10, 2);
 
       add_filter('wp_insert_post_data', [$this, 'on_before_save_product'], 10, 2);
       add_action('save_post_product', [$this, 'on_save_product']);
@@ -53,6 +54,11 @@ class Register
       foreach ($children as $child_ID) {
          \add_post_meta($child_ID, '_product_parent', $post_ID, true);
       }
+   }
+
+   public function set_search_product_statuses($post_statuses)
+   {
+      return current_user_can('administrator') ? ['private', 'publish', 'draft', 'future', 'pending'] : $post_statuses;
    }
 
    public function set_title_children(string $title, int $post_ID): string
