@@ -4,73 +4,75 @@ namespace ctrl\Product;
 
 class Register
 {
-   private array $group_map = [];
-
    public function __construct()
    {
-      add_action('pre_get_posts', [$this, 'reorder_products']);
-      add_filter('the_title', [$this, 'indent_child_products'], 10, 2);
+      add_filter('the_title', [$this, 'set_title_children'], 10, 2);
+
+      add_filter('wp_insert_post_data', [$this, 'on_before_save_product'], 10, 2);
+      add_action('save_post_product', [$this, 'on_save_product']);
    }
 
-   public function indent_child_products(string $title, int $post_id): string
+   public function on_before_save_product($data, $args)
+   {
+      if ('product' !== $args['post_type']) {
+         return $data;
+      }
+
+      if (empty($_POST['grouped_products'])) {
+         return $data;
+      }
+
+      $product          = wc_get_product($args['ID']);
+      $current_children = $product->get_children();
+      $new_children     = $_POST['grouped_products'];
+      $to_change        = array_diff($current_children, $new_children);
+
+      if (!empty($to_change)) {
+         foreach ($to_change as $child_ID) {
+            delete_post_meta($child_ID, '_product_parent');
+         }
+      }
+
+      return $data;
+   }
+
+   public function on_save_product($post_ID): void
+   {
+      $product = wc_get_product($post_ID);
+
+      if (!$product->is_type('grouped')) {
+         return;
+      }
+
+      $children = $_POST['grouped_products'] ?? [];
+
+      if (empty($children)) {
+         return;
+      }
+
+      foreach ($children as $child_ID) {
+         \add_post_meta($child_ID, '_product_parent', $post_ID, true);
+      }
+   }
+
+   public function set_title_children(string $title, int $post_ID): string
    {
       global $pagenow;
 
       if (
-         !is_admin() || 'edit.php' !== $pagenow || get_post_type($post_id) !== 'product'
+         !is_admin() || 'edit.php' !== $pagenow || get_post_type($post_ID) !== 'product'
       ) {
          return $title;
       }
 
-      if (isset($this->group_map[$post_id])) {
-         return '— ' . $title;
+      $product_parent = get_post_meta($post_ID, '_product_parent', true);
+
+      if (empty($product_parent)) {
+         return $title;
       }
 
-      return $title;
-   }
+      $product = wc_get_product($product_parent);
 
-   public function reorder_products($query): void
-   {
-      if (
-         !is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'product'
-      ) {
-         return;
-      }
-
-      $products = get_posts([
-         'post_type'      => 'product',
-         'posts_per_page' => -1,
-         'orderby'        => 'menu_order title',
-         'order'          => 'ASC',
-         'post_status'    => 'any',
-      ]);
-
-      $ordered_ids = [];
-
-      foreach ($products as $product_post) {
-         $product = wc_get_product($product_post->ID);
-
-         if (!$product) {
-            continue;
-         }
-
-         if ($product->is_type('grouped')) {
-            $ordered_ids[] = $product->get_id();
-
-            $children = $product->get_children();
-
-            foreach ($children as $child_id) {
-               $ordered_ids[]              = $child_id;
-               $this->group_map[$child_id] = $product->get_id();
-            }
-         } elseif (!isset($this->group_map[$product->get_id()])) {
-            $ordered_ids[] = $product->get_id();
-         }
-      }
-
-      if (!empty($ordered_ids)) {
-         $query->set('post__in', $ordered_ids);
-         $query->set('orderby', 'post__in');
-      }
+      return $product->get_name() . ' — ' . $title;
    }
 }
