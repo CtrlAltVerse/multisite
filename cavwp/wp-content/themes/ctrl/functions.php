@@ -13,6 +13,7 @@ function load_theme(): void
    $AutoLoader->add_namespace('ctrl', implode(DIRECTORY_SEPARATOR, [__DIR__, 'classes']));
 
    new Register();
+   new Product\Register();
    new Chapter\Register();
    new Book\Register();
    new Book\Register_ePub_Styles();
