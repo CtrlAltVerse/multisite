@@ -1,0 +1,205 @@
+{
+   "version": 2,
+   "settings": {
+      "layout": {
+         "contentSize": "768px",
+         "wideSize": "1024px"
+      },
+      "spacing": {
+         "units": ["px", "em", "rem", "%"],
+         "blockGap": "1.5em"
+      },
+      "typography": {
+         "lineHeight": true,
+         "customFontSize": true,
+         "fontSizes": [
+            {
+               "name": "Small",
+               "slug": "small",
+               "size": "0.8125em"
+            },
+            {
+               "name": "Medium",
+               "slug": "medium",
+               "size": "1.25em"
+            },
+            {
+               "name": "Large",
+               "slug": "large",
+               "size": "2.25em"
+            },
+            {
+               "name": "Extra Large",
+               "slug": "x-large",
+               "size": "2.625em"
+            }
+         ],
+         "fontFamilies": [
+            {
+               "fontFamily": "'Myriad Pro', Seravek, Ember, 'Trebuchet MS', 'BN Trebuchet MS', 'PT Sans', 'Frutiger Neue', Roboto, sans-serif;",
+               "name": "Humanist",
+               "slug": "humanist"
+            },
+            {
+               "fontFamily": "Futura, 'Century Gothic', 'Apple SD Gothic Neo', AppleGothic, sans-serif;",
+               "name": "Geometric",
+               "slug": "geometric"
+            },
+            {
+               "fontFamily": "Athelas, Literata, Bookerly, 'Merriweather Serif', Malabar, 'BN Malabar', Georgia, 'Droid Serif', serif;",
+               "name": "Modern",
+               "slug": "modern"
+            }
+         ]
+      },
+      "color": {
+         "palette": [
+            { "name": "Highlight", "slug": "highlight", "color": "#ffff00" }
+         ]
+      }
+   },
+   "styles": {
+      "typography": {
+         "fontSize": "100%",
+         "lineHeight": "1.5"
+      },
+      "blocks": {
+         "core/heading": {
+            "typography": {
+               "fontWeight": "400"
+            }
+         },
+         "core/paragraph": {
+            "typography": {
+               "lineHeight": "1.5"
+            },
+            "spacing": {
+               "margin": {
+                  "bottom": "1.5em"
+               }
+            }
+         },
+         "core/quote": {
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            },
+            "typography": {
+               "fontStyle": "italic"
+            }
+         },
+         "core/image": {
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            }
+         },
+         "core/figure": {
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            }
+         }
+      },
+      "elements": {
+         "heading": {
+            "typography": {
+               "fontWeight": "400"
+            }
+         },
+         "link": {
+            "typography": {
+               "fontWeight": "700",
+               "textDecoration": "underline"
+            }
+         }
+      }
+   },
+   "variations": [
+      {
+         "block": "core/separator",
+         "name": "transition",
+         "label": "Transition",
+         "styles": {
+            "border": {
+               "width": "0"
+            },
+            "dimensions": {
+               "minHeight": "1.5em"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "0",
+                  "bottom": "0"
+               }
+            }
+         }
+      },
+      {
+         "block": "core/separator",
+         "name": "asterism",
+         "label": "Asterism",
+         "styles": {
+            "border": {
+               "width": "0"
+            },
+            "dimensions": {
+               "minHeight": "1.5em"
+            },
+            "background": {
+               "image": "url(/assets/asterism.svg)",
+               "position": "center",
+               "repeat": "no-repeat"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            }
+         }
+      },
+      {
+         "block": "core/separator",
+         "name": "dots",
+         "label": "Dots",
+         "styles": {
+            "border": {
+               "style": "dotted",
+               "width": "6px",
+               "color": "currentColor"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            }
+         }
+      },
+      {
+         "block": "core/separator",
+         "name": "wide",
+         "label": "Wide",
+         "styles": {
+            "border": {
+               "style": "solid",
+               "width": "4px",
+               "color": "currentColor"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "1.5em",
+                  "bottom": "1.5em"
+               }
+            }
+         }
+      }
+   ]
+}

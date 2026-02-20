@@ -10,6 +10,11 @@ final class Register
    {
       add_action('wp_enqueue_scripts', [$this, 'handle_assets']);
       add_action('wp_resource_hints', [$this, 'add_resources'], 10, 2);
+      add_action('admin_init', [$this, 'register_image_sizes']);
+      add_action('admin_init', [$this, 'remove_image_sizes'], 15);
+      add_action('after_setup_theme', [$this, 'register_image_sizes']);
+      add_action('after_setup_theme', [$this, 'remove_image_sizes'], 15);
+
       add_shortcode('wp_hierarchy', [$this, 'sc_wp_hierarchy']);
 
       add_filter('get_custom_logo', [$this, 'set_logo']);
@@ -66,6 +71,24 @@ final class Register
       if ('links' !== $cav_template && !is_admin()) {
          remove_theme_support('custom-background');
       }
+   }
+
+   public function register_image_sizes()
+   {
+      add_image_size('amazon', 1600, 2560, true);
+      add_image_size('apple', 1600, 2560, true);
+
+      add_image_size('kobo', 1600, 2133, true);
+      add_image_size('google', 1600, 2133, true);
+   }
+
+   public function remove_image_sizes()
+   {
+      remove_image_size('1536x1536');
+      remove_image_size('2048x2048');
+      remove_image_size('woocommerce_gallery_thumbnail');
+      remove_image_size('woocommerce_single');
+      remove_image_size('woocommerce_thumbnail');
    }
 
    public function sc_wp_hierarchy()
