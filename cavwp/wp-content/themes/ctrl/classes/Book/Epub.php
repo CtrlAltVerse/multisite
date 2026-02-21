@@ -145,6 +145,11 @@ final class Epub
 
       $this->uuid = wp_generate_uuid4();
 
+      $this->info['contributors'][] = [
+         'name' => 'CtrlAltVerso',
+         'role' => 'pbl',
+      ];
+
       $this->temp_folder = HECTOR_FOLDER . 'epub_' . $info['slug'] . '_' . $version;
 
       $this->folders = [
@@ -351,6 +356,7 @@ final class Epub
          }
 
          foreach ($contributors as $role => $contributors_names) {
+            $role  = Utils::get_roles($role);
             $names = CavWPUtils::parse_titles($contributors_names);
 
             $list .= <<<XML
@@ -401,7 +407,7 @@ final class Epub
       $css = get_option('cav_hector_epub_style', '');
 
       $settings = WP_Theme_JSON_Resolver::get_merged_data()->get_settings();
-      $colors   = $settings['color']['palette']['theme'] ?? [];
+      $colors   = array_merge($settings['color']['palette']['default'], $settings['color']['palette']['theme'] ?? []);
 
       if (!empty($colors)) {
          foreach ($colors as $color) {
@@ -447,10 +453,6 @@ final class Epub
          <p class="has-text-align-justify">{$line1}</p>
          <p class="has-text-align-justify">{$line2}</p>
          {$link}
-
-         <figure class="mt-2 has-text-align-center">
-            <img class="max-w-sm" src="../assets/images/cover.jpg" alt="" />
-         </figure>
       XML;
 
       $this->add_section(998, [
@@ -775,11 +777,6 @@ final class Epub
          XML;
       }
 
-      $this->info['contributors'][] = [
-         'name' => $this->site_name,
-         'role' => 'pbl',
-      ];
-
       $contributors = '';
 
       foreach ($this->info['contributors'] as $key => $contributor) {
@@ -1061,7 +1058,7 @@ final class Epub
             <br />
             <hr class="is-style-transition" />
             <br />
-            <p class="has-text-align-center has-medium-font-size">{$this->site_name}</p>
+            <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
             <p class="has-text-align-center">{$this->year}</p>
          </section>
       </body>

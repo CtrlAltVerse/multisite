@@ -242,17 +242,16 @@ class Register_Admin
                   Gerar
                </button>
                <?php
-               }
 
             $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()));
 
-            if ($files) {
-               foreach ($files as $file) {
-                  $filename = basename($file);
+                  if ($files) {
+                     foreach ($files as $file) {
+                        $filename = basename($file);
 
-                  foreach (HECTOR_EPUB_STORES as $key => $title) {
-                     if (str_contains($filename, $key)) {
-                        ?>
+                        foreach (HECTOR_EPUB_STORES as $key => $title) {
+                           if (str_contains($filename, $key)) {
+                              ?>
                <a class="button"
                   download="<?php echo esc_attr($filename); ?>"
                   href="<?php echo $this->ajax_url . '?' . http_build_query([
@@ -262,10 +261,11 @@ class Register_Admin
                   <?php echo esc_html($title); ?>
                </a>
                <?php
+                           }
+                        }
                      }
                   }
                }
-            }
             ?>
             </td>
          </tr>
