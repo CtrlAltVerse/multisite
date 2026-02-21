@@ -20,12 +20,6 @@ class Register_Admin
 
       add_action('wp_ajax_hector_download_file', [$this, 'ajax_download_file']);
       add_action('wp_ajax_hector_generate_epub', [$this, 'ajax_generate_epub']);
-
-      /*
-      .section-description
-      .section-author
-      .section-date
-      */
    }
 
    public function ajax_download_file(): void
@@ -115,7 +109,7 @@ class Register_Admin
    {
       global $pagenow;
 
-      if (!$pagenow === 'admin.php' || 'hector' !== $_GET['page']) {
+      if (!$pagenow === 'admin.php' || 'hector' !== $_GET['page'] ?? false) {
          return;
       }
 
@@ -214,10 +208,10 @@ class Register_Admin
    <table class="widefat striped">
       <thead>
          <tr>
-            <th>Produtos</th>
-            <th>Capas</th>
-            <th>EPUBs</th>
-            <th>PDFs</th>
+            <th style="width: 8%">Produtos</th>
+            <th style="width: 16%">Capas</th>
+            <th style="width: 38%">EPUBs</th>
+            <th style="width: 38%">PDFs</th>
          </tr>
       </thead>
       <tbody>
