@@ -15,8 +15,11 @@ class Book extends WC_Product_Grouped
 
       foreach ($versions as $version) {
          $info['cover'] = \get_the_post_thumbnail_url($this->get_id(), $version);
-         new Epub($version, $info);
+         $epub          = new Epub($version, $info);
+         $books[]       = $epub->create();
       }
+
+      return $books;
    }
 
    public function make_pdf()
@@ -27,6 +30,7 @@ class Book extends WC_Product_Grouped
 
    private function get_info($target = 'print')
    {
+      $info['ID']            = $this->get_id();
       $info['slug']          = $this->get_slug();
       $info['title']         = $this->get_title();
       $info['subtitle']      = get_field('subtitle', $this->get_id());
@@ -53,7 +57,7 @@ class Book extends WC_Product_Grouped
          $info['series']['position'] = get_field('series_position', $this->get_id());
       }
 
-      $authors = get_field('autor', $this->get_id());
+      $authors = get_field('authors', $this->get_id());
 
       foreach ($authors as $author) {
          $authors_names[] = get_the_author_meta('display_name', $author);
@@ -72,8 +76,6 @@ class Book extends WC_Product_Grouped
       $info['author'] = CavWPUtils::parse_titles($authors_names);
 
       $info['contributors'] = get_field('contributors', $this->get_id());
-
-      $spine = get_field('spine', $this->get_id());
 
       $products = $this->get_children();
 
@@ -99,22 +101,31 @@ class Book extends WC_Product_Grouped
          }
       }
 
-      if (!empty($spine)) {
-         foreach ($spine as $item) {
-            if ('print' === $target && 'epub' === $item['type']) {
-               continue;
-            }
+      $parts = get_field('parts', $this->get_id());
 
-            if ('epub' === $target && 'print' === $item['type']) {
-               continue;
-            }
+      if (!empty($parts)) {
+         foreach ($parts as $part_key => $part) {
+            $info['parts'][$part_key] = [
+               'title'    => $part['title'],
+               'subtitle' => $part['subtitle'],
+            ];
 
-            if (in_array($item['type'], ['chapter', 'print', 'epub'])) {
-               $info['spine'][] = $this->parse_chapter($item['part']);
-            }
+            foreach ($part['spine'] as $item) {
+               if ('print' === $target && 'epub' === $item['type']) {
+                  continue;
+               }
 
-            if ('custom' === $item['type'] && 'print' === $target) {
-               $info['spine'][] = wp_get_attachment_url($item['custom']);
+               if ('epub' === $target && 'print' === $item['type']) {
+                  continue;
+               }
+
+               if (in_array($item['type'], ['chapter', 'print', 'epub'])) {
+                  $info['parts'][$part_key]['spine'][] = $this->parse_chapter($item['part']);
+               }
+
+               if ('custom' === $item['type'] && 'print' === $target) {
+                  $info['parts'][$part_key]['spine'][] = wp_get_attachment_url($item['custom']);
+               }
             }
          }
       }

@@ -2,6 +2,18 @@
 
 namespace ctrl;
 
+define('HECTOR_FOLDER', ABSPATH . 'hector' . DIRECTORY_SEPARATOR);
+define('HECTOR_EPUB_STORES', [
+   'amazon' => 'Amazon Kindle',
+   'kobo'   => 'Kobo',
+   'apple'  => 'Apple Books',
+   'google' => 'Google Books',
+]);
+define('HECTOR_PDF_FORMATS', [
+   'br' => 'Brasil',
+   'us' => 'Internacional',
+]);
+
 add_action('wp_loaded', 'ctrl\load_theme');
 function load_theme(): void
 {
@@ -16,7 +28,7 @@ function load_theme(): void
    new Product\Register();
    new Chapter\Register();
    new Book\Register();
-   new Book\Register_ePub_Styles();
+   new Book\Register_Admin();
 }
 
 add_action('init', function() {

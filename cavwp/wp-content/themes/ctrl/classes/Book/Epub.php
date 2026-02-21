@@ -6,116 +6,123 @@ use cavWP\Utils as CavWPUtils;
 use WP_Theme_JSON_Resolver;
 use ZipArchive;
 
+define('EPUB_TEMPLATES', [
+   'chapter' => [
+      'role' => 'chapter',
+      'type' => 'bodymatter',
+      'toc'  => true,
+   ],
+   'prologue' => [
+      'role' => 'prologue',
+      'type' => 'bodymatter',
+      'toc'  => true,
+   ],
+   'epilogue' => [
+      'role' => 'epilogue',
+      'type' => 'bodymatter',
+      'toc'  => true,
+   ],
+   'other-credits' => [
+      'role' => 'credits',
+      'type' => 'backmatter',
+      'toc'  => true,
+   ],
+   'dedication' => [
+      'role' => 'dedication',
+      'type' => 'frontmatter',
+      'toc'  => false,
+   ],
+   'preface' => [
+      'role' => 'preface',
+      'type' => 'frontmatter',
+      'toc'  => true,
+   ],
+   'introduction' => [
+      'role' => 'introduction',
+      'type' => 'frontmatter',
+      'toc'  => true,
+   ],
+   'appendix' => [
+      'role' => 'appendix',
+      'type' => 'backmatter',
+      'toc'  => true,
+   ],
+   'conclusion' => [
+      'role' => 'conclusion',
+      'type' => 'backmatter',
+      'toc'  => false,
+   ],
+   'acknowledgments' => [
+      'role' => 'acknowledgments',
+      'type' => 'frontmatter',
+      'toc'  => false,
+   ],
+   'foreword' => [
+      'role' => 'foreword',
+      'type' => 'frontmatter',
+      'toc'  => false,
+   ],
+   'preamble' => [
+      'role' => 'preamble',
+      'type' => 'frontmatter',
+      'toc'  => false,
+   ],
+   'division' => [
+      'role' => 'division',
+      'type' => 'bodymatter',
+      'toc'  => false,
+   ],
+   'afterword' => [
+      'role' => 'afterword',
+      'type' => 'backmatter',
+      'toc'  => false,
+   ],
+   // blockquote p cite
+   'epigraph' => [
+      'role' => 'epigraph',
+      'type' => 'frontmatter',
+      'toc'  => false,
+   ],
+   // dl dt dd
+   'glossary' => [
+      'role' => 'glossary',
+      'type' => 'backmatter',
+      'toc'  => true,
+   ],
+   'colophon' => [
+      'role' => 'colophon',
+      'type' => 'backmatter',
+      'toc'  => false,
+   ],
+   // ul li
+   'bibliography' => [
+      'role' => 'bibliography',
+      'type' => 'backmatter',
+      'toc'  => true,
+   ],
+   'bio' => [
+      'role' => 'bio',
+      'type' => 'backmatter',
+      'toc'  => true,
+   ],
+]);
+define('LOCALES', [
+   'en' => 'en_US',
+   'pt' => 'pt_BR',
+   'es' => 'es_ES',
+]);
+
 final class Epub
 {
    private $folders = [];
    private $images  = [];
    private $info;
+   private $is_multipart;
    private $lang;
    private $site_domain;
    private $site_link;
    private $site_name;
    private $temp_folder;
-   private $templates = [
-      'chapter' => [
-         'role' => 'chapter',
-         'type' => 'bodymatter',
-         'toc'  => true,
-      ],
-      'prologue' => [
-         'role' => 'prologue',
-         'type' => 'bodymatter',
-         'toc'  => true,
-      ],
-      'epilogue' => [
-         'role' => 'epilogue',
-         'type' => 'bodymatter',
-         'toc'  => true,
-      ],
-      'other-credits' => [
-         'role' => 'credits',
-         'type' => 'backmatter',
-         'toc'  => true,
-      ],
-      'dedication' => [
-         'role' => 'dedication',
-         'type' => 'frontmatter',
-         'toc'  => false,
-      ],
-      'preface' => [
-         'role' => 'preface',
-         'type' => 'frontmatter',
-         'toc'  => true,
-      ],
-      'introduction' => [
-         'role' => 'introduction',
-         'type' => 'frontmatter',
-         'toc'  => true,
-      ],
-      'appendix' => [
-         'role' => 'appendix',
-         'type' => 'backmatter',
-         'toc'  => true,
-      ],
-      'conclusion' => [
-         'role' => 'conclusion',
-         'type' => 'backmatter',
-         'toc'  => false,
-      ],
-      'acknowledgments' => [
-         'role' => 'acknowledgments',
-         'type' => 'frontmatter',
-         'toc'  => false,
-      ],
-      'foreword' => [
-         'role' => 'foreword',
-         'type' => 'frontmatter',
-         'toc'  => false,
-      ],
-      'preamble' => [
-         'role' => 'preamble',
-         'type' => 'frontmatter',
-         'toc'  => false,
-      ],
-      'division' => [
-         'role' => 'division',
-         'type' => 'bodymatter',
-         'toc'  => false,
-      ],
-      'afterword' => [
-         'role' => 'afterword',
-         'type' => 'backmatter',
-         'toc'  => false,
-      ],
-      // blockquote p cite
-      'epigraph' => [
-         'role' => 'epigraph',
-         'type' => 'frontmatter',
-         'toc'  => false,
-      ],
-      // dl dt dd
-      'glossary' => [
-         'role' => 'glossary',
-         'type' => 'backmatter',
-         'toc'  => true,
-      ],
-      'colophon' => [
-         'role' => 'colophon',
-         'type' => 'backmatter',
-         'toc'  => false,
-      ],
-      // ul li
-      'bibliography' => [
-         'role' => 'bibliography',
-         'type' => 'backmatter',
-         'toc'  => true,
-      ],
-      'bio' => [
-         'role' => 'bio',
-         'type' => 'backmatter',
-         'toc'  => true,
-      ],
-   ];
    private $title;
    private $title_bio;
    private $uuid;
@@ -124,12 +131,13 @@ final class Epub
 
    public function __construct($version, $info)
    {
-      $this->info      = $info;
-      $this->title     = $info['title'];
-      $this->lang      = $info['attributes']['lang'];
-      $this->version   = $version;
-      $this->year      = $info['release']->date('Y');
-      $this->title_bio = _n('Sobre o autor', 'Sobre os autores', count($this->info['authors']), 'ctrl');
+      $this->info         = $info;
+      $this->title        = $info['title'];
+      $this->lang         = $info['attributes']['lang'];
+      $this->version      = $version;
+      $this->year         = $info['release']->date('Y');
+      $this->title_bio    = _n('Sobre o autor', 'Sobre os autores', count($this->info['authors']), 'ctrl');
+      $this->is_multipart = count($this->info['parts']) > 1;
 
       $this->site_name   = get_bloginfo('name');
       $this->site_link   = home_url();
@@ -137,7 +145,7 @@ final class Epub
 
       $this->uuid = wp_generate_uuid4();
 
-      $this->temp_folder = ABSPATH . 'hector' . DIRECTORY_SEPARATOR . 'epub_' . $info['slug'] . '_' . $version;
+      $this->temp_folder = HECTOR_FOLDER . 'epub_' . $info['slug'] . '_' . $version;
 
       $this->folders = [
          $this->temp_folder,
@@ -147,15 +155,58 @@ final class Epub
          $this->temp_folder . '/OEBPS/assets',
          $this->temp_folder . '/OEBPS/assets/images',
       ];
+   }
 
-      $locales = [
-         'en' => 'en_US',
-         'pt' => 'pt_BR',
-         'es' => 'es_ES',
-      ];
-      switch_to_locale($locales[$this->lang]);
-      $this->create();
+   public function create()
+   {
+      switch_to_locale(LOCALES[$this->lang]);
+
+      if (is_dir($this->temp_folder)) {
+         return;
+      }
+
+      if (!is_dir(HECTOR_FOLDER)) {
+         mkdir(HECTOR_FOLDER, 0o777);
+      }
+
+      foreach ($this->folders as $folder) {
+         $folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
+         mkdir($folder, 0o777);
+
+         if (!is_dir($folder)) {
+            return debug("Cannot create folder: {$folder}");
+         }
+      }
+
+      $this->create_file('/mimetype', 'application/epub+zip');
+      $this->add_css();
+      $this->add_images();
+      $this->add_container();
+      $this->add_opf();
+      $this->add_nav();
+      $this->add_ncx();
+      $this->add_cover();
+      $this->add_title();
+      $this->add_credits();
+
+      // ADD CONTENT SECTIONS
+      foreach ($this->info['parts'] as $part_key => $part) {
+         if ($this->is_multipart) {
+            $this->add_division($part_key, $part);
+         }
+
+         foreach ($part['spine'] as $key => $spine_item) {
+            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+            $this->add_section($key, $spine_item);
+         }
+      }
+
+      $this->add_bio();
+      $this->add_cta();
+      $this->add_colophon();
       restore_previous_locale();
+
+      return $this->zip();
    }
 
    private function add_bio()
@@ -343,7 +394,7 @@ final class Epub
       </section>
       XML;
 
-      $this->add_section(2, [
+      $this->add_section('002', [
          'section_type' => 'other-credits',
          'content'      => $credits,
       ], false);
@@ -414,6 +465,28 @@ final class Epub
       ], false);
    }
 
+   private function add_division($key, $part)
+   {
+      $subtitle = '';
+
+      if (!empty($part['subtitle'])) {
+         $subtitle = "<p class=\"has-medium-font-size mt-2\">{$part['subtitle']}</p>";
+      }
+
+      $content = <<<XHTML
+      <div class="valign-center">
+         <h1 class="has-large-font-size">{$part['title']}</h1>
+         {$subtitle}
+      </div>
+      XHTML;
+
+      $key = str_pad($key + 1, 2, '0', STR_PAD_LEFT);
+      $this->add_section($key, [
+         'section_type' => 'division',
+         'content'      => $content,
+      ], false);
+   }
+
    private function add_images()
    {
       if (!empty($this->info['cover'])) {
@@ -438,29 +511,32 @@ final class Epub
          }
       }
 
-      foreach ($this->info['spine'] as $key => $spine_item) {
-         $found_images = preg_match_all(
-            '/(\<img.*?src=[\'|"])(.*?)([\'|"].*?\>)/mis',
-            $spine_item['content'],
-            $image_matches,
-         );
+      // SEARCH FOR IMAGENS IN THE CONTENT
+      foreach ($this->info['parts'] as $part) {
+         foreach ($part['spine'] as $spine_item) {
+            $found_images = preg_match_all(
+               '/(\<img.*?src=[\'|"])(.*?)([\'|"].*?\>)/mis',
+               $spine_item['content'],
+               $image_matches,
+            );
 
-         if (empty($found_images)) {
-            continue;
-         }
-
-         if (empty($image_matches[2])) {
-            continue;
-         }
-
-         foreach ($image_matches[2] as $url) {
-            $image_name = basename($url);
-
-            if (in_array($image_name, array_keys($this->images))) {
+            if (empty($found_images)) {
                continue;
             }
 
-            $this->save_image($url);
+            if (empty($image_matches[2])) {
+               continue;
+            }
+
+            foreach ($image_matches[2] as $url) {
+               $image_name = basename($url);
+
+               if (in_array($image_name, array_keys($this->images))) {
+                  continue;
+               }
+
+               $this->save_image($url);
+            }
          }
       }
    }
@@ -475,18 +551,37 @@ final class Epub
 
       $nav_itens = '';
 
-      foreach ($this->info['spine'] as $key => $spine_item) {
-         if (!$spine_item['show_toc']) {
-            continue;
+      // MAKE NAV SUMMARY
+      foreach ($this->info['parts'] as $part_key => $part) {
+         if ($this->is_multipart) {
+            $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
+            $nav_itens .= <<<XML
+            <li>
+               <a href="content/{$part_key}-division.xhtml">{$part['title']}</a>
+               <ol>
+            XML;
          }
 
-         $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+         foreach ($part['spine'] as $key => $spine_item) {
+            if (!$spine_item['show_toc']) {
+               continue;
+            }
 
-         $nav_itens .= <<<XML
-         <li>
-            <a href="content/{$key}-{$spine_item['section_type']}.xhtml">{$spine_item['title']}</a>
-         </li>
-         XML;
+            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+
+            $nav_itens .= <<<XML
+            <li>
+               <a href="content/{$key}-{$spine_item['section_type']}.xhtml">{$spine_item['title']}</a>
+            </li>
+            XML;
+         }
+
+         if ($this->is_multipart) {
+            $nav_itens .= <<<'XML'
+            </ol>
+            </li>
+            XML;
+         }
       }
 
       $nav = <<<XML
@@ -523,21 +618,41 @@ final class Epub
    {
       $toc_itens = '';
 
-      foreach ($this->info['spine'] as $key => $spine_item) {
-         if (!$spine_item['show_toc']) {
-            continue;
+      // MAKE NCX SUMMARY
+      foreach ($this->info['parts'] as $part) {
+         if ($this->is_multipart) {
+            $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
+            $nav_itens .= <<<XML
+            <navPoint id="part-{$part_key}">
+               <navLabel>
+                  <text>{$part['title']}</text>
+               </navLabel>
+               <content src="content/{$part_key}-division.xhtml" />
+            XML;
          }
 
-         $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+         foreach ($this->info['spine'] as $key => $spine_item) {
+            if (!$spine_item['show_toc']) {
+               continue;
+            }
 
-         $toc_itens .= <<<XML
-         <navPoint id="spine-{$key}">
-            <navLabel>
-               <text>{$spine_item['title']}</text>
-            </navLabel>
-            <content src="content/{$key}-{$spine_item['section_type']}.xhtml" />
-         </navPoint>
-         XML;
+            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+
+            $toc_itens .= <<<XML
+            <navPoint id="spine-{$key}">
+               <navLabel>
+                  <text>{$spine_item['title']}</text>
+               </navLabel>
+               <content src="content/{$key}-{$spine_item['section_type']}.xhtml" />
+            </navPoint>
+            XML;
+         }
+
+         if ($this->is_multipart) {
+            $toc_itens .= <<<'XML'
+            </navPoint>
+            XML;
+         }
       }
 
       $toc = <<<XML
@@ -684,18 +799,35 @@ final class Epub
          XML;
       }
 
-      foreach ($this->info['spine'] as $key => $spine_item) {
-         $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+      // ADD XHTML FILES TO MANIFEST AND SPINE
+      foreach ($this->info['parts'] as $part_key => $part) {
+         if ($this->is_multipart) {
+            $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
 
-         $manifest_itens .= <<<XML
-            <item href="content/{$key}-{$spine_item['section_type']}.xhtml" id="xhtml-{$key}-{$spine_item['section_type']}" media-type="application/xhtml+xml" />
+            $manifest_itens .= <<<XML
+            <item href="content/{$part_key}-division.xhtml" id="division-{$part_key}" media-type="application/xhtml+xml" />
 
-         XML;
+            XML;
 
-         $spine_itens .= <<<XML
-            <itemref idref="xhtml-{$key}-{$spine_item['section_type']}" />
+            $spine_itens .= <<<XML
+            <itemref idref="division-{$part_key}" />
 
-         XML;
+            XML;
+         }
+
+         foreach ($part['spine'] as $key => $spine_item) {
+            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+
+            $manifest_itens .= <<<XML
+               <item href="content/{$key}-{$spine_item['section_type']}.xhtml" id="xhtml-{$key}-{$spine_item['section_type']}" media-type="application/xhtml+xml" />
+
+            XML;
+
+            $spine_itens .= <<<XML
+               <itemref idref="xhtml-{$key}-{$spine_item['section_type']}" />
+
+            XML;
+         }
       }
 
       if (!empty($this->images)) {
@@ -826,7 +958,7 @@ final class Epub
    private function add_section($key, $spine_item, $apply_filter = true, $with_section = true)
    {
       $section_type = $spine_item['section_type'];
-      $section      = $this->templates[$section_type];
+      $section      = EPUB_TEMPLATES[$section_type];
       $body_type    = $section['type'];
       $section_role = $section['role'];
 
@@ -899,7 +1031,6 @@ final class Epub
       </html>
       XML;
 
-      $key = str_pad($key, 3, '0', STR_PAD_LEFT);
       $this->create_file("/OEBPS/content/{$key}-{$section_type}.xhtml", $template);
    }
 
@@ -942,47 +1073,6 @@ final class Epub
       XML;
 
       $this->create_file('/OEBPS/content/001-titlepage.xhtml', $content);
-   }
-
-   private function create()
-   {
-      if (is_dir($this->temp_folder)) {
-         return;
-      }
-
-      if (!is_dir(ABSPATH . 'hector')) {
-         mkdir(ABSPATH . 'hector', 0o777);
-      }
-
-      foreach ($this->folders as $folder) {
-         $folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
-         mkdir($folder, 0o777);
-
-         if (!is_dir($folder)) {
-            return debug("Cannot create folder: {$folder}");
-         }
-      }
-
-      $this->create_file('/mimetype', 'application/epub+zip');
-      $this->add_css();
-      $this->add_images();
-      $this->add_container();
-      $this->add_opf();
-      $this->add_nav();
-      $this->add_ncx();
-      $this->add_cover();
-      $this->add_title();
-      $this->add_credits();
-
-      foreach ($this->info['spine'] as $key => $spine_item) {
-         $this->add_section($key + 3, $spine_item);
-      }
-
-      $this->add_bio();
-      $this->add_cta();
-      $this->add_colophon();
-
-      $this->zip();
    }
 
    private function create_file($file, $content)
@@ -1067,14 +1157,11 @@ final class Epub
          return debug('zip extension is not loaded');
       }
 
-      $author = $this->info['author'];
-      $title  = $this->info['slug'];
-
-      $file_name = sanitize_file_name("{$this->year}-{$author}-{$title}-{$this->version}") . '.epub';
+      $file_name = Utils::get_filename($this->info['ID'], $this->version);
 
       $zip = new ZipArchive();
 
-      if (!$zip->open(ABSPATH . 'hector' . DIRECTORY_SEPARATOR . $file_name, ZipArchive::CREATE)) {
+      if (!$zip->open(HECTOR_FOLDER . $file_name, ZipArchive::CREATE)) {
          return debug('Failed to create zip file.');
       }
 
@@ -1109,6 +1196,8 @@ final class Epub
       foreach ($folders as $folder) {
          rmdir($folder);
       }
+
       */
+      return $file_name;
    }
 }
