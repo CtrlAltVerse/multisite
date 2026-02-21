@@ -221,7 +221,7 @@ final class Epub
 
          if (!empty($author['link'])) {
             $site_text = esc_html__('Site pessoal', 'ctrl');
-            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{${$site_text}}</a></li>";
+            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
          }
 
          if ('amazon' === $this->version && !empty($author['amazon-profile'])) {
@@ -234,7 +234,7 @@ final class Epub
             <img src="{$img}" alt="" class="rounded" />
             <h2>{$author['name']}</h2>
             <p class="has-text-align-left">{$author['bio']}</p>
-            <ul class="list-disc">
+            <ul>
                {$links}
             </ul>
          </section>
@@ -390,7 +390,7 @@ final class Epub
 
          {$list}
 
-         <dt>{$this->site_name} [<a href="{$this->site_link}" target="_blank">{$this->site_domain}</a>]</dt>
+         <dt>{$this->site_name} • <a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></dt>
          <dd>© {$this->year} {$author}. {$all_rights}</dd>
       </dl>
       </section>
