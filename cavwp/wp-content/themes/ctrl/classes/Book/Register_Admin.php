@@ -199,7 +199,7 @@ class Register_Admin
       ];
 
       $products = wc_get_products([
-         'product_type'   => 'grouped',
+         'type'           => 'grouped',
          'posts_per_page' => -1,
          'orderby'        => 'title',
          'order'          => 'ASC',
@@ -232,7 +232,9 @@ class Register_Admin
 
                   if ($image_url) {
                      ?>
-               <a  class="button" href="<?php echo esc_url($image_url); ?>" download="<?php basename($image_url); ?>">
+               <a class="button"
+                  href="<?php echo esc_url($image_url); ?>"
+                  download="<?php basename($image_url); ?>">
                   <?php echo esc_html($label); ?>
                </a>
                <?php
@@ -240,11 +242,13 @@ class Register_Admin
                } ?>
             </td>
             <td>
+               <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
                        data-book="<?php echo esc_attr($product->get_id()); ?>">
                   Gerar
                </button>
                <?php
+               }
 
             $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()));
 
