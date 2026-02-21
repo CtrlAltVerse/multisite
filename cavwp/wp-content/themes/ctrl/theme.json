@@ -54,7 +54,31 @@
       },
       "color": {
          "palette": [
-            { "name": "Highlight", "slug": "highlight", "color": "#ffff00" }
+            {
+               "name": "Black Sky",
+               "slug": "black-sky",
+               "color": "#131314"
+            },
+            {
+               "name": "Dark Graffiti",
+               "slug": "dark-graffiti",
+               "color": "#262629"
+            },
+            {
+               "name": "Graffiti",
+               "slug": "graffiti",
+               "color": "#5e5e66"
+            },
+            {
+               "name": "Dark Gray",
+               "slug": "dark-gray",
+               "color": "#a9ab8"
+            },
+            {
+               "name": "Gray",
+               "slug": "gray",
+               "color": "#ddddf9"
+            }
          ]
       }
    },

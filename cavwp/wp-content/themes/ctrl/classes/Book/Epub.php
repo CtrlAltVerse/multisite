@@ -270,9 +270,9 @@ final class Epub
       $content = <<<XML
       <div class="valign-bottom">
       <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
-      <div class="p-1 has-white-background-color has-text-align-center">
+      <div class="mt-2 mb-2 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/ctrlaltverso-dark.jpg" alt="{$this->site_name}" />
+            <img src="../assets/images/CtrlAltVerso.jpg" alt="{$this->site_name}" />
          </a>
       </div>
       <ul class="list-none has-text-align-center">
@@ -377,9 +377,9 @@ final class Epub
       $author     = rtrim($this->info['author'], '.');
 
       $credits = <<<XML
-      <div class="p-1 has-white-background-color has-text-align-center">
+      <div class="mb-2 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/ctrlaltverso-dark.jpg" alt="{$this->site_name}" />
+            <img src="../assets/images/CtrlAltVerso.jpg" alt="{$this->site_name}" />
          </a>
       </div>
       <hr class="is-style-transition" />
@@ -500,7 +500,7 @@ final class Epub
       $logo = \get_field('logo', 'options');
 
       if (!empty($logo)) {
-         $this->save_image(wp_get_attachment_image_url($logo, 'full'), 'ctrlaltverso-dark.jpg');
+         $this->save_image(wp_get_attachment_image_url($logo, 'full'), 'CtrlAltVerso.jpg');
       }
 
       if (!empty($this->info['authors'])) {
