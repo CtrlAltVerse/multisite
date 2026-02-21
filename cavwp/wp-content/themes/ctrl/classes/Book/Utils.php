@@ -18,7 +18,13 @@ class Utils
          return;
       }
 
-      $year   = $product->get_date_created()->date('Y');
+      $year         = date('Y');
+      $date_created = $product->get_date_created();
+
+      if (!empty($date_created)) {
+         $year = $date_created->date('Y');
+      }
+
       $title  = $product->get_slug();
       $author = '';
 
