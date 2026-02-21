@@ -13,16 +13,23 @@ class Utils
       }
 
       $product = wc_get_product($product_ID);
-      $year    = $product->get_date_created()->date('Y');
-      $title   = $product->get_slug();
+
+      if (empty($product)) {
+         return;
+      }
+
+      $year   = $product->get_date_created()->date('Y');
+      $title  = $product->get_slug();
+      $author = '';
 
       $authors = get_field('authors', $product_ID);
 
-      foreach ($authors as $author) {
-         $authors_names[] = get_the_author_meta('display_name', $author);
+      if (!empty($authors)) {
+         foreach ($authors as $author) {
+            $authors_names[] = get_the_author_meta('display_name', $author);
+         }
+         $author = CavWPUtils::parse_titles($authors_names);
       }
-
-      $author = CavWPUtils::parse_titles($authors_names);
 
       if (!$version) {
          $version = '*';
