@@ -14,6 +14,12 @@ define('HECTOR_PDF_FORMATS', [
    'us' => 'Internacional',
 ]);
 
+add_action('admin_init', function() {
+   if (!is_dir(HECTOR_FOLDER)) {
+      mkdir(HECTOR_FOLDER, 0o777);
+   }
+}, 20);
+
 add_action('wp_loaded', 'ctrl\load_theme');
 function load_theme(): void
 {

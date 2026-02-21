@@ -165,10 +165,6 @@ final class Epub
          return;
       }
 
-      if (!is_dir(HECTOR_FOLDER)) {
-         mkdir(HECTOR_FOLDER, 0o777);
-      }
-
       foreach ($this->folders as $folder) {
          $folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
          mkdir($folder, 0o777);
