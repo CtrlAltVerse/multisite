@@ -109,7 +109,7 @@ class Register_Admin
    {
       global $pagenow;
 
-      if (!$pagenow === 'admin.php' || 'hector' !== $_GET['page'] ?? false) {
+      if (!$pagenow === 'admin.php' || 'hector' !== ($_GET['page'] ?? false)) {
          return;
       }
 

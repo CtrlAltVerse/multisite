@@ -220,8 +220,8 @@ final class Epub
          $links = '';
 
          if (!empty($author['link'])) {
-            $author_domain = CavWPUtils::clean_domain($author['link']);
-            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$author_domain}</a></li>";
+            $site_text = esc_html__('Site pessoal', 'ctrl');
+            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{${$site_text}}</a></li>";
          }
 
          if ('amazon' === $this->version && !empty($author['amazon-profile'])) {
@@ -230,7 +230,7 @@ final class Epub
          }
 
          $content = <<<XML
-         <section epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
+         <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
             <img src="{$img}" alt="" class="rounded" />
             <h2>{$author['name']}</h2>
             <p class="has-text-align-left">{$author['bio']}</p>
@@ -1084,7 +1084,6 @@ final class Epub
       return "{$last}, {$names}";
    }
 
-   // TODO -> blocks to XHTML
    private function parse_content($content)
    {
       $content = preg_replace_callback(
