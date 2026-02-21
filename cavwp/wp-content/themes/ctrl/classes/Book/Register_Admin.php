@@ -208,10 +208,10 @@ class Register_Admin
    <table class="widefat striped">
       <thead>
          <tr>
-            <th style="width: 8%">Produtos</th>
-            <th style="width: 16%">Capas</th>
-            <th style="width: 38%">EPUBs</th>
-            <th style="width: 38%">PDFs</th>
+            <th style="width: 13%">Produtos</th>
+            <th style="width: 17%">Capas</th>
+            <th style="width: 35%">EPUBs</th>
+            <th style="width: 35%">PDFs</th>
          </tr>
       </thead>
       <tbody>

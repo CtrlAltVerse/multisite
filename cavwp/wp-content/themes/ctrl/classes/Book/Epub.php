@@ -1180,17 +1180,16 @@ final class Epub
 
       $zip->close();
 
-      /*
-
       foreach ($files_to_delete as $delete) {
          unlink($delete);
       }
+
+      $folders = array_reverse($this->folders);
 
       foreach ($folders as $folder) {
          rmdir($folder);
       }
 
-      */
       return $file_name;
    }
 }
