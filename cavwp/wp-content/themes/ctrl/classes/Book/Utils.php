@@ -8,6 +8,10 @@ class Utils
 {
    public static function get_filename($product_ID, $version = false)
    {
+      if (empty($product_ID)) {
+         return;
+      }
+
       $product = wc_get_product($product_ID);
       $year    = $product->get_date_created()->date('Y');
       $title   = $product->get_slug();
