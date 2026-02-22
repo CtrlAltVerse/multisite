@@ -58,7 +58,7 @@ class Register
          return;
       }
 
-      $books = wc_get_products([
+      $books = \wc_get_products([
          'posts_per_page' => -1,
          'orderby'        => 'title',
          'order'          => 'ASC',
@@ -165,7 +165,7 @@ class Register
 
       $selected = isset($_GET['book']) ? (int) ($_GET['book']) : '';
 
-      $books = wc_get_products([
+      $books = \wc_get_products([
          'posts_per_page' => -1,
          'orderby'        => 'title',
          'order'          => 'ASC',

@@ -61,8 +61,12 @@ class Register
       return current_user_can('administrator') ? ['private', 'publish', 'draft', 'future', 'pending'] : $post_statuses;
    }
 
-   public function set_title_children(string $title, int $post_ID): string
+   public function set_title_children(string $title, int $post_ID = 0): string
    {
+      if (empty($post_ID)) {
+         return $title;
+      }
+
       global $pagenow;
 
       if (
