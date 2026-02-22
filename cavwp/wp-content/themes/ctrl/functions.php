@@ -35,6 +35,7 @@ function load_theme(): void
    new Chapter\Register();
    new Book\Register();
    new Book\Register_Admin();
+   new tools\Register();
 }
 
 add_action('init', function() {

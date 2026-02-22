@@ -18,8 +18,6 @@ final class Register
       add_shortcode('wp_hierarchy', [$this, 'sc_wp_hierarchy']);
 
       add_filter('get_custom_logo', [$this, 'set_logo']);
-
-      new tools\Register();
    }
 
    public function add_resources($urls, $type)

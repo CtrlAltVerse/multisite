@@ -1,13 +1,13 @@
 {
-   "version": 2,
+   "$schema": "https://schemas.wp.org/trunk/theme.json",
+   "version": 3,
    "settings": {
       "layout": {
-         "contentSize": "768px",
-         "wideSize": "1024px"
+         "contentSize": "56rem",
+         "wideSize": "96rem"
       },
       "spacing": {
-         "units": ["px", "em", "rem", "%"],
-         "blockGap": "1.5em"
+         "units": ["px", "em", "rem", "%"]
       },
       "typography": {
          "lineHeight": true,
@@ -83,31 +83,23 @@
       }
    },
    "styles": {
+      "color": {
+         "text": "#f8f8f2",
+         "background": "#282a36"
+      },
       "typography": {
-         "fontSize": "100%",
+         "fontSize": "120%",
          "lineHeight": "1.5"
       },
+      "spacing": { "blockGap": "1.5em" },
       "blocks": {
-         "core/heading": {
-            "typography": {
-               "fontWeight": "400"
-            }
-         },
-         "core/paragraph": {
-            "typography": {
-               "lineHeight": "1.5"
-            },
-            "spacing": {
-               "margin": {
-                  "bottom": "1.5em"
-               }
-            }
-         },
          "core/quote": {
             "spacing": {
                "margin": {
                   "top": "1.5em",
-                  "bottom": "1.5em"
+                  "bottom": "1.5em",
+                  "left": "5%",
+                  "right": "5%"
                }
             },
             "typography": {
@@ -117,69 +109,71 @@
          "core/image": {
             "spacing": {
                "margin": {
-                  "top": "1.5em",
-                  "bottom": "1.5em"
+                  "top": "0",
+                  "bottom": "0"
                }
             }
          },
          "core/figure": {
             "spacing": {
                "margin": {
-                  "top": "1.5em",
-                  "bottom": "1.5em"
+                  "top": "0",
+                  "bottom": "0"
+               }
+            }
+         },
+         "core/separator": {
+            "spacing": {
+               "margin": {
+                  "top": "1.4375em",
+                  "bottom": "1.4375em",
+                  "right": "0",
+                  "left": "37.5%"
                }
             }
          }
       },
       "elements": {
-         "heading": {
+         "h1": {
             "typography": {
-               "fontWeight": "400"
-            }
-         },
-         "link": {
-            "typography": {
-               "fontWeight": "700",
-               "textDecoration": "underline"
-            }
-         }
-      }
-   },
-   "variations": [
-      {
-         "block": "core/separator",
-         "name": "transition",
-         "label": "Transition",
-         "styles": {
-            "border": {
-               "width": "0"
-            },
-            "dimensions": {
-               "minHeight": "1.5em"
+               "fontSize": "1.4375em",
+               "lineHeight": "1.04347826"
             },
             "spacing": {
                "margin": {
                   "top": "0",
-                  "bottom": "0"
+                  "bottom": "2.08695652em"
                }
             }
-         }
-      },
-      {
-         "block": "core/separator",
-         "name": "asterism",
-         "label": "Asterism",
-         "styles": {
-            "border": {
-               "width": "0"
+         },
+         "h2": {
+            "typography": {
+               "fontSize": "1.3125em",
+               "lineHeight": "1.14285714"
             },
-            "dimensions": {
-               "minHeight": "1.5em"
+            "spacing": {
+               "margin": {
+                  "top": "2.28571429em",
+                  "bottom": "1.14285714em"
+               }
+            }
+         },
+         "h3": {
+            "typography": {
+               "fontSize": "1.125em",
+               "lineHeight": "1.33333333"
             },
-            "background": {
-               "image": "url(/assets/asterism.svg)",
-               "position": "center",
-               "repeat": "no-repeat"
+            "spacing": {
+               "margin": {
+                  "top": "1.33333333em",
+                  "bottom": "1.33333333em"
+               }
+            }
+         },
+         "h4": {
+            "typography": {
+               "fontSize": "1em",
+               "lineHeight": "1.5"
             },
             "spacing": {
                "margin": {
@@ -187,43 +181,19 @@
                   "bottom": "1.5em"
                }
             }
-         }
-      },
-      {
-         "block": "core/separator",
-         "name": "dots",
-         "label": "Dots",
-         "styles": {
-            "border": {
-               "style": "dotted",
-               "width": "6px",
-               "color": "currentColor"
-            },
-            "spacing": {
-               "margin": {
-                  "top": "1.5em",
-                  "bottom": "1.5em"
-               }
+         },
+         "h5": {
+            "typography": {
+               "textIndent": "1em",
+               "fontWeight": "600"
             }
-         }
-      },
-      {
-         "block": "core/separator",
-         "name": "wide",
-         "label": "Wide",
-         "styles": {
-            "border": {
-               "style": "solid",
-               "width": "4px",
-               "color": "currentColor"
-            },
-            "spacing": {
-               "margin": {
-                  "top": "1.5em",
-                  "bottom": "1.5em"
-               }
+         },
+         "h6": {
+            "typography": {
+               "textIndent": "1em",
+               "fontWeight": "600"
             }
          }
       }
-   ]
+   }
 }
