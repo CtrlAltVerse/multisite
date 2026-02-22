@@ -12,16 +12,16 @@ class Register
 
    public function filter_chapters($field_args, $_field, $product_ID)
    {
-      $field_args['orderby']    = ['menu_order' => 'ASC', 'date' => 'DESC'];
+      $field_args['orderby']    = ['menu_order' => 'ASC', 'date' => 'ASC'];
       $field_args['meta_query'] = [[
          'key'   => 'book',
          'value' => $product_ID,
       ]];
 
-      $spine = get_field('spine', $product_ID);
+      $parts = get_field('parts', $product_ID);
 
-      if (!empty($spine)) {
-         foreach ($spine as $item) {
+      if (!empty($parts)) {
+         foreach ($parts['spine'] as $item) {
             if ('chapter' !== $item['type']) {
                continue;
             }

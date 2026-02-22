@@ -93,6 +93,8 @@ class Utils
          return $roles[$role] ?? $role;
       }
 
+      asort($roles);
+
       return $roles;
    }
 }

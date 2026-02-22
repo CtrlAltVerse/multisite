@@ -67,10 +67,9 @@ class Book extends WC_Product_Grouped
             'avatar' => get_avatar_url($author, [
                'size' => 180,
             ]),
-            'bio'            => get_the_author_meta('description', $author),
-            'link'           => get_the_author_meta('user_url', $author),
-            'email'          => get_the_author_meta('user_email', $author),
-            'amazon-profile' => get_the_author_meta('amazon-profile', $author),
+            'bio'   => get_the_author_meta('description', $author),
+            'link'  => get_the_author_meta('user_url', $author),
+            'email' => get_the_author_meta('user_email', $author),
          ];
       }
       $info['author'] = CavWPUtils::parse_titles($authors_names);

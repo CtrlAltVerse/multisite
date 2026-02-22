@@ -2,6 +2,7 @@
 
 namespace ctrl\Book;
 
+use cavWP\Models\User;
 use cavWP\Utils as CavWPUtils;
 use WP_Theme_JSON_Resolver;
 use ZipArchive;
@@ -215,7 +216,8 @@ final class Epub
       $content = '';
 
       foreach ($this->info['authors'] as $author_ID => $author) {
-         $img = '../assets/images/avatar-' . $author_ID . '.jpg';
+         $ext = pathinfo($author['avatar'], PATHINFO_EXTENSION);
+         $img = '../assets/images/avatar-' . $author_ID . '.' . $ext;
 
          $links = '';
 
@@ -224,9 +226,15 @@ final class Epub
             $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
          }
 
-         if ('amazon' === $this->version && !empty($author['amazon-profile'])) {
-            $profile_text = esc_html__('Perfil na Amazon', 'ctrl');
-            $links .= "<li><a href=\"{$author['amazon-profile']}\" target=\"_blank\">{$profile_text}</a></li>";
+         $author  = new User($author_ID);
+         $socials = $author->get_socials(['amazon-profile']);
+
+         foreach ($socials as $key => $social) {
+            if ('amazon' !== $this->version && 'amazon-profile' === $key) {
+               continue;
+            }
+
+            $links .= "<li><a href=\"{$social['profile']}\" target=\"_blank\">{$social['name']}</a></li>";
          }
 
          $content = <<<XML
@@ -272,7 +280,7 @@ final class Epub
       <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
       <div class="mt-2 mb-2 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/CtrlAltVerso.jpg" alt="{$this->site_name}" />
+            <img src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
       </div>
       <ul class="list-none has-text-align-center">
@@ -379,7 +387,7 @@ final class Epub
       $credits = <<<XML
       <div class="mb-2 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/CtrlAltVerso.jpg" alt="{$this->site_name}" />
+            <img src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
       </div>
       <hr class="is-style-transition" />
@@ -500,12 +508,13 @@ final class Epub
       $logo = \get_field('logo', 'options');
 
       if (!empty($logo)) {
-         $this->save_image(wp_get_attachment_image_url($logo, 'full'), 'CtrlAltVerso.jpg');
+         $this->save_image(wp_get_attachment_image_url($logo, 'full'), 'CtrlAltVerso.png');
       }
 
       if (!empty($this->info['authors'])) {
          foreach ($this->info['authors'] as $author_ID => $author) {
-            $this->save_image($author['avatar'], 'avatar-' . $author_ID . '.jpg');
+            $ext = pathinfo($author['avatar'], PATHINFO_EXTENSION);
+            $this->save_image($author['avatar'], 'avatar-' . $author_ID . '.' . $ext);
          }
       }
 
@@ -551,7 +560,7 @@ final class Epub
 
       // MAKE NAV SUMMARY
       foreach ($this->info['parts'] as $part_key => $part) {
-         if ($this->is_multipart) {
+         if ($this->is_multipart && !empty($part['title'])) {
             $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
             $nav_itens .= <<<XML
             <li>
@@ -574,7 +583,7 @@ final class Epub
             XML;
          }
 
-         if ($this->is_multipart) {
+         if ($this->is_multipart && !empty($part['title'])) {
             $nav_itens .= <<<'XML'
             </ol>
             </li>
@@ -618,7 +627,7 @@ final class Epub
 
       // MAKE NCX SUMMARY
       foreach ($this->info['parts'] as $part) {
-         if ($this->is_multipart) {
+         if ($this->is_multipart && !empty($part['title'])) {
             $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
             $nav_itens .= <<<XML
             <navPoint id="part-{$part_key}">
@@ -646,7 +655,7 @@ final class Epub
             XML;
          }
 
-         if ($this->is_multipart) {
+         if ($this->is_multipart && !empty($part['title'])) {
             $toc_itens .= <<<'XML'
             </navPoint>
             XML;
@@ -794,7 +803,7 @@ final class Epub
 
       // ADD XHTML FILES TO MANIFEST AND SPINE
       foreach ($this->info['parts'] as $part_key => $part) {
-         if ($this->is_multipart) {
+         if ($this->is_multipart && !empty($part['title'])) {
             $part_key = str_pad($part_key + 1, 2, '0', STR_PAD_LEFT);
 
             $manifest_itens .= <<<XML
@@ -835,7 +844,11 @@ final class Epub
          }
       }
 
-      $description = strip_tags($this->info['description']);
+      $description = '';
+
+      if (!empty($this->info['description'])) {
+         $description = '<dc:description>' . strip_tags($this->info['description']) . '</dc:description>';
+      }
 
       $opf = <<<XML
       <?xml version="1.0" encoding="utf-8" standalone="no"?>
@@ -864,7 +877,7 @@ final class Epub
 
             <dc:publisher>{$this->site_name}</dc:publisher>
             <dc:rights>(c) {$this->year} {$this->info['author']}</dc:rights>
-            <dc:description>{$description}</dc:description>
+            {$description}
 
             {$contributors}
 
