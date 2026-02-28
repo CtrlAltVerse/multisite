@@ -19,9 +19,11 @@ class Register
          return;
       }
 
-      $already = (int) get_post_meta($post_ID, 'has_qrcode', true);
+      if (empty(get_post_meta($post_ID, 'link', true))) {
+         return;
+      }
 
-      if (!empty($already)) {
+      if (!empty(get_post_meta($post_ID, 'has_qrcode', true))) {
          return;
       }
 
@@ -36,9 +38,11 @@ class Register
          return;
       }
 
-      $already = (int) get_post_meta($post_ID, 'has_code', true);
+      if (empty(get_post_meta($post_ID, 'link', true))) {
+         return;
+      }
 
-      if (!empty($already)) {
+      if (!empty(get_post_meta($post_ID, 'has_code', true))) {
          return;
       }
 

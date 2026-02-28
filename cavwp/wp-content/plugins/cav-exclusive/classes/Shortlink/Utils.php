@@ -4,10 +4,14 @@ namespace cavEx\Shortlink;
 
 class Utils
 {
-   public static function create_shortlink($title, $link)
+   public static function create_shortlink($title, $link, $category = '')
    {
       if (is_multisite()) {
          switch_to_blog(1);
+      }
+
+      if (!empty($category)) {
+         $category_ID = get_term_by('slug', $category, 'category');
       }
 
       $post_ID = wp_insert_post([
@@ -16,6 +20,7 @@ class Utils
          'post_type'      => 'shortlink',
          'comment_status' => 'closed',
          'ping_status'    => 'closed',
+         'post_category'  => [$category_ID] ?? null,
          'meta_input'     => [
             'link' => $link,
          ],

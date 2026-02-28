@@ -11,6 +11,8 @@ function load_theme(): void
 
    $AutoLoader = \cav_autoloader();
    $AutoLoader->add_namespace('cav', implode(DIRECTORY_SEPARATOR, [__DIR__, 'classes']));
+
+   new Register();
 }
 
 add_action('pre_get_posts', 'cav\set_query');

@@ -80,7 +80,7 @@ class Utils
    public static function get_rewards_by($object_target)
    {
       if (!function_exists('get_field')) {
-         return;
+         return [];
       }
 
       switch_to_blog(3);
@@ -103,9 +103,9 @@ class Utils
 
       foreach ($unlocks as $unlock) {
          $is_unlocked = in_array($unlock->ID, $user_unlocks);
-         $objects = get_field('object', $unlock->ID);
-         $type    = get_field('type', $unlock->ID);
-         $qty = get_field('quantity', $unlock->ID);
+         $objects     = get_field('object', $unlock->ID);
+         $type        = get_field('type', $unlock->ID);
+         $qty         = get_field('quantity', $unlock->ID);
 
          if ('0' === $qty) {
             continue;
@@ -113,8 +113,7 @@ class Utils
 
          foreach ($objects as $object) {
             if (
-               $is_unlocked ||
-               (int) $object !== (int) $object_target
+               $is_unlocked || (int) $object !== (int) $object_target
             ) {
                continue;
             }
@@ -146,48 +145,6 @@ class Utils
       return $xp - $xp_spent;
    }
 
-   public static function is_unlocked($object_target, $type, $user = null)
-   {
-      $user_ID = $user ?? get_current_user_id();
-      $unlocks = get_user_meta($user_ID, 'unlocks', true);
-
-      if(empty($unlocks)){
-         $unlocks = [];
-      }
-
-      switch_to_blog(3);
-
-      $rewards = get_posts([
-         'post_type'  => 'unlock',
-         'nopaging'   => true,
-         'fields' => 'ids',
-         'meta_query' => [
-            [
-               'key'     => 'object',
-               'compare' => 'LIKE',
-               'value'   => $object_target,
-            ],
-            [
-               'key'     => 'type',
-               'value'   => $type,
-            ],
-         ],
-      ]);
-
-      restore_current_blog();
-
-      $unlocked = false;
-
-      foreach ($rewards as $reward) {
-         if (in_array($reward, $unlocks)) {
-            $unlocked = true;
-            break;
-         }
-      }
-
-      return $unlocked;
-   }
-
    public static function is_unlockable($reward_ID, $user = null)
    {
       $user_ID = $user ?? get_current_user_id();
@@ -211,6 +168,48 @@ class Utils
       restore_current_blog();
 
       return $xp_available - (int) $price['tier'] > 0;
+   }
+
+   public static function is_unlocked($object_target, $type, $user = null)
+   {
+      $user_ID = $user ?? get_current_user_id();
+      $unlocks = get_user_meta($user_ID, 'unlocks', true);
+
+      if (empty($unlocks)) {
+         $unlocks = [];
+      }
+
+      switch_to_blog(3);
+
+      $rewards = get_posts([
+         'post_type'  => 'unlock',
+         'nopaging'   => true,
+         'fields'     => 'ids',
+         'meta_query' => [
+            [
+               'key'     => 'object',
+               'compare' => 'LIKE',
+               'value'   => $object_target,
+            ],
+            [
+               'key'   => 'type',
+               'value' => $type,
+            ],
+         ],
+      ]);
+
+      restore_current_blog();
+
+      $unlocked = false;
+
+      foreach ($rewards as $reward) {
+         if (in_array($reward, $unlocks)) {
+            $unlocked = true;
+            break;
+         }
+      }
+
+      return $unlocked;
    }
 
    public static function join_titles($raw_titles)
@@ -254,7 +253,7 @@ class Utils
       $all = [];
 
       foreach ($prices as $price) {
-         if(empty($price['active'])){
+         if (empty($price['active'])) {
             continue;
          }
 
