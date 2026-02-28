@@ -29,12 +29,14 @@ get_component('header');
    while (have_rows('links')) {
       the_row();
 
-      $bg = '';
+      $bg  = '';
+      $svg = '';
 
-      $color = get_sub_field('bg');
+      $tag = get_sub_field('tag');
 
-      if (!empty($color)) {
-         $bg = 'background-color:' . $color;
+      if (!empty($tag)) {
+         $svg = get_field('svg', $tag);
+         $bg  = 'background-color:' . get_field('color', $tag);
       }
 
       ?>
@@ -43,8 +45,7 @@ get_component('header');
             href="<?php echo get_sub_field('url'); ?>"
             style="<?php echo $bg; ?>"
             target="_blank">
-            <?php echo get_sub_field('svg'); ?>
-
+            <?php echo $svg; ?>
             <span class="uppercase text-sm sm:text-base">
                <?php echo get_sub_field('label'); ?>
             </span>
