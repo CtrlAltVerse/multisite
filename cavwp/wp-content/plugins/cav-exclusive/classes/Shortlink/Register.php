@@ -23,7 +23,9 @@ class Register
          return;
       }
 
-      if (!empty(get_post_meta($post_ID, 'has_qrcode', true))) {
+      $has_qrcode = (int) get_post_meta($post_ID, 'has_qrcode', true);
+
+      if (!empty($has_qrcode)) {
          return;
       }
 
@@ -42,7 +44,9 @@ class Register
          return;
       }
 
-      if (!empty(get_post_meta($post_ID, 'has_code', true))) {
+      $has_code = (int) get_post_meta($post_ID, 'has_code', true);
+
+      if (!empty($has_code)) {
          return;
       }
 

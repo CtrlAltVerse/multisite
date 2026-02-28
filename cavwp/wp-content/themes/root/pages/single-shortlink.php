@@ -35,8 +35,8 @@ get_component('header');
       $tag = get_sub_field('tag');
 
       if (!empty($tag)) {
-         $svg = get_field('svg', $tag);
-         $bg  = 'background-color:' . get_field('color', $tag);
+         $svg = get_field('svg', 'term_' . $tag);
+         $bg  = 'background-color:' . get_field('color', 'term_' . $tag);
       }
 
       ?>
