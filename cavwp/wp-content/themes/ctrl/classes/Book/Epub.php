@@ -226,8 +226,8 @@ final class Epub
             $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
          }
 
-         $author  = new User($author_ID);
-         $socials = $author->get_socials(['amazon-profile']);
+         $author_o = new User($author_ID);
+         $socials  = $author_o->get_socials(['amazon-profile']);
 
          foreach ($socials as $key => $social) {
             if ('amazon' !== $this->version && 'amazon-profile' === $key) {
@@ -638,7 +638,7 @@ final class Epub
             XML;
          }
 
-         foreach ($this->info['spine'] as $key => $spine_item) {
+         foreach ($part['spine'] as $key => $spine_item) {
             if (!$spine_item['show_toc']) {
                continue;
             }

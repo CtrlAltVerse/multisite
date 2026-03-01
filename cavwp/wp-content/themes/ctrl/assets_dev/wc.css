@@ -1,0 +1,11 @@
+.woocommerce-product-gallery__image a {
+   @apply flex justify-center;
+}
+
+.flex-control-thumbs {
+   @apply flex justify-center gap-1 mt-1.5;
+
+   img {
+      @apply object-cover size-20;
+   }
+}

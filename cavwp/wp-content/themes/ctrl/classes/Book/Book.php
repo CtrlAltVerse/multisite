@@ -2,7 +2,6 @@
 
 namespace ctrl\Book;
 
-use cavWP\Utils as CavWPUtils;
 use WC_Product_Grouped;
 
 class Book extends WC_Product_Grouped
@@ -22,13 +21,14 @@ class Book extends WC_Product_Grouped
       return $books;
    }
 
-   public function make_pdf() {
-      $info = $this->get_info('print');
-      $versions = ['us','br'];
+   public function make_pdf()
+   {
+      $info     = $this->get_info('print');
+      $versions = ['us', 'br'];
 
-      foreach ($versions as  $version) {
-         $pdf = new Pdf($version, $info);
-         $books[]= $pdf->create();
+      foreach ($versions as $version) {
+         $pdf     = new Pdf($version, $info);
+         $books[] = $pdf->create();
       }
 
       return $books;
@@ -66,7 +66,6 @@ class Book extends WC_Product_Grouped
       $authors = get_field('authors', $this->get_id());
 
       foreach ($authors as $author) {
-
          $info['authors'][$author] = [
             'name'   => get_the_author_meta('display_name', $author),
             'avatar' => get_avatar_url($author, [

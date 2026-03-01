@@ -30,9 +30,6 @@ class Register
 
       if (!empty($parts)) {
          foreach ($parts['spine'] as $item) {
-            if ('chapter' !== $item['type']) {
-               continue;
-            }
             $exclude[] = $item['part'];
          }
          $field_args['exclude'] = $exclude;

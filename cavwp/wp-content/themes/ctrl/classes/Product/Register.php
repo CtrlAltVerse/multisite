@@ -106,8 +106,11 @@ class Register
 
       global $pagenow;
 
-      if (
-         !is_admin() || 'edit.php' !== $pagenow || get_post_type($post_ID) !== 'product'
+      if (!is_admin()) {
+         return $title;
+      }
+
+      if ('hector' !== ($_GET['page'] ?? '') && ('edit.php' !== $pagenow || get_post_type($post_ID) !== 'product')
       ) {
          return $title;
       }

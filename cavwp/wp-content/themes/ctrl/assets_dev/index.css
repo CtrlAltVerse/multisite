@@ -5,6 +5,7 @@
 @import './content';
 @import './toast';
 @import './tools';
+@import './wc';
 @import './animations';
 
 @source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill ri-tools-fill ri-article-line");
@@ -12,13 +13,16 @@
 @source '../../../plugins/cav-exclusive';
 
 @theme {
-   --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+   --font-sans:
+      ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
       'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-   --font-serif: 'Gelasio', ui-serif, Georgia, Cambria, 'Times New Roman', Times,
-      serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+   --font-serif:
+      'Gelasio', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif,
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
       'Noto Color Emoji';
-   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
-      Consolas, 'Liberation Mono', 'Courier New', monospace;
+   --font-mono:
+      'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      'Liberation Mono', 'Courier New', monospace;
 
    --aspect-poster: 2 / 3;
 
@@ -33,6 +37,19 @@
    --color-neutral-300: #ddddf0;
    --color-neutral-200: #dfdfd7;
    --color-neutral-100: #fff;
+
+   --color-westar-50: #f9faf9;
+   --color-westar-100: #f4f5f4;
+   --color-westar-200: #e8e8e3;
+   --color-westar-300: #dfdfd7;
+   --color-westar-400: #adad99;
+   --color-westar-500: #7e7e66;
+   --color-westar-600: #595b4a;
+   --color-westar-700: #464838;
+   --color-westar-800: #2b2922;
+   --color-westar-900: #1e1e15;
+   --color-westar-950: #0d0d08;
+
    --color-blue-50: oklch(94.14% 0.03 287.95);
    --color-blue-100: oklch(89.12% 0.055 288.7);
    --color-blue-200: oklch(78.37% 0.114 287.42);
