@@ -91,7 +91,11 @@ class Book extends WC_Product_Grouped
             $type = get_term($cat, 'product_cat')->slug;
 
             if ($target === $type) {
-               $info['release'] = $product->get_date_created();
+               $date_created = $product->get_date_created();
+
+               if (!empty($date_created)) {
+                  $info['release'] = $date_created->date('Y-m-d\TH:i:s\Z');
+               }
 
                if (!empty($isbn = $product->get_global_unique_id())) {
                   $info['isbn'] = $isbn;

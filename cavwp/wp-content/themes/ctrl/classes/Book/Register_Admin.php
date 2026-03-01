@@ -69,19 +69,20 @@ class Register_Admin
          wp_die();
       }
 
-      if (empty($_POST['type']) || empty($_POST['book_id']) || !is_numeric($_POST['book_id']) ||  !in_array($_POST['type'], ['epub', 'pdf'])) {
+      if (empty($_POST['type']) || empty($_POST['book_id']) || !is_numeric($_POST['book_id']) || !in_array($_POST['type'], ['epub', 'pdf'])) {
          return wp_send_json_error([], 403);
       }
 
       $book_id = (int) $_POST['book_id'];
-      $type = (string) $_POST['type'];
+      $type    = (string) $_POST['type'];
 
       $book = new Book($book_id);
-      if ($type === 'epub') {
+
+      if ('epub' === $type) {
          $filenames = $book->make_epub();
       }
 
-      if ($type === 'pdf') {
+      if ('pdf' === $type) {
          $filenames = $book->make_pdf();
       }
 
@@ -124,8 +125,8 @@ class Register_Admin
          return;
       }
 
-?>
-      <script>
+      ?>
+<script>
          const ajaxUrl = '<?php echo esc_js($this->ajax_url); ?>';
          jQuery(function($) {
             $('button[data-pdf],button[data-epub]').on('click', function() {
@@ -144,7 +145,7 @@ class Register_Admin
             });
          });
       </script>
-   <?php
+<?php
    }
 
    public function init()
@@ -211,103 +212,104 @@ class Register_Admin
          'order'          => 'ASC',
       ]);
 
-   ?>
-      <div class="wrap">
-         <h1>
-            <?php esc_html_e('Hector', 'ctrl'); ?>
-         </h1>
-         <h2>Download de Arquivos</h2>
-         <table class="widefat striped">
-            <thead>
-               <tr>
-                  <th style="width: 15%">Produtos</th>
-                  <th style="width: 20%">Capas</th>
-                  <th style="width: 40%">EPUBs</th>
-                  <th style="width: 25%">PDFs</th>
-               </tr>
-            </thead>
-            <tbody>
-               <?php foreach ($products as $product) { ?>
-                  <tr>
-                     <th>
-                        <?php echo esc_html($product->get_name()); ?>
-                     </th>
-                     <td>
-                        <?php foreach ($image_sizes as $size => $label) {
-                           $image_url = get_the_post_thumbnail_url($product->get_id(), $size);
+      ?>
+<div class="wrap">
+   <h1>
+      <?php esc_html_e('Hector', 'ctrl'); ?>
+   </h1>
+   <h2>Download de Arquivos</h2>
+   <table class="widefat striped">
+      <thead>
+         <tr>
+            <th style="width: 15%">Produtos</th>
+            <th style="width: 20%">Capas</th>
+            <th style="width: 40%">EPUBs</th>
+            <th style="width: 25%">PDFs</th>
+         </tr>
+      </thead>
+      <tbody>
+         <?php foreach ($products as $product) { ?>
+         <tr>
+            <th>
+               <?php echo apply_filters('the_title', $product->get_name(), $product->get_id()); ?>
+            </th>
+            <td>
+               <?php foreach ($image_sizes as $size => $label) {
+                  $image_url = get_the_post_thumbnail_url($product->get_id(), $size);
 
-                           if ($image_url) {
-                        ?>
-                              <a class="button"
-                                 href="<?php echo esc_url($image_url); ?>"
-                                 download="<?php basename($image_url); ?>">
-                                 <?php echo esc_html($label); ?>
-                              </a>
-                        <?php
-                           }
-                        } ?>
-                     </td>
-                     <td>
-                        <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
-                           <button class="button" type="button"
-                              data-epub="<?php echo esc_attr($product->get_id()); ?>">
-                              Gerar
-                           </button>
-                           <?php
+                  if ($image_url) {
+                     ?>
+               <a class="button"
+                  href="<?php echo esc_url($image_url); ?>"
+                  download="<?php basename($image_url); ?>"
+                  target="_blank">
+                  <?php echo esc_html($label); ?>
+               </a>
+               <?php
+                  }
+               } ?>
+            </td>
+            <td>
+               <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
+               <button class="button" type="button"
+                       data-epub="<?php echo esc_attr($product->get_id()); ?>">
+                  Gerar
+               </button>
+               <?php
 
-                           $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()).'.epub');
+                  $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()) . '.epub');
 
-                           if ($files) {
-                              foreach ($files as $file) {
-                                 $filename = basename($file);
+                  if ($files) {
+                     foreach ($files as $file) {
+                        $filename = basename($file);
 
-                                 foreach (HECTOR_EPUB_STORES as $key => $title) {
-                                    if (str_contains($filename, $key)) {
-                           ?>
-                                       <a class="button"
-                                          download="<?php echo esc_attr($filename); ?>"
-                                          href="<?php echo $this->ajax_url . '?' . http_build_query([
-                                                   'action' => 'hector_download_file',
-                                                   'file'   => $filename,
-                                                ]); ?>">
-                                          <?php echo esc_html($title); ?>
-                                       </a>
-                        <?php
-                                    }
-                                 }
-                              }
+                        foreach (HECTOR_EPUB_STORES as $key => $title) {
+                           if (str_contains($filename, $key)) {
+                              ?>
+               <a class="button"
+                  download="<?php echo esc_attr($filename); ?>"
+                  href="<?php echo $this->ajax_url . '?' . http_build_query([
+                     'action' => 'hector_download_file',
+                     'file'   => $filename,
+                  ]); ?>">
+                  <?php echo esc_html($title); ?>
+               </a>
+               <?php
                            }
                         }
-                        ?>
-                     </td>
-                     <td>
-                        <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
-                           <button class="button" type="button"
-                              data-pdf="<?php echo esc_attr($product->get_id()); ?>">
-                              Gerar
-                           </button>
-                        <?php
-                        }
-                        ?>
-                     </td>
-                  </tr>
-               <?php } ?>
-            </tbody>
-         </table>
+                     }
+                  }
+               }
+            ?>
+            </td>
+            <td>
+               <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
+               <button class="button" type="button"
+                       data-pdf="<?php echo esc_attr($product->get_id()); ?>">
+                  Gerar
+               </button>
+               <?php
+               }
+            ?>
+            </td>
+         </tr>
+         <?php } ?>
+      </tbody>
+   </table>
 
-         <h2>ePub Style</h2>
-         <form method="post" action="options.php">
-            <?php settings_fields('hector'); ?>
+   <h2>ePub Style</h2>
+   <form method="post" action="options.php">
+      <?php settings_fields('hector'); ?>
 
-            <textarea
-               id="custom_style_editor"
-               name="<?php echo esc_attr($this->option_name); ?>"
-               rows="40"
-               style="width:100%;"><?php echo esc_textarea($value); ?></textarea>
+      <textarea
+                id="custom_style_editor"
+                name="<?php echo esc_attr($this->option_name); ?>"
+                rows="40"
+                style="width:100%;"><?php echo esc_textarea($value); ?></textarea>
 
-            <?php submit_button(); ?>
-         </form>
-      </div>
+      <?php submit_button(); ?>
+   </form>
+</div>
 <?php
    }
 }

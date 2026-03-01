@@ -100,15 +100,11 @@ class Register
 
    public function set_product_title(string $title, int $post_ID = 0): string
    {
-      if (empty($post_ID)) {
+      if (empty($post_ID) || !is_admin()) {
          return $title;
       }
 
       global $pagenow;
-
-      if (!is_admin()) {
-         return $title;
-      }
 
       if ('hector' !== ($_GET['page'] ?? '') && ('edit.php' !== $pagenow || get_post_type($post_ID) !== 'product')
       ) {

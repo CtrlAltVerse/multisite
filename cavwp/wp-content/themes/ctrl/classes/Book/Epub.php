@@ -216,8 +216,7 @@ final class Epub
       $content = '';
 
       foreach ($this->info['authors'] as $author_ID => $author) {
-         $ext = pathinfo($author['avatar'], PATHINFO_EXTENSION);
-         $img = '../assets/images/avatar-' . $author_ID . '.' . $ext;
+         $img = '../assets/images/avatar-' . $author_ID . '.jpg';
 
          $links = '';
 
@@ -515,8 +514,7 @@ final class Epub
 
       if (!empty($this->info['authors'])) {
          foreach ($this->info['authors'] as $author_ID => $author) {
-            $ext = pathinfo($author['avatar'], PATHINFO_EXTENSION);
-            $this->save_image($author['avatar'], 'avatar-' . $author_ID . '.' . $ext);
+            $this->save_image($author['avatar'], 'avatar-' . $author_ID . '.jpg');
          }
       }
 
@@ -538,6 +536,10 @@ final class Epub
             }
 
             foreach ($image_matches[2] as $url) {
+               if (is_environment('production')) {
+                  $url = str_replace($this->site_link . '/wp-content/uploads', 'https://cdn.altvers.net', $url);
+               }
+
                $image_name = basename($url);
 
                if (in_array($image_name, array_keys($this->images))) {
@@ -838,9 +840,10 @@ final class Epub
          foreach ($this->images as $image) {
             $image_name = basename($image['path']);
             $cover      = $image['cover'] ? 'properties="cover-image"' : '';
+            $path       = str_replace('../', '', $image['path']);
 
             $manifest_itens .= <<<XML
-               <item href="OEBPS/{$image['path']}" id="{$image_name}" media-type="{$image['type']}" {$cover} />
+               <item href="{$path}" id="{$image_name}" media-type="{$image['type']}" {$cover} />
 
             XML;
          }
@@ -985,16 +988,17 @@ final class Epub
       }
 
       if ($apply_filter) {
+         $content .= Utils::blocks_to_epub($spine_item['content']);
+
          if (!empty($this->images)) {
             foreach ($this->images as $new_image) {
-               $spine_item['content'] = str_replace(
+               $content = str_replace(
                   $new_image['old'],
                   $new_image['path'],
-                  $spine_item['content'],
+                  $content,
                );
             }
          }
-         $content .= Utils::blocks_to_epub($spine_item['content']);
       } else {
          $content .= $spine_item['content'];
       }
@@ -1093,6 +1097,11 @@ final class Epub
    private function invert_name($name)
    {
       $names = explode(' ', trim($name));
+
+      if (count($names) <= 1) {
+         return $name;
+      }
+
       $last  = array_pop($names);
       $names = implode(' ', $names);
 
@@ -1150,6 +1159,12 @@ final class Epub
             $full_path = $folder . '/' . $file;
 
             if (is_dir($full_path)) {
+               continue;
+            }
+
+            $checks = explode('.', $file);
+
+            if (empty($checks[1]) && 'mimetype' !== $file) {
                continue;
             }
 

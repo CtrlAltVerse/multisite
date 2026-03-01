@@ -14,30 +14,36 @@ class Utils
 
       $content = '';
 
+      $image_local_url = home_url('/wp-content/uploads');
+
       foreach ($blocks as $block) {
          switch ($block['blockName']) {
             case 'core/paragraph':
-               $align = $block['attrs']['align'] ?? 'justify';
-
-               if ('justify' === $align) {
-                  $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
-                  $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
-               }
-               break;
-
-            case null:
-               if (empty($block['innerHTML'])) {
+               if ('<p></p>' === trim($block['innerHTML'])) {
                   $block['innerHTML'] = '<p><br /></p>';
+               } else {
+                  $align = $block['attrs']['align'] ?? 'justify';
+
+                  if ('justify' === $align) {
+                     $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
+                     $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
+                  }
                }
                break;
 
             case 'core/list':
-               $content .= $block['innerContent'][0];
-               $content .= self::blocks_to_epub($block['innerBlocks']);
-               $content .= $block['innerContent'][count($block['innerContent']) - 1];
-               break;
+               $block['innerHTML'] = $block['innerContent'][0];
+               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks']);
+               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
                break;
 
+            case 'core/image':
+               if (is_environment('production')) {
+                  $block['innerHTML'] = str_replace($image_local_url, 'https://cdn.altvers.net', $block['innerHTML']);
+               }
+               break;
+
+            case null:
             case 'core/list-item':
             case 'core/heading':
             case 'core/separator':
@@ -64,7 +70,7 @@ class Utils
    {
       $content = str_replace('<br>', '<br/>', $content);
 
-      return html_entity_decode($content);
+      return str_replace('&nbsp;', ' ', $content);
    }
 
    public static function get_author_names($product_ID)
