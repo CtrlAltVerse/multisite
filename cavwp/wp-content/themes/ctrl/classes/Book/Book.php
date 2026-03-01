@@ -43,6 +43,7 @@ class Book extends WC_Product_Grouped
       $info['short_title']   = get_field('short_title', $this->get_id());
       $info['edition_title'] = get_field('edition_title', $this->get_id());
       $info['tags']          = $this->get_tag_ids();
+      $info['release']       = get_post_meta($this->get_id(), 'release', true);
 
       $attributes = $this->get_attributes();
 
