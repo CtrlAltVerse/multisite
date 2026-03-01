@@ -12,12 +12,12 @@ if (is_front_page()) {
    $body_classes .= ' select-none overflow-hidden';
 }
 
-if (is_singular(['print', 'chapter'])) {
-   $body_classes .= ' bg-neutral-200 text-neutral-800 select-none';
+if (is_singular(['product', 'chapter', 'print'])) {
+   $body_classes .= ' bg-westar-300 text-neutral-800 select-none';
 }
 
 if (is_singular('tool') || is_post_type_archive('tool') || is_singular(['post'])) {
-   $body_classes .= ' bg-neutral-200 text-neutral-800 dark:text-neutral-200 dark:bg-space font-mono text-base';
+   $body_classes .= ' bg-westar-300 text-neutral-800 dark:text-westar-300 dark:bg-space font-mono text-base';
 }
 
 ?>

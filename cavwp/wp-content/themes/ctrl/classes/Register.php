@@ -46,7 +46,7 @@ final class Register
       $deps_js  = [];
       $deps_css = [];
 
-      if (is_page('ganhando-xp') || is_singular('print')) {
+      if (is_page('ganhando-xp') || is_singular('product') || is_singular('print')) {
          $deps_js[] = 'rewards';
       }
 

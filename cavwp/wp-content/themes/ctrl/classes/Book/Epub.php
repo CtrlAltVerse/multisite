@@ -1162,7 +1162,7 @@ final class Epub
          return debug('zip extension is not loaded');
       }
 
-      $file_name = Utils::get_filename($this->info['ID'], $this->version);
+      $file_name = Utils::get_filename($this->info['ID'], $this->version) . '.epub';
 
       $zip = new ZipArchive();
 

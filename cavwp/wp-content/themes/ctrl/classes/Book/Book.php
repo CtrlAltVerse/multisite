@@ -22,10 +22,16 @@ class Book extends WC_Product_Grouped
       return $books;
    }
 
-   public function make_pdf()
-   {
-      // mPDF https://mpdf.github.io/
-      // https://dompdf.github.io/
+   public function make_pdf() {
+      $info = $this->get_info('print');
+      $versions = ['us','br'];
+
+      foreach ($versions as  $version) {
+         $pdf = new Pdf($version, $info);
+         $books[]= $pdf->create();
+      }
+
+      return $books;
    }
 
    private function get_info($target = 'print')
@@ -60,7 +66,6 @@ class Book extends WC_Product_Grouped
       $authors = get_field('authors', $this->get_id());
 
       foreach ($authors as $author) {
-         $authors_names[] = get_the_author_meta('display_name', $author);
 
          $info['authors'][$author] = [
             'name'   => get_the_author_meta('display_name', $author),
@@ -72,7 +77,7 @@ class Book extends WC_Product_Grouped
             'email' => get_the_author_meta('user_email', $author),
          ];
       }
-      $info['author'] = CavWPUtils::parse_titles($authors_names);
+      $info['author'] = Utils::get_author_names($this->get_id());
 
       $info['contributors'] = get_field('contributors', $this->get_id());
 

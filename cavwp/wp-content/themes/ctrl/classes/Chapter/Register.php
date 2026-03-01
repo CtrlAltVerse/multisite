@@ -123,11 +123,17 @@ class Register
          return;
       }
 
-      $book_id = get_post_meta($post_id, 'book', true);
+      $books = get_post_meta($post_id, 'book', true);
 
-      if ($book_id) {
-         echo esc_html(get_the_title($book_id));
+      if (empty($books)) {
+         return;
       }
+
+      if (!is_array($books)) {
+         $books = [$books];
+      }
+
+      echo implode(', ', array_map(fn($book) => get_the_title($book), $books));
    }
 
    public function filter_book_query($query)

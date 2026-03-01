@@ -240,7 +240,7 @@
       </details>
 
    </form>
-   <div class="flex flex-col gap-6 lg:w-2/3" x-show="output.length">
+   <div class="flex flex-col gap-6 lg:w-2/3" x-show="output.length" x-cloak>
       <div>
          <h2>Prévia Google</h2>
          <output class="google flex flex-col gap-1.5">
@@ -260,7 +260,7 @@
          <p class="text-xs !mb-2">Após a publicação use o <a href="https://www.linkedin.com/post-inspector/"
                target="_blank" rel="help" tabindex="-1">validador do LinkedIn</a>.</p>
          <output class="linkedin flex items-center gap-3 border-t border-inherent">
-            <div class="overflow-hidden" x-show="metas.img.length">
+            <div class="overflow-hidden" x-show="metas.img.length" x-cloak>
                <img class="object-cover w-27 aspect-[108/72]" x-bind:src="metas.img">
             </div>
             <div class="flex flex-col text-xs">
@@ -275,7 +275,7 @@
          <p class="text-xs !mb-2">Após a publicação use o <a href="https://developers.facebook.com/tools/debug/"
                target="_blank" rel="help" tabindex="-1">validador do Facebook</a>.</p>
          <output class="facebook flex flex-col border-t border-inherent">
-            <div class="h-70 overflow-hidden" x-show="metas.img.length">
+            <div class="h-70 overflow-hidden" x-show="metas.img.length" x-cloak>
                <img class="object-cover size-full" x-bind:src="metas.img">
             </div>
             <div class="flex flex-col border border-inherent py-2.5 px-3 text-xs">

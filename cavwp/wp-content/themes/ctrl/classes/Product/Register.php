@@ -6,11 +6,43 @@ class Register
 {
    public function __construct()
    {
-      add_filter('the_title', [$this, 'set_title_children'], 10, 2);
+      add_action('template_redirect', [$this, 'check_product_children']);
+      add_action('wp_enqueue_scripts', [$this, 'remove_image_zoom_support']);
+
+      add_filter('the_title', [$this, 'set_product_title'], 10, 2);
       add_filter('woocommerce_search_products_post_statuses', [$this, 'set_search_product_statuses'], 10, 2);
 
       add_filter('wp_insert_post_data', [$this, 'on_before_save_product'], 10, 2);
       add_action('save_post_product', [$this, 'on_save_product']);
+
+      add_filter('woocommerce_gallery_image_size', [$this, 'set_gallery_image_size']);
+   }
+
+   public function check_product_children()
+   {
+      global $post;
+
+      if ('product' !== $post->post_type) {
+         return;
+      }
+
+      $types = get_the_terms($post->ID, 'product_type');
+
+      foreach ($types as $type) {
+         if ('grouped' === $type->slug) {
+            return;
+         }
+      }
+
+      $parent = (int) get_post_meta($post->ID, '_product_parent', true);
+
+      if (empty($parent)) {
+         return;
+      }
+
+      if (wp_safe_redirect(get_permalink($parent))) {
+         exit;
+      }
    }
 
    public function on_before_save_product($data, $args)
@@ -56,12 +88,17 @@ class Register
       }
    }
 
-   public function set_search_product_statuses($post_statuses)
+   public function remove_image_zoom_support()
    {
-      return current_user_can('administrator') ? ['private', 'publish', 'draft', 'future', 'pending'] : $post_statuses;
+      remove_theme_support('wc-product-gallery-zoom');
    }
 
-   public function set_title_children(string $title, int $post_ID = 0): string
+   public function set_gallery_image_size()
+   {
+      return 'medium';
+   }
+
+   public function set_product_title(string $title, int $post_ID = 0): string
    {
       if (empty($post_ID)) {
          return $title;
@@ -75,14 +112,31 @@ class Register
          return $title;
       }
 
+      $product_main = wc_get_product($post_ID);
+
+      if ($product_main->is_type('grouped')) {
+         $subtitle = get_post_meta($post_ID, 'subtitle', true);
+
+         if (empty($subtitle)) {
+            return $title;
+         }
+
+         return $title . ': “' . $subtitle . '”';
+      }
+
       $product_parent = get_post_meta($post_ID, '_product_parent', true);
 
       if (empty($product_parent)) {
          return $title;
       }
 
-      $product = wc_get_product($product_parent);
+      $product_parent = wc_get_product($product_parent);
 
-      return '— ' . $product->get_name() . ' > ' . $title;
+      return '— ' . $product_parent->get_name() . ' > ' . $title;
+   }
+
+   public function set_search_product_statuses($post_statuses)
+   {
+      return current_user_can('administrator') ? ['private', 'publish', 'draft', 'future', 'pending'] : $post_statuses;
    }
 }

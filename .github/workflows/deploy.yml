@@ -24,6 +24,17 @@ jobs:
           rm -rf cavwp/wp-content/themes/ctrl/assets_dev
           rm -rf cavwp/wp-content/plugins/cav-exclusive/assets_dev
 
+      - name: Setup Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3.11'
+          extensions: mbstring, xml, curl
+          tools: composer
+
+      - name: Install prod dep
+        run: |
+          composer install --no-dev
+
       - name: Setup Rclone
         run: |
           curl -o rclone.zip https://downloads.rclone.org/rclone-current-linux-amd64.zip

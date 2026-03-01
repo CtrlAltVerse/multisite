@@ -13,10 +13,18 @@ class Register
    public function filter_chapters($field_args, $_field, $product_ID)
    {
       $field_args['orderby']    = ['menu_order' => 'ASC', 'date' => 'ASC'];
-      $field_args['meta_query'] = [[
-         'key'   => 'book',
-         'value' => $product_ID,
-      ]];
+      $field_args['meta_query'] = [
+         'relation' => 'OR',
+         [
+            'key'     => 'book',
+            'compare' => 'LIKE',
+            'value'   => "\"{$product_ID}\"",
+         ],
+         [
+            'key'     => 'book',
+            'compare' => '=',
+            'value'   => $product_ID,
+         ]];
 
       $parts = get_field('parts', $product_ID);
 

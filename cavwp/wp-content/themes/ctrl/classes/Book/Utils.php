@@ -6,6 +6,17 @@ use cavWP\Utils as CavWPUtils;
 
 class Utils
 {
+   public static function get_author_names($product_ID)
+   {
+      $authors = get_field('authors', $product_ID);
+
+      foreach ($authors as $author) {
+         $authors_names[] = get_the_author_meta('display_name', $author);
+      }
+
+      return CavWPUtils::parse_titles($authors_names);
+   }
+
    public static function get_filename($product_ID, $version = false)
    {
       if (empty($product_ID)) {
@@ -18,11 +29,11 @@ class Utils
          return;
       }
 
-      $year         = date('Y');
-      $date_created = $product->get_date_created();
+      $year    = date('Y');
+      $release = get_post_meta($product_ID, 'release', true);
 
-      if (!empty($date_created)) {
-         $year = $date_created->date('Y');
+      if (!empty($release)) {
+         $year = date('Y', strtotime($release));
       }
 
       $title  = $product->get_slug();
@@ -41,7 +52,7 @@ class Utils
          $version = '*';
       }
 
-      return sanitize_file_name("{$year}-{$author}-{$title}") . '-' . $version . '.epub';
+      return sanitize_file_name("{$year}-{$author}-{$title}") . '-' . $version;
    }
 
    public static function get_roles($role = false)
@@ -87,6 +98,7 @@ class Utils
          'win'  => esc_html__('Introdução', 'ctrl'),
          'wpr'  => esc_html__('Prefácio', 'ctrl'),
          'pbl'  => esc_html__('Publicação', 'ctrl'),
+         'pht'  => esc_html__('Fotos', 'ctrl'),
       ];
 
       if ($role) {

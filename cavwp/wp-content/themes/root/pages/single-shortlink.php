@@ -4,10 +4,6 @@ $post_ID = get_the_ID();
 $link    = get_post_meta($post_ID, 'link', true);
 
 if (!empty($link)) {
-   $views = (int) get_post_meta($post_ID, 'views', true);
-   $views++;
-   update_post_meta($post_ID, 'views', $views);
-
    if (wp_redirect($link)) {
       exit;
    }
@@ -15,6 +11,12 @@ if (!empty($link)) {
 
 if (!have_rows('links')) {
    wp_die('Nenhum link cadastrado.');
+}
+
+if (!current_user_can('author')) {
+   $views = (int) get_post_meta($post_ID, 'views', true);
+   $views++;
+   update_post_meta($post_ID, 'views', $views);
 }
 
 get_component('header');

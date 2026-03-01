@@ -216,7 +216,7 @@
 <form x-data="toolPricesRatio">
    <ul class="subcat">
       <template x-for="cat in mesureCats">
-         <li x-bind:class="{'bg-zinc-500 text-neutral-200': mesure === cat.value}">
+         <li x-bind:class="{'bg-zinc-500 text-westar-300': mesure === cat.value}">
             <button class="btn" x-bind:class="{'active': mesure === cat.value }" type="button"
                x-on:click.prevent="mesure = cat.value" x-text="cat.label"></button>
          </li>
