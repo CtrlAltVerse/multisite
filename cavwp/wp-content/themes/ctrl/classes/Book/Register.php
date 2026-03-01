@@ -29,8 +29,10 @@ class Register
       $parts = get_field('parts', $product_ID);
 
       if (!empty($parts)) {
-         foreach ($parts['spine'] as $item) {
-            $exclude[] = $item['part'];
+         foreach ($parts as $part) {
+            foreach ($part['spine'] as $item) {
+               $exclude[] = $item['part'];
+            }
          }
          $field_args['exclude'] = $exclude;
       }

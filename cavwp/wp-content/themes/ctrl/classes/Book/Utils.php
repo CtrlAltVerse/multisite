@@ -6,6 +6,67 @@ use cavWP\Utils as CavWPUtils;
 
 class Utils
 {
+   public static function blocks_to_epub($blocks)
+   {
+      if (!is_array($blocks)) {
+         $blocks = parse_blocks($blocks);
+      }
+
+      $content = '';
+
+      foreach ($blocks as $block) {
+         switch ($block['blockName']) {
+            case 'core/paragraph':
+               $align = $block['attrs']['align'] ?? 'justify';
+
+               if ('justify' === $align) {
+                  $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
+                  $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
+               }
+               break;
+
+            case null:
+               if (empty($block['innerHTML'])) {
+                  $block['innerHTML'] = '<p><br /></p>';
+               }
+               break;
+
+            case 'core/list':
+               $content .= $block['innerContent'][0];
+               $content .= self::blocks_to_epub($block['innerBlocks']);
+               $content .= $block['innerContent'][count($block['innerContent']) - 1];
+               break;
+               break;
+
+            case 'core/list-item':
+            case 'core/heading':
+            case 'core/separator':
+            case 'core/html': // trust
+            case 'core/media-text': // later
+            case 'core/table':// later
+               break;
+
+            case 'core/embed':
+               $block['innerHTML'] = '';
+               break;
+
+            default:
+               debug($block);
+               break;
+         }
+         $content .= self::clean_content($block['innerHTML']);
+      }
+
+      return $content;
+   }
+
+   public static function clean_content($content)
+   {
+      $content = str_replace('<br>', '<br/>', $content);
+
+      return html_entity_decode($content);
+   }
+
    public static function get_author_names($product_ID)
    {
       $authors = get_field('authors', $product_ID);

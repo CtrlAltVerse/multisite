@@ -994,7 +994,7 @@ final class Epub
                );
             }
          }
-         $content .= $this->parse_content($spine_item['content']);
+         $content .= Utils::blocks_to_epub($spine_item['content']);
       } else {
          $content .= $spine_item['content'];
       }
@@ -1097,39 +1097,6 @@ final class Epub
       $names = implode(' ', $names);
 
       return "{$last}, {$names}";
-   }
-
-   private function parse_content($content)
-   {
-      $content = preg_replace_callback(
-         '/<p(?![^>]*\bclass=)([^>]*)>/i',
-         fn($matches) => '<p class="has-text-align-justify"' . $matches[1] . '>',
-         $content,
-      );
-
-      $content = preg_replace_callback(
-         '/<p([^>]*class=")([^"]*)("[^>]*)>/i',
-         function($matches) {
-            $classes = $matches[2];
-
-            if (preg_match('/\bhas-text-align-[a-z]+\b/i', $classes)) {
-               return $matches[0];
-            }
-
-            $new_classes = trim($classes . ' has-text-align-justify');
-
-            return '<p' . $matches[1] . $new_classes . $matches[3] . '>';
-         },
-         $content,
-      );
-
-      $content = preg_replace(
-         '/\<(script|iframe)[^>]*\>.*?\<\/(script|iframe)\>/mis',
-         '',
-         $content,
-      );
-
-      return str_replace('<br>', '<br/>', $content);
    }
 
    private function save_image($url, $new_filename = null, $is_cover = false)

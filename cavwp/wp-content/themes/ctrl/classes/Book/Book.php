@@ -140,8 +140,6 @@ class Book extends WC_Product_Grouped
    private function parse_chapter($chapter_ID)
    {
       $chapter = get_post($chapter_ID);
-
-      $content = apply_filters('the_content', $chapter->post_content);
       $excerpt = apply_filters('the_excerpt', $chapter->post_excerpt);
 
       return [
@@ -155,7 +153,7 @@ class Book extends WC_Product_Grouped
          'show_toc'         => get_field('show_toc', $chapter_ID),
          'section_type'     => get_field('section_type', $chapter_ID),
          'excerpt'          => $excerpt,
-         'content'          => $content,
+         'content'          => $chapter->post_content,
       ];
    }
 }
