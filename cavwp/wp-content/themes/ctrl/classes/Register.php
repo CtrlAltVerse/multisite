@@ -14,6 +14,7 @@ final class Register
       add_action('admin_init', [$this, 'remove_image_sizes'], 15);
       add_action('after_setup_theme', [$this, 'register_image_sizes']);
       add_action('after_setup_theme', [$this, 'remove_image_sizes'], 15);
+      add_action('after_setup_theme', [$this, 'load_textdomain']);
 
       add_shortcode('wp_hierarchy', [$this, 'sc_wp_hierarchy']);
 
@@ -69,6 +70,11 @@ final class Register
       if ('links' !== $cav_template && !is_admin()) {
          remove_theme_support('custom-background');
       }
+   }
+
+   public function load_textdomain()
+   {
+      load_theme_textdomain('ctrl', WP_CONTENT_DIR . '/languages/themes');
    }
 
    public function register_image_sizes()

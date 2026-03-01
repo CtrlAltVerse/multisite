@@ -355,8 +355,10 @@ final class Epub
       }
 
       if (!empty($this->info['contributors'])) {
+         $contributors = [];
+
          foreach ($this->info['contributors'] as $contributor) {
-            if (in_array($contributor['role'], array_keys($this->info['contributors']))) {
+            if (in_array($contributor['role'], array_keys($contributors))) {
                $contributors[$contributor['role']][] = $contributor['name'];
             } else {
                $contributors[$contributor['role']] = [$contributor['name']];

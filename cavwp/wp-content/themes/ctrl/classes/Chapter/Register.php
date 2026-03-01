@@ -153,11 +153,19 @@ class Register
       }
 
       if (!empty($_GET['book'])) {
+         $book_ID = (int) $_GET['book'];
+
          $query->set('meta_query', [
+            'relation' => 'OR',
             [
                'key'     => 'book',
-               'value'   => (int) $_GET['book'],
+               'compare' => 'LIKE',
+               'value'   => "\"{$book_ID}\"",
+            ],
+            [
+               'key'     => 'book',
                'compare' => '=',
+               'value'   => $book_ID,
             ],
          ]);
       }
