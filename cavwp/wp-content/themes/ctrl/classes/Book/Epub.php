@@ -136,7 +136,7 @@ final class Epub
       $this->title        = $info['title'];
       $this->lang         = $info['attributes']['lang'];
       $this->version      = $version;
-      $this->year         = $info['release']->date('Y');
+      $this->year         = date('Y', strtotime($info['release']));
       $this->title_bio    = _n('Sobre o autor', 'Sobre os autores', count($this->info['authors']), 'ctrl');
       $this->is_multipart = count($this->info['parts']) > 1;
 
