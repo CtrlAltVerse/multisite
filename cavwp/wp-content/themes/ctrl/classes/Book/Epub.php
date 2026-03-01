@@ -700,7 +700,7 @@ final class Epub
 
    private function add_opf()
    {
-      $release  = $this->info['release']->date('Y-m-d\TH:i:s\Z');
+      $release  = date('Y-m-d\TH:i:s\Z', strtotime($this->info['release']));
       $modified = date('Y-m-d\TH:i:s\Z', time());
 
       $isbn = '';
