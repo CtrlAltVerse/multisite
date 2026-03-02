@@ -986,6 +986,10 @@ final class Epub
       $body_type    = $section['type'];
       $section_role = $section['role'];
 
+      if ('epigraph' === $section_type) {
+         $with_section = false;
+      }
+
       $content = '';
 
       if ($spine_item['show_title'] ?? false && !empty($spine_item['title'])) {
@@ -1001,7 +1005,7 @@ final class Epub
       }
 
       if ($apply_filter) {
-         $content .= Utils::blocks_to_epub($spine_item['content']);
+         $content .= Utils::blocks_to_epub($spine_item['content'], $section_type);
 
          if (!empty($this->images)) {
             foreach ($this->images as $new_image) {

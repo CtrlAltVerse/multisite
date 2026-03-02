@@ -73,7 +73,7 @@ class Book extends WC_Product_Grouped
                'size' => 180,
             ]),
             'bio' => [
-               'pt' => get_the_author_meta('description', $author),
+               'pt' => get_post_meta($author, 'bio_pt', true),
                'en' => get_post_meta($author, 'bio_en', true),
                'es' => get_post_meta($author, 'bio_es', true),
             ],
@@ -148,7 +148,7 @@ class Book extends WC_Product_Grouped
    private function parse_chapter($chapter_ID)
    {
       $chapter = get_post($chapter_ID);
-      $excerpt = apply_filters('the_excerpt', $chapter->post_excerpt);
+      $excerpt = apply_filters('the_excerpt', trim($chapter->post_excerpt));
 
       return [
          'title'            => apply_filters('the_title', $chapter->post_title, $chapter_ID),
@@ -161,7 +161,7 @@ class Book extends WC_Product_Grouped
          'show_toc'         => get_field('show_toc', $chapter_ID),
          'section_type'     => get_field('section_type', $chapter_ID),
          'excerpt'          => $excerpt,
-         'content'          => $chapter->post_content,
+         'content'          => trim($chapter->post_content),
       ];
    }
 }

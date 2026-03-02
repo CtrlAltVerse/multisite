@@ -6,7 +6,7 @@ use cavWP\Utils as CavWPUtils;
 
 class Utils
 {
-   public static function blocks_to_epub($blocks)
+   public static function blocks_to_epub($blocks, $epub_type)
    {
       if (!is_array($blocks)) {
          $blocks = parse_blocks($blocks);
@@ -33,7 +33,7 @@ class Utils
 
             case 'core/list':
                $block['innerHTML'] = $block['innerContent'][0];
-               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks']);
+               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks'], $epub_type);
                $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
                break;
 
@@ -43,8 +43,36 @@ class Utils
                }
                break;
 
-            case null:
+            case 'core/quote':
+               $block['innerHTML'] = $block['innerContent'][0];
+               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks'], $epub_type);
+               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
+
+               if ('epigraph' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
+               }
+
+               break;
+
             case 'core/list-item':
+               if ('bibliography' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<li', '<li epub:type="biblioentry" role="doc-biblioentry"', $block['innerHTML']);
+               }
+               break;
+
+            case 'cav/dt':
+               if ('glossary' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<dt', '<dt epub:type="glossterm"', $block['innerHTML']);
+               }
+               break;
+
+            case 'cav/dd':
+               if ('glossary' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<dd', '<dd epub:type="glossdef"', $block['innerHTML']);
+               }
+               break;
+
+            case null:
             case 'core/heading':
             case 'core/separator':
             case 'core/html': // trust
