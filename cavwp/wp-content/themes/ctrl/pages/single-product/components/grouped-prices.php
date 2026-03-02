@@ -98,13 +98,13 @@ $quantites_required      = false;
 
          ?>
       </ul>
-<div class="flex px-4 pb-2">
          <?php if ($quantites_required && $show_add_to_cart_button && $product_child->is_type('external') !== $list) { ?>
+<div class="flex px-4 pb-2">
             <button type="submit" class="w-full py-2 px-4 bg-neutral-700 text-neutral-100 rounded mb-3">
                <?php echo esc_html($product->single_add_to_cart_text()); ?>
             </button>
-         <?php } ?>
          </div>
+         <?php } ?>
          </div>
       <?php } ?>
    </div>

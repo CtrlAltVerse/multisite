@@ -115,8 +115,10 @@ define('LOCALES', [
 
 final class Epub
 {
-   private $folders = [];
-   private $images  = [];
+   private $count_chars = 0;
+   private $count_key   = 'chars_count';
+   private $folders     = [];
+   private $images      = [];
    private $info;
    private $is_multipart;
    private $lang;
@@ -132,12 +134,17 @@ final class Epub
 
    public function __construct($version, $info)
    {
-      $this->info         = $info;
-      $this->title        = $info['title'];
-      $this->lang         = $info['attributes']['lang'];
-      $this->version      = $version;
-      $this->year         = date('Y', strtotime($info['release']));
-      $this->title_bio    = _n('Sobre o autor', 'Sobre os autores', count($this->info['authors']), 'ctrl');
+      $this->info    = $info;
+      $this->title   = $info['title'];
+      $this->lang    = $info['attributes']['lang'];
+      $this->version = $version;
+      $this->year    = date('Y', strtotime($info['release']));
+
+      if (count($this->info['authors']) === 1) {
+         $this->title_bio = esc_attr__('Sobre o autor', 'ctrl');
+      } else {
+         $this->title_bio = esc_attr__('Sobre os autores', 'ctrl');
+      }
       $this->is_multipart = count($this->info['parts']) > 1;
 
       $this->site_name   = get_bloginfo('name');
@@ -208,6 +215,10 @@ final class Epub
       $this->add_colophon();
       restore_previous_locale();
 
+      if ('amazon' === $this->version) {
+         update_post_meta($this->info['ID'], $this->count_key, $this->count_chars);
+      }
+
       return $this->zip();
    }
 
@@ -236,16 +247,18 @@ final class Epub
             $links .= "<li><a href=\"{$social['profile']}\" target=\"_blank\">{$social['name']}</a></li>";
          }
 
+         $bio_content = explode(PHP_EOL, $author['bio'][$this->lang]);
+         $bio         = implode(PHP_EOL, array_map(fn($line) => '<p class="has-text-align-left">' . $line . '</p>', $bio_content));
+
          $content = <<<XML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
             <img src="{$img}" alt="" class="rounded" />
             <h2>{$author['name']}</h2>
-            <p class="has-text-align-left">{$author['bio']}</p>
+            {$bio}
             <ul>
                {$links}
             </ul>
          </section>
-         <hr class="is-style-transition" />
          XML;
       }
 
@@ -382,7 +395,7 @@ final class Epub
          XML;
       }
 
-      $all_rights = esc_attr__('Todos os direitos reservados.', 'ctrl');
+      $all_rights = esc_html__('Todos os direitos reservados.', 'ctrl');
       $author     = rtrim($this->info['author'], '.');
 
       $credits = <<<XML
@@ -1089,6 +1102,10 @@ final class Epub
 
    private function create_file($file, $content)
    {
+      if (str_ends_with($file, '.xhtml') && 'amazon' === $this->version) {
+         $this->count_chars += strlen(trim(strip_tags($content)));
+      }
+
       $handle = fopen($this->temp_folder . $file, 'w+');
       fwrite($handle, $content);
       fclose($handle);

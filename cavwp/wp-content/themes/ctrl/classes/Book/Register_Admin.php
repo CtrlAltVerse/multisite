@@ -223,8 +223,9 @@ class Register_Admin
          <tr>
             <th style="width: 15%">Produtos</th>
             <th style="width: 20%">Capas</th>
-            <th style="width: 40%">EPUBs</th>
-            <th style="width: 25%">PDFs</th>
+            <th style="width: 10%">Números</th>
+            <th style="width: 35%">EPUBs</th>
+            <th style="width: 20%">PDFs</th>
          </tr>
       </thead>
       <tbody>
@@ -250,6 +251,27 @@ class Register_Admin
                } ?>
             </td>
             <td>
+               <?php
+
+               $chars_count = get_post_meta($product->get_id(), 'chars_count', true);
+
+            if (!empty($chars_count)) {
+               echo $chars_count . ' caracteres';
+            }
+
+            $pages_count = get_post_meta($product->get_id(), 'pages_count', true);
+
+            if (!empty($chars_count) && !empty($pages_count)) {
+               echo '<br />';
+            }
+
+            if (!empty($pages_count)) {
+               echo $pages_count . ' páginas';
+            }
+
+            ?>
+            </td>
+            <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
                        data-epub="<?php echo esc_attr($product->get_id()); ?>">
@@ -257,7 +279,7 @@ class Register_Admin
                </button>
                <?php
 
-                  $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()) . '.epub');
+               $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()) . '.epub');
 
                   if ($files) {
                      foreach ($files as $file) {
