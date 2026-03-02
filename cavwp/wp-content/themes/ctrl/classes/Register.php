@@ -14,11 +14,10 @@ final class Register
       add_action('admin_init', [$this, 'remove_image_sizes'], 15);
       add_action('after_setup_theme', [$this, 'register_image_sizes']);
       add_action('after_setup_theme', [$this, 'remove_image_sizes'], 15);
-      add_action('after_setup_theme', [$this, 'load_textdomain']);
 
       add_shortcode('wp_hierarchy', [$this, 'sc_wp_hierarchy']);
 
-      add_filter('get_custom_logo', [$this, 'set_logo']);
+      add_filter('get_custom_logo', [$this, 'set_logo'], 10, 2);
    }
 
    public function add_resources($urls, $type)
@@ -72,11 +71,6 @@ final class Register
       }
    }
 
-   public function load_textdomain()
-   {
-      load_theme_textdomain('ctrl', WP_CONTENT_DIR . '/languages/themes');
-   }
-
    public function register_image_sizes()
    {
       add_image_size('amazon', 1600, 2560, true);
@@ -104,12 +98,23 @@ final class Register
       return ob_get_clean();
    }
 
-   public function set_logo($logo)
+   public function set_logo($logo, $blog_id)
    {
       if (!empty($logo)) {
          return $logo;
       }
 
-      return Utils::render_svg(get_template_directory() . '/assets/CtrlAltVerso.svg');
+      if (is_multisite() && !empty($blog_id) && get_current_blog_id() !== (int) $blog_id) {
+         switch_to_blog($blog_id);
+         $switched_blog = true;
+      }
+
+      $logo = Utils::render_svg(get_template_directory() . '/assets/CtrlAltVerso.svg');
+
+      if ($switched_blog) {
+         restore_current_blog();
+      }
+
+      return $logo;
    }
 }
