@@ -10,45 +10,41 @@
          "units": ["px", "em", "rem", "%"]
       },
       "typography": {
-         "lineHeight": true,
-         "customFontSize": true,
-         "fontSizes": [
-            {
-               "name": "Small",
-               "slug": "small",
-               "size": "0.8125em"
-            },
-            {
-               "name": "Medium",
-               "slug": "medium",
-               "size": "1.25em"
-            },
-            {
-               "name": "Large",
-               "slug": "large",
-               "size": "2.25em"
-            },
-            {
-               "name": "Extra Large",
-               "slug": "x-large",
-               "size": "2.625em"
-            }
-         ],
+         "customFontSize": false,
+         "dropCap": false,
+         "fontStyle": false,
+         "fontWeight": false,
+         "letterSpacing": false,
+         "lineHeight": false,
+         "textColumns": false,
+         "textDecoration": false,
+         "textTransform": false,
+         "writingMode": false,
          "fontFamilies": [
             {
-               "fontFamily": "'Myriad Pro', Seravek, Ember, 'Trebuchet MS', 'BN Trebuchet MS', 'PT Sans', 'Frutiger Neue', Roboto, sans-serif;",
+               "fontFamily": "'Source Serif 4', Cardo,'Minion Pro','Iowan Old Style',Palatino,'Palatino Linotype','Palatino Nova','BN Amasis',Cambria,FreeSerif,'Times New Roman',serif",
+               "name": "Transitional",
+               "slug": "transitional"
+            },
+            {
+               "fontFamily": "'Inria Serif',Athelas, Literata, Bookerly, 'Merriweather Serif', Malabar, 'BN Malabar', Georgia, 'Droid Serif', serif;",
+               "name": "Modern",
+               "slug": "modern"
+            },
+            {
+               "fontFamily": "Inter,'Helvetica Neue',Helvetica,Arial,Roboto,'Noto Sans',sans-serif",
+               "name": "Neo Grotesque",
+               "slug": "neo-grotesque"
+            },
+            {
+               "fontFamily": "Lato,'Myriad Pro', Seravek, Ember, 'Trebuchet MS', 'BN Trebuchet MS', 'PT Sans', 'Frutiger Neue', Roboto, sans-serif;",
                "name": "Humanist",
                "slug": "humanist"
             },
             {
-               "fontFamily": "Futura, 'Century Gothic', 'Apple SD Gothic Neo', AppleGothic, sans-serif;",
+               "fontFamily": "Jost,Futura, 'Century Gothic', 'Apple SD Gothic Neo', AppleGothic, sans-serif;",
                "name": "Geometric",
                "slug": "geometric"
-            },
-            {
-               "fontFamily": "Athelas, Literata, Bookerly, 'Merriweather Serif', Malabar, 'BN Malabar', Georgia, 'Droid Serif', serif;",
-               "name": "Modern",
-               "slug": "modern"
             }
          ]
       },
@@ -88,7 +84,7 @@
          "background": "#282a36"
       },
       "typography": {
-         "fontSize": "120%",
+         "fontSize": "1rem",
          "lineHeight": "1.5"
       },
       "spacing": { "blockGap": "1.5em" },
@@ -98,8 +94,8 @@
                "margin": {
                   "top": "1.5em",
                   "bottom": "1.5em",
-                  "left": "5%",
-                  "right": "5%"
+                  "left": "0",
+                  "right": "0"
                }
             },
             "typography": {
@@ -117,18 +113,30 @@
          "core/figure": {
             "spacing": {
                "margin": {
-                  "top": "0",
-                  "bottom": "0"
+                  "top": "1rem",
+                  "bottom": "1rem"
                }
             }
          },
          "core/separator": {
+            "dimensions": { "height": "1rem", "width": "100%" },
+            "border": { "style": "none" },
+            "color": { "text": "#777" },
             "spacing": {
                "margin": {
-                  "top": "1.4375em",
-                  "bottom": "1.4375em",
-                  "right": "0",
-                  "left": "37.5%"
+                  "top": "1.5rem",
+                  "bottom": "1.5rem",
+                  "right": "auto",
+                  "left": "auto"
+               }
+            },
+            "variations": {
+               "wide": {
+                  "dimensions": { "width": "40%!important" },
+                  "border": {
+                     "width": "0 0 0.25rem 0",
+                     "style": "solid"
+                  }
                }
             }
          }
@@ -136,62 +144,78 @@
       "elements": {
          "h1": {
             "typography": {
-               "fontSize": "1.4375em",
-               "lineHeight": "1.04347826"
+               "fontSize": "2.5rem",
+               "lineHeight": "1.35"
             },
             "spacing": {
                "margin": {
                   "top": "0",
-                  "bottom": "2.08695652em"
+                  "bottom": "8rem"
                }
             }
          },
          "h2": {
             "typography": {
-               "fontSize": "1.3125em",
-               "lineHeight": "1.14285714"
+               "fontSize": "1.8rem",
+               "lineHeight": "1.35"
             },
             "spacing": {
                "margin": {
-                  "top": "2.28571429em",
-                  "bottom": "1.14285714em"
+                  "top": "2rem",
+                  "bottom": "1rem"
                }
             }
          },
          "h3": {
             "typography": {
-               "fontSize": "1.125em",
-               "lineHeight": "1.33333333"
+               "fontSize": "1.4rem",
+               "lineHeight": "1.35"
             },
             "spacing": {
                "margin": {
-                  "top": "1.33333333em",
-                  "bottom": "1.33333333em"
+                  "top": "1.8rem",
+                  "bottom": "1rem"
                }
             }
          },
          "h4": {
             "typography": {
-               "fontSize": "1em",
+               "fontSize": "1.1rem",
                "lineHeight": "1.5"
             },
             "spacing": {
                "margin": {
-                  "top": "1.5em",
-                  "bottom": "1.5em"
+                  "top": "1.5rem",
+                  "bottom": "1rem"
                }
             }
          },
          "h5": {
             "typography": {
-               "textIndent": "1em",
+               "fontSize": "1rem",
+               "lineHeight": "1.5",
+               "textIndent": "1rem",
                "fontWeight": "600"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "1rem",
+                  "bottom": "0"
+               }
             }
          },
          "h6": {
             "typography": {
-               "textIndent": "1em",
+               "fontSize": "1rem",
+               "lineHeight": "1.5",
+               "textIndent": "1rem",
                "fontWeight": "600"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "1rem",
+                  "bottom": "0"
+               }
             }
          }
       }

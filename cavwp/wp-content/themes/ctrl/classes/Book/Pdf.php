@@ -25,7 +25,6 @@ const FONTS = [
 
 final class Pdf
 {
-   private $current_page = 1;
    private $info;
    private $is_multipart;
    private $lang;
@@ -143,7 +142,7 @@ final class Pdf
       $main_author = Utils::invert_name(array_values($this->info['authors'])[0]['name']);
 
       $content = <<<HTML
-         <div>
+         <section>
             <p>Copyright © {$this->year} by {$author}. {$all_rights}</p>
             <dl>
                <dt>{$this->title}</dt>
@@ -180,7 +179,7 @@ final class Pdf
                   </tr>
                </tbody>
             </table>
-         </div>
+         </section>
       HTML;
 
       $this->mpdf->WriteHTML($content);
@@ -209,6 +208,7 @@ final class Pdf
       $image_url = wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'large');
 
       $content = <<<HTML
+      <section>
       <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
       <div>
          <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
@@ -222,6 +222,7 @@ final class Pdf
             {$links}
          </ul>
       </div>
+      </section>
       HTML;
 
       $this->mpdf->WriteHTML($content);
@@ -236,10 +237,12 @@ final class Pdf
       }
 
       $content = <<<XHTML
+      <section>
       <div class="valign-center">
          <h1 class="has-large-font-size">{$part['title']}</h1>
          {$subtitle}
       </div>
+      </section>
       XHTML;
 
       $this->mpdf->WriteHTML($content);
@@ -248,8 +251,10 @@ final class Pdf
    private function add_face()
    {
       $content = <<<HTML
+      <section>
       <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
       <div class="h1 has-text-align-center">{$this->title}</div>
+      </section>
       HTML;
 
       $this->mpdf->WriteHTML($content);
@@ -260,7 +265,7 @@ final class Pdf
    {
       $this->mpdf->AddPage();
 
-      $content = '';
+      $content = '<section>';
 
       if ($spine_item['show_title'] ?? false && !empty($spine_item['title'])) {
          $content .= "<h1>{$spine_item['title']}</h1>";
@@ -288,18 +293,22 @@ final class Pdf
          $content .= "<p class=\"section-date\">{$date}</p>";
       }
 
+      $content = '</section>';
+
       $this->mpdf->WriteHTML($content);
    }
 
    private function add_title()
    {
       $content = <<<HTML
+      <section>
       <div class="has-text-align-center h2 mt-0 mb-0">{$this->info['author']}</div>
       <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
       <div class="h1 has-text-align-center mb-0">{$this->title}</div>
       <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
       <div class="has-text-align-center has-medium-font-size">CtrlAltVerso</div>
       <div class="has-text-align-center has-medium-font-size">{$this->year}</div>
+      </section>
       HTML;
 
       $this->mpdf->WriteHTML($content);

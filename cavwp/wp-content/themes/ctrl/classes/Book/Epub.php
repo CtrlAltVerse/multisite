@@ -247,7 +247,7 @@ final class Epub
 
          $content = <<<XML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
-            <img src="{$img}" alt="" class="rounded-full" />
+            <img src="{$img}" alt="" class="is-style-rounded" />
             <h2>{$author['name']}</h2>
             {$bio}
             <ul>
@@ -399,7 +399,6 @@ final class Epub
             <img class="mx-auto" src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
       </figure>
-      <hr class="is-style-transition" />
       <section epub:type="copyright-page" id="copyright-page">
       <dl>
          <dt>{$this->title}</dt>
@@ -1079,17 +1078,18 @@ final class Epub
       </head>
 
       <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="frontmatter">
-         <section class="page-center" epub:type="titlepage" id="titlepage">
+         <section class="page-around" epub:type="titlepage" id="titlepage">
             <h1 class="has-text-align-center" epub:type="fulltitle">
-               <span class="has-large-font-size" epub:type="title">{$this->title}</span>
+               <span class="has-x-large-font-size" epub:type="title">{$this->title}</span>
                {$subtitle}
             </h1>
+
             <p class="has-text-align-center has-large-font-size">{$this->info['author']}</p>
-            <br />
-            <hr class="is-style-transition" />
-            <br />
-            <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
-            <p class="has-text-align-center has-medium-font-size">{$this->year}</p>
+
+            <div>
+               <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
+               <p class="has-text-align-center has-medium-font-size">{$this->year}</p>
+            </div>
          </section>
       </body>
       </html>

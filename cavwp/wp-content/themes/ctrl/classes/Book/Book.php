@@ -71,9 +71,9 @@ class Book extends WC_Product_Grouped
                'size' => 180,
             ]),
             'bio' => [
-               'pt' => get_post_meta($author, 'bio_pt', true),
-               'en' => get_post_meta($author, 'bio_en', true),
-               'es' => get_post_meta($author, 'bio_es', true),
+               'pt' => get_user_meta($author, 'bio_pt', true),
+               'en' => get_user_meta($author, 'bio_en', true),
+               'es' => get_user_meta($author, 'bio_es', true),
             ],
             'link'  => get_the_author_meta('user_url', $author),
             'email' => get_the_author_meta('user_email', $author),
