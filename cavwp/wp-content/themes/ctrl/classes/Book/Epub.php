@@ -519,8 +519,8 @@ final class Epub
       }
 
       if (!empty($this->info['authors'])) {
-         foreach ($this->info['authors'] as $author_ID => $author) {
-            $avatar = get_avatar_url($author, ['size' => 180]);
+         foreach ($this->info['authors'] as $author_ID => $_author) {
+            $avatar = get_avatar_url($author_ID, ['size' => 180]);
             $this->save_image($avatar, 'avatar-' . $author_ID . '.jpg');
          }
       }

@@ -66,8 +66,8 @@ final class Pdf
       $this->mpdf = new Mpdf([
          'mode'          => 'utf-8',
          'mirrorMargins' => 1,
-         'dpi'           => 300,
-         'img_dpi'       => 300,
+         'dpi'           => 200,
+         'img_dpi'       => 96,
          'format'        => [160, 230],
          'margin_header' => 0,
          'margin_footer' => 0,
@@ -126,7 +126,7 @@ final class Pdf
       foreach ($this->info['authors'] as $author_ID => $author) {
          $this->mpdf->AddPage();
 
-         $img = get_avatar_url($author, ['size' => 666]);
+         $img = get_avatar_url($author_ID, ['size' => 666]);
 
          $links = '';
 
