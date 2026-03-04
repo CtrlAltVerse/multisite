@@ -66,11 +66,8 @@ class Book extends WC_Product_Grouped
 
       foreach ($authors as $author) {
          $info['authors'][$author] = [
-            'name'   => get_the_author_meta('display_name', $author),
-            'avatar' => get_avatar_url($author, [
-               'size' => 180,
-            ]),
-            'bio' => [
+            'name' => get_the_author_meta('display_name', $author),
+            'bio'  => [
                'pt' => get_user_meta($author, 'bio_pt', true),
                'en' => get_user_meta($author, 'bio_en', true),
                'es' => get_user_meta($author, 'bio_es', true),

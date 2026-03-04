@@ -245,7 +245,7 @@ final class Epub
          $bio_content = explode(PHP_EOL, $author['bio'][$this->lang]);
          $bio         = implode(PHP_EOL, array_map(fn($line) => '<p class="has-text-align-left">' . $line . '</p>', $bio_content));
 
-         $content = <<<XML
+         $content .= <<<XML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
             <img src="{$img}" alt="" class="is-style-rounded" />
             <h2>{$author['name']}</h2>
@@ -520,7 +520,8 @@ final class Epub
 
       if (!empty($this->info['authors'])) {
          foreach ($this->info['authors'] as $author_ID => $author) {
-            $this->save_image($author['avatar'], 'avatar-' . $author_ID . '.jpg');
+            $avatar = get_avatar_url($author, ['size' => 180]);
+            $this->save_image($avatar, 'avatar-' . $author_ID . '.jpg');
          }
       }
 

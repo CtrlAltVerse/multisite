@@ -2,6 +2,7 @@
 
 namespace ctrl\Book;
 
+use cavWP\Models\User;
 use cavWP\Utils as CavWPUtils;
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
@@ -21,8 +22,6 @@ const FONTS = [
    'monospace' => 'JetBrainsMono',
 ];
 
-// https://dompdf.github.io/
-
 final class Pdf
 {
    private $info;
@@ -33,6 +32,7 @@ final class Pdf
    private $site_link;
    private $site_name;
    private $title;
+   private $title_bio;
    private $year;
 
    public function __construct($info)
@@ -45,6 +45,12 @@ final class Pdf
       $this->site_name    = get_bloginfo('name');
       $this->site_link    = home_url();
       $this->site_domain  = CavWPUtils::clean_domain($this->site_link);
+
+      if (count($this->info['authors']) === 1) {
+         $this->title_bio = esc_attr__('Sobre o autor', 'ctrl');
+      } else {
+         $this->title_bio = esc_attr__('Sobre os autores', 'ctrl');
+      }
 
       $fontDirs = array_map(fn($font) => HECTOR_FOLDER . '_fonts' . DIRECTORY_SEPARATOR . $font, array_values(FONTS));
 
@@ -99,7 +105,8 @@ final class Pdf
          }
       }
 
-      $this->add_cta();
+      $this->add_bio();
+      $this->add_colophon();
 
       $filename = Utils::get_filename($this->info['ID'], 'br') . '.pdf';
 
@@ -108,6 +115,91 @@ final class Pdf
       restore_previous_locale();
 
       return $filename;
+   }
+
+   private function add_bio()
+   {
+      $content = <<<HTML
+         <h1>{$this->title_bio}</h1>
+      HTML;
+
+      foreach ($this->info['authors'] as $author_ID => $author) {
+         $this->mpdf->AddPage();
+
+         $img = get_avatar_url($author, ['size' => 666]);
+
+         $links = '';
+
+         if (!empty($author['link'])) {
+            $site_text = esc_html__('Site pessoal', 'ctrl');
+            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
+         }
+
+         $author_o = new User($author_ID);
+         $socials  = $author_o->get_socials();
+
+         foreach ($socials as $social) {
+            $links .= "<li><a href=\"{$social['profile']}\" target=\"_blank\">{$social['name']}</a></li>";
+         }
+
+         $bio_content = explode(PHP_EOL, $author['bio'][$this->lang]);
+         $bio         = implode(PHP_EOL, array_map(fn($line) => '<p class="has-text-align-left">' . $line . '</p>', $bio_content));
+
+         $content .= <<<HTML
+         <section>
+            <img src="{$img}" alt="" class="is-style-rounded" />
+            <h2>{$author['name']}</h2>
+            {$bio}
+            <ul>
+               {$links}
+            </ul>
+         </section>
+         HTML;
+      }
+
+      $this->mpdf->WriteHTML($content);
+   }
+
+   private function add_colophon()
+   {
+      $this->mpdf->AddPage();
+
+      $title      = mb_strtoupper(esc_html__('Uma publicação', 'ctrl'));
+      $site_links = get_field('links', 'options')[0]['group'];
+
+      $links = '';
+
+      if (!empty($site_links)) {
+         foreach ($site_links as $site_link) {
+            $link_domain = CavWPUtils::clean_domain($site_link['link']);
+
+            $links .= <<<HTML
+               <li><a href="{$site_link['link']}" target="_blank">{$link_domain}</a></li>
+            HTML;
+         }
+      }
+
+      $image_url = wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'large');
+
+      $content = <<<HTML
+      <section>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <div>
+         <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
+         <figure>
+            <a href="{$this->site_link}" target="_blank">
+               <img class="mx-auto w-50" src="{$image_url}" />
+            </a>
+         </figure>
+         <ul class="list-none has-text-align-center">
+            <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
+            {$links}
+         </ul>
+      </div>
+      </section>
+      HTML;
+
+      $this->mpdf->WriteHTML($content);
    }
 
    private function add_credits()
@@ -132,10 +224,10 @@ final class Pdf
             $role  = Utils::get_roles($role);
             $names = CavWPUtils::parse_titles($contributors_names);
 
-            $list .= <<<XML
+            $list .= <<<HTML
                <dt>{$role}</dt>
                <dd>{$names}</dd>
-            XML;
+            HTML;
          }
       }
 
@@ -184,48 +276,6 @@ final class Pdf
 
       $this->mpdf->WriteHTML($content);
       $this->mpdf->AddPage();
-   }
-
-   private function add_cta()
-   {
-      $this->mpdf->AddPage();
-
-      $title      = mb_strtoupper(esc_html__('Uma publicação', 'ctrl'));
-      $site_links = get_field('links', 'options')[0]['group'];
-
-      $links = '';
-
-      if (!empty($site_links)) {
-         foreach ($site_links as $site_link) {
-            $link_domain = CavWPUtils::clean_domain($site_link['link']);
-
-            $links .= <<<XML
-               <li><a href="{$site_link['link']}" target="_blank">{$link_domain}</a></li>
-            XML;
-         }
-      }
-
-      $image_url = wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'large');
-
-      $content = <<<HTML
-      <section>
-      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-      <div>
-         <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
-         <figure>
-            <a href="{$this->site_link}" target="_blank">
-               <img class="mx-auto w-50" src="{$image_url}" />
-            </a>
-         </figure>
-         <ul class="list-none has-text-align-center">
-            <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
-            {$links}
-         </ul>
-      </div>
-      </section>
-      HTML;
-
-      $this->mpdf->WriteHTML($content);
    }
 
    private function add_division($part)
@@ -293,7 +343,7 @@ final class Pdf
          $content .= "<p class=\"section-date\">{$date}</p>";
       }
 
-      $content = '</section>';
+      $content .= '</section>';
 
       $this->mpdf->WriteHTML($content);
    }
