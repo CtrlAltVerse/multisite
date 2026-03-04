@@ -2,24 +2,24 @@
 
 namespace ctrl\Book;
 
+use cavWP\Utils as CavWPUtils;
+use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
 
 require_once ABSPATH . 'vendor/autoload.php';
 
-define('FORMATS', [
-   'us' => ['155.5', '228.6'],
-   'br' => ['160', '230'],
-]);
-define('MARGINS', [
-   'us' => ['margin_left' => 12,
-      'margin_right'      => 17,
-      'margin_top'        => 18,
-      'margin_bottom'     => 25],
-   'br' => ['margin_left' => 13.5,
-      'margin_right'      => 20,
-      'margin_top'        => 18,
-      'margin_bottom'     => 39, ],
-]);
+const FONTS = [
+   // serif
+   'default'      => 'Merriweather',
+   'transitional' => 'SourceSerif4',
+   'modern'       => 'InriaSerif',
+   // sans-serif
+   'neogrotesque' => 'Inter',
+   'humanist'     => 'Lato',
+   'geometric'    => 'Jost',
+   // monospace
+   'monospace' => 'JetBrainsMono',
+];
 
 // https://dompdf.github.io/
 
@@ -30,33 +30,64 @@ final class Pdf
    private $is_multipart;
    private $lang;
    private $mpdf;
+   private $site_domain;
+   private $site_link;
+   private $site_name;
    private $title;
-   private $version;
+   private $year;
 
-   public function __construct($version, $info)
+   public function __construct($info)
    {
       $this->info         = $info;
       $this->title        = $info['title'];
-      $this->version      = $version;
-      $this->lang         = $info['attributes']['lang'];
+      $this->lang         = $info['attributes']['lang'] ?? 'pt';
       $this->is_multipart = count($this->info['parts']) > 1;
+      $this->year         = date('Y', strtotime($info['release']));
+      $this->site_name    = get_bloginfo('name');
+      $this->site_link    = home_url();
+      $this->site_domain  = CavWPUtils::clean_domain($this->site_link);
+
+      $fontDirs = array_map(fn($font) => HECTOR_FOLDER . '_fonts' . DIRECTORY_SEPARATOR . $font, array_values(FONTS));
+
+      foreach (FONTS as $key => $font) {
+         $fontData[$key] = [
+            'R'  => $font . '-Regular.ttf',
+            'I'  => $font . '-Italic.ttf',
+            'B'  => $font . '-Bold.ttf',
+            'BI' => $font . '-BoldItalic.ttf',
+         ];
+      }
 
       $this->mpdf = new Mpdf([
          'mode'          => 'utf-8',
          'mirrorMargins' => 1,
          'dpi'           => 300,
          'img_dpi'       => 300,
-         'format'        => FORMATS[$version],
+         'format'        => [160, 230],
          'margin_header' => 0,
          'margin_footer' => 0,
+         'margin_top'    => 14.4,
+         'margin_left'   => 11,
+         'margin_bottom' => 24,
+         'margin_right'  => 11,
          'tempDir'       => HECTOR_FOLDER,
-         ...MARGINS[$version],
+         'fontDir'       => $fontDirs,
+         'fontdata'      => $fontData,
+         'default_font'  => 'pdffont0',
       ]);
+
+      $css = get_option('cav_hector_epub_style', '');
+
+      $this->mpdf->WriteHTML($css, HTMLParserMode::HEADER_CSS);
    }
 
    public function create()
    {
       switch_to_locale(LOCALES[$this->lang]);
+
+      $this->add_face();
+      $this->add_credits();
+      $this->add_title();
 
       // ADD CONTENT SECTIONS
       foreach ($this->info['parts'] as $part) {
@@ -69,13 +100,131 @@ final class Pdf
          }
       }
 
-      $filename = Utils::get_filename($this->info['ID'], $this->version) . '.pdf';
+      $this->add_cta();
+
+      $filename = Utils::get_filename($this->info['ID'], 'br') . '.pdf';
 
       $this->mpdf->OutputFile(HECTOR_FOLDER . $filename);
 
       restore_previous_locale();
 
       return $filename;
+   }
+
+   private function add_credits()
+   {
+      $all_rights = esc_html__('Todos os direitos reservados.', 'ctrl');
+      $author     = rtrim($this->info['author'], '.');
+
+      $list = '';
+
+      if (!empty($this->info['contributors'])) {
+         $contributors = [];
+
+         foreach ($this->info['contributors'] as $contributor) {
+            if (in_array($contributor['role'], array_keys($contributors))) {
+               $contributors[$contributor['role']][] = $contributor['name'];
+            } else {
+               $contributors[$contributor['role']] = [$contributor['name']];
+            }
+         }
+
+         foreach ($contributors as $role => $contributors_names) {
+            $role  = Utils::get_roles($role);
+            $names = CavWPUtils::parse_titles($contributors_names);
+
+            $list .= <<<XML
+               <dt>{$role}</dt>
+               <dd>{$names}</dd>
+            XML;
+         }
+      }
+
+      $main_author = Utils::invert_name(array_values($this->info['authors'])[0]['name']);
+
+      $content = <<<HTML
+         <div>
+            <p>Copyright © {$this->year} by {$author}. {$all_rights}</p>
+            <dl>
+               <dt>{$this->title}</dt>
+               <dd>{$this->info['author']}</dd>
+
+               {$list}
+
+               <dt>{$this->site_name}</dt>
+               <dd><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></dd>
+            </dl>
+
+            <table class="has-monospace-font-family has-small-text-size border-y w-100 no-border mt-10">
+               <tbody>
+                  <tr>
+                     <td class="pt-5 pb-5 pr-6 pl-6 align-top">
+                        S4343d
+                     </td>
+                     <td class="pt-5 pb-5 pr-6 pl-6">
+                        <p>{$main_author}</p>
+                        <p class="has-text-align-justify indent">{$this->title} / {$author}. - CtrlAltVerso, {$this->year}.</p>
+                        <p class="has-text-align-justify indent">16 x 23cm</p>
+                        <br/>
+                        <p>ISBN: </p>
+                        <br/>
+                        <p>1. Ficção brasileira. I. Título.</p>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td class="has-text-align-right">
+                        <p>CDD: </p>
+                        <p>CDU: </p>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      HTML;
+
+      $this->mpdf->WriteHTML($content);
+      $this->mpdf->AddPage();
+   }
+
+   private function add_cta()
+   {
+      $this->mpdf->AddPage();
+
+      $title      = mb_strtoupper(esc_html__('Uma publicação', 'ctrl'));
+      $site_links = get_field('links', 'options')[0]['group'];
+
+      $links = '';
+
+      if (!empty($site_links)) {
+         foreach ($site_links as $site_link) {
+            $link_domain = CavWPUtils::clean_domain($site_link['link']);
+
+            $links .= <<<XML
+               <li><a href="{$site_link['link']}" target="_blank">{$link_domain}</a></li>
+            XML;
+         }
+      }
+
+      $image_url = wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'large');
+
+      $content = <<<HTML
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <div>
+         <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
+         <figure>
+            <a href="{$this->site_link}" target="_blank">
+               <img class="mx-auto w-50" src="{$image_url}" />
+            </a>
+         </figure>
+         <ul class="list-none has-text-align-center">
+            <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
+            {$links}
+         </ul>
+      </div>
+      HTML;
+
+      $this->mpdf->WriteHTML($content);
    }
 
    private function add_division($part)
@@ -96,6 +245,17 @@ final class Pdf
       $this->mpdf->WriteHTML($content);
    }
 
+   private function add_face()
+   {
+      $content = <<<HTML
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <div class="h1 has-text-align-center">{$this->title}</div>
+      HTML;
+
+      $this->mpdf->WriteHTML($content);
+      $this->mpdf->AddPage();
+   }
+
    private function add_section($spine_item)
    {
       $this->mpdf->AddPage();
@@ -114,7 +274,7 @@ final class Pdf
          $content .= "<p class=\"section-author\">{$spine_item['author']}</p>";
       }
 
-      $content .= $spine_item['content'];
+      $content .= Utils::parse_blocks($spine_item['content']);
 
       if ($spine_item['show_date'] ?? false) {
          $date_formats = [
@@ -129,5 +289,20 @@ final class Pdf
       }
 
       $this->mpdf->WriteHTML($content);
+   }
+
+   private function add_title()
+   {
+      $content = <<<HTML
+      <div class="has-text-align-center h2 mt-0 mb-0">{$this->info['author']}</div>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <div class="h1 has-text-align-center mb-0">{$this->title}</div>
+      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      <div class="has-text-align-center has-medium-font-size">CtrlAltVerso</div>
+      <div class="has-text-align-center has-medium-font-size">{$this->year}</div>
+      HTML;
+
+      $this->mpdf->WriteHTML($content);
+      $this->mpdf->AddPage();
    }
 }

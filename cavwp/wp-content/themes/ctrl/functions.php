@@ -10,8 +10,12 @@ define('HECTOR_EPUB_STORES', [
    'google' => 'Google Books',
 ]);
 define('HECTOR_PDF_FORMATS', [
-   'br' => 'Brasil',
-   'us' => 'Internacional',
+   'br' => '16×23cm',
+]);
+define('LOCALES', [
+   'en' => 'en_US',
+   'pt' => 'pt_BR',
+   'es' => 'es_ES',
 ]);
 
 add_action('admin_init', function() {

@@ -32,7 +32,7 @@ body.single-tool {
 
    select.input {
       option {
-         @apply bg-neutral-200 dark:bg-neutral-800;
+         @apply bg-westar-300 dark:bg-neutral-800;
       }
 
       optgroup {
@@ -95,8 +95,9 @@ body.single-tool {
    }
 
    .linkedin {
-      font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
-         Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans',
+      font-family:
+         -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
+         'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans',
          Cantarell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji',
          'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial,
          sans-serif;

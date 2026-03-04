@@ -44,11 +44,16 @@ body.page .hentry {
 }
 
 body.single-print .hentry,
+body.single-product .hentry,
 body.single-chapter .hentry {
    @apply text-lg leading-relaxed;
 
    blockquote {
-      @apply border-l-3 border-current pl-6 py-1.5;
+      @apply border-l-3 border-current pl-6 py-1.5 italic;
+
+      cite {
+         @apply block not-italic font-medium mt-2;
+      }
    }
 
    hr {
@@ -119,7 +124,7 @@ body.single-post .hentry {
       @apply flex gap-4 mt-12 text-base;
 
       a {
-         @apply py-1 px-2.5 rounded bg-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:no-underline;
+         @apply py-1 px-2.5 rounded bg-westar-300 text-neutral-700 hover:bg-neutral-100 hover:no-underline;
       }
    }
 }

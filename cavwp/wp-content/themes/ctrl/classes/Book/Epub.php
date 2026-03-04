@@ -7,7 +7,7 @@ use cavWP\Utils as CavWPUtils;
 use WP_Theme_JSON_Resolver;
 use ZipArchive;
 
-define('EPUB_TEMPLATES', [
+const EPUB_TEMPLATES = [
    'chapter' => [
       'role' => 'chapter',
       'type' => 'bodymatter',
@@ -106,12 +106,7 @@ define('EPUB_TEMPLATES', [
       'type' => 'backmatter',
       'toc'  => true,
    ],
-]);
-define('LOCALES', [
-   'en' => 'en_US',
-   'pt' => 'pt_BR',
-   'es' => 'es_ES',
-]);
+];
 
 final class Epub
 {
@@ -136,7 +131,7 @@ final class Epub
    {
       $this->info    = $info;
       $this->title   = $info['title'];
-      $this->lang    = $info['attributes']['lang'];
+      $this->lang    = $info['attributes']['lang'] ?? 'pt';
       $this->version = $version;
       $this->year    = date('Y', strtotime($info['release']));
 
@@ -252,7 +247,7 @@ final class Epub
 
          $content = <<<XML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
-            <img src="{$img}" alt="" class="rounded" />
+            <img src="{$img}" alt="" class="rounded-full" />
             <h2>{$author['name']}</h2>
             {$bio}
             <ul>
@@ -288,13 +283,13 @@ final class Epub
       }
 
       $content = <<<XML
-      <div class="valign-bottom">
+      <div class="page-bottom">
       <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
-      <div class="mt-2 mb-2 has-black-sky-background-color has-text-align-center">
+      <figure class="has-black-sky-background-color">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
+            <img class="mx-auto" src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
-      </div>
+      </figure>
       <ul class="list-none has-text-align-center">
          <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
          {$links}
@@ -335,8 +330,8 @@ final class Epub
          <link href="../assets/blitz.css" type="text/css" rel="stylesheet" />
       </head>
 
-      <body class="h-100" xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="cover">
-         <figure class="h-100 m-0 has-text-align-center is-style-portrait" id="cover">
+      <body class="page-center" xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="cover">
+         <figure class="m-0 has-text-align-center is-style-portrait" id="cover">
             <img role="doc-cover" src="../assets/images/cover.jpg" alt="" />
          </figure>
       </body>
@@ -399,11 +394,11 @@ final class Epub
       $author     = rtrim($this->info['author'], '.');
 
       $credits = <<<XML
-      <div class="mb-2 has-black-sky-background-color has-text-align-center">
+      <figure class="mt-0 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
+            <img class="mx-auto" src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
-      </div>
+      </figure>
       <hr class="is-style-transition" />
       <section epub:type="copyright-page" id="copyright-page">
       <dl>
@@ -467,7 +462,6 @@ final class Epub
          $link = "<p class=\"has-text-align-justify mt-2\"><a href=\"{$store_link}\" target=\"_blank\">{$link_text}</a></p>";
       }
 
-      // Thank you for your purchase and for reading this book. It means a great deal to us. If possible, please consider leaving a rating and a review at the store where you purchased it.
       $line1 = esc_html__('Agradecemos sua compra e principalmente pela leitura deste livro. Isto vale muito para nós. ', 'ctrl');
       $line2 = esc_html__('Se puder, deixe sua avaliação e um comentário na loja que comprou.', 'ctrl');
 
@@ -494,7 +488,7 @@ final class Epub
       }
 
       $content = <<<XHTML
-      <div class="valign-center">
+      <div class="page-center">
          <h1 class="has-large-font-size">{$part['title']}</h1>
          {$subtitle}
       </div>
@@ -792,7 +786,7 @@ final class Epub
       foreach ($this->info['authors'] as $author_ID => $author) {
          $key = $author_ID + 1;
 
-         $name_invert = $this->invert_name($author['name']);
+         $name_invert = Utils::invert_name($author['name']);
 
          $authors .= <<<XML
             <dc:creator id="creator{$key}">{$author['name']}</dc:creator>
@@ -808,7 +802,7 @@ final class Epub
       foreach ($this->info['contributors'] as $key => $contributor) {
          $key++;
 
-         $name_invert = $this->invert_name($contributor['name']);
+         $name_invert = Utils::invert_name($contributor['name']);
 
          $contributors .= <<<XML
          <dc:contributor id="contrib{$key}">{$contributor['name']}</dc:contributor>
@@ -1005,7 +999,7 @@ final class Epub
       }
 
       if ($apply_filter) {
-         $content .= Utils::blocks_to_epub($spine_item['content'], $section_type);
+         $content .= Utils::parse_blocks($spine_item['content'], $section_type);
 
          if (!empty($this->images)) {
             foreach ($this->images as $new_image) {
@@ -1085,9 +1079,9 @@ final class Epub
       </head>
 
       <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="frontmatter">
-         <section class="valign-center" epub:type="titlepage" id="titlepage">
+         <section class="page-center" epub:type="titlepage" id="titlepage">
             <h1 class="has-text-align-center" epub:type="fulltitle">
-               <span class="has-x-large-font-size" epub:type="title">{$this->title}</span>
+               <span class="has-large-font-size" epub:type="title">{$this->title}</span>
                {$subtitle}
             </h1>
             <p class="has-text-align-center has-large-font-size">{$this->info['author']}</p>
@@ -1095,7 +1089,7 @@ final class Epub
             <hr class="is-style-transition" />
             <br />
             <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
-            <p class="has-text-align-center">{$this->year}</p>
+            <p class="has-text-align-center has-medium-font-size">{$this->year}</p>
          </section>
       </body>
       </html>
@@ -1113,20 +1107,6 @@ final class Epub
       $handle = fopen($this->temp_folder . $file, 'w+');
       fwrite($handle, $content);
       fclose($handle);
-   }
-
-   private function invert_name($name)
-   {
-      $names = explode(' ', trim($name));
-
-      if (count($names) <= 1) {
-         return $name;
-      }
-
-      $last  = array_pop($names);
-      $names = implode(' ', $names);
-
-      return "{$last}, {$names}";
    }
 
    private function save_image($url, $new_filename = null, $is_cover = false)

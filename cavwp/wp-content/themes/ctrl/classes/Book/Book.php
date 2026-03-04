@@ -4,6 +4,9 @@ namespace ctrl\Book;
 
 use WC_Product_Grouped;
 
+// LIBREOFFICE ODT
+// SCRIBUS SLA
+
 class Book extends WC_Product_Grouped
 {
    public function make_epub()
@@ -23,15 +26,10 @@ class Book extends WC_Product_Grouped
 
    public function make_pdf()
    {
-      $info     = $this->get_info('print');
-      $versions = ['us', 'br'];
+      $info = $this->get_info('print');
+      $pdf  = new Pdf($info);
 
-      foreach ($versions as $version) {
-         $pdf     = new Pdf($version, $info);
-         $books[] = $pdf->create();
-      }
-
-      return $books;
+      return $pdf->create();
    }
 
    private function get_info($target = 'print')
@@ -83,7 +81,13 @@ class Book extends WC_Product_Grouped
       }
       $info['author'] = Utils::get_author_names($this->get_id());
 
-      $info['contributors'] = get_field('contributors', $this->get_id());
+      $info['contributors'] = [];
+
+      $contributors = get_field('contributors', $this->get_id());
+
+      if (!empty($contributors)) {
+         $info['contributors'] = $contributors;
+      }
 
       $products = $this->get_children();
 

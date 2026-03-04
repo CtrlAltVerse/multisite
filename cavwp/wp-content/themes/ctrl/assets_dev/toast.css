@@ -3,7 +3,7 @@
 }
 
 .toast {
-   @apply relative rounded py-3 px-4 bg-neutral-700 text-neutral-200 text-lg font-medium transition duration-100 ease-linear;
+   @apply relative rounded py-3 px-4 bg-neutral-700 text-westar-300 text-lg font-medium transition duration-100 ease-linear;
 
    .toast-bar {
       @apply absolute bottom-0 left-0 h-0.5 bg-neutral-100/60;

@@ -6,104 +6,20 @@ use cavWP\Utils as CavWPUtils;
 
 class Utils
 {
-   public static function blocks_to_epub($blocks, $epub_type)
-   {
-      if (!is_array($blocks)) {
-         $blocks = parse_blocks($blocks);
-      }
-
-      $content = '';
-
-      $image_local_url = home_url('/wp-content/uploads');
-
-      foreach ($blocks as $block) {
-         switch ($block['blockName']) {
-            case 'core/paragraph':
-               if ('<p></p>' === trim($block['innerHTML'])) {
-                  $block['innerHTML'] = '<p><br /></p>';
-               } else {
-                  $align = $block['attrs']['align'] ?? 'justify';
-
-                  if ('justify' === $align) {
-                     $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
-                     $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
-                  }
-               }
-               break;
-
-            case 'core/list':
-               $block['innerHTML'] = $block['innerContent'][0];
-               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks'], $epub_type);
-               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
-               break;
-
-            case 'core/image':
-               if (is_environment('production')) {
-                  $block['innerHTML'] = str_replace($image_local_url, 'https://cdn.altvers.net', $block['innerHTML']);
-               }
-               break;
-
-            case 'core/quote':
-               $block['innerHTML'] = $block['innerContent'][0];
-               $block['innerHTML'] .= self::blocks_to_epub($block['innerBlocks'], $epub_type);
-               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
-
-               if ('epigraph' === $epub_type) {
-                  $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
-               }
-
-               break;
-
-            case 'core/list-item':
-               if ('bibliography' === $epub_type) {
-                  $block['innerHTML'] = str_replace('<li', '<li epub:type="biblioentry" role="doc-biblioentry"', $block['innerHTML']);
-               }
-               break;
-
-            case 'cav/dt':
-               if ('glossary' === $epub_type) {
-                  $block['innerHTML'] = str_replace('<dt', '<dt epub:type="glossterm"', $block['innerHTML']);
-               }
-               break;
-
-            case 'cav/dd':
-               if ('glossary' === $epub_type) {
-                  $block['innerHTML'] = str_replace('<dd', '<dd epub:type="glossdef"', $block['innerHTML']);
-               }
-               break;
-
-            case null:
-            case 'core/heading':
-            case 'core/separator':
-            case 'core/html': // trust
-            case 'core/media-text': // later
-            case 'core/table':// later
-               break;
-
-            case 'core/embed':
-               $block['innerHTML'] = '';
-               break;
-
-            default:
-               debug($block);
-               break;
-         }
-         $content .= self::clean_content($block['innerHTML']);
-      }
-
-      return $content;
-   }
-
    public static function clean_content($content)
    {
       $content = str_replace('<br>', '<br/>', $content);
+      $content = str_replace('<details', '<div', $content);
+      $content = str_replace('</details>', '</div>', $content);
+      $content = str_replace('<summary', '<p class="h3"', $content);
+      $content = str_replace('</summary>', '</p>', $content);
 
       return str_replace('&nbsp;', ' ', $content);
    }
 
    public static function get_author_names($product_ID)
    {
-      $authors = get_field('authors', $product_ID);
+      $authors = \get_field('authors', $product_ID);
 
       foreach ($authors as $author) {
          $authors_names[] = get_the_author_meta('display_name', $author);
@@ -143,7 +59,7 @@ class Utils
          $author = CavWPUtils::parse_titles($authors_names);
       }
 
-      if (!$version) {
+      if (false === $version) {
          $version = '*';
       }
 
@@ -203,5 +119,113 @@ class Utils
       asort($roles);
 
       return $roles;
+   }
+
+   public static function invert_name($name)
+   {
+      $names = explode(' ', trim($name));
+
+      if (count($names) <= 1) {
+         return $name;
+      }
+
+      $last  = array_pop($names);
+      $names = implode(' ', $names);
+
+      return "{$last}, {$names}";
+   }
+   public static function parse_blocks($blocks, $epub_type = false)
+   {
+      if (!is_array($blocks)) {
+         $blocks = parse_blocks($blocks);
+      }
+
+      $content = '';
+
+      $image_local_url = home_url('/wp-content/uploads');
+
+      foreach ($blocks as $block) {
+         switch ($block['blockName']) {
+            case 'core/paragraph':
+               if ('<p></p>' === trim($block['innerHTML'])) {
+                  $block['innerHTML'] = '<p><br /></p>';
+               } else {
+                  $align = $block['attrs']['align'] ?? 'justify';
+
+                  if ('justify' === $align) {
+                     $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
+                     $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
+                  }
+               }
+               break;
+
+            case 'core/list':
+               $block['innerHTML'] = $block['innerContent'][0];
+               $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
+               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
+               break;
+
+            case 'core/image':
+               if (is_environment('production')) {
+                  $block['innerHTML'] = str_replace($image_local_url, 'https://cdn.altvers.net', $block['innerHTML']);
+               }
+               break;
+
+            case 'core/quote':
+               $block['innerHTML'] = $block['innerContent'][0];
+               $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
+               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
+
+               if ('epigraph' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
+               }
+
+               break;
+
+            case 'core/list-item':
+               if ('bibliography' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<li', '<li epub:type="biblioentry" role="doc-biblioentry"', $block['innerHTML']);
+               }
+               break;
+
+            case 'cav/dt':
+               if ('glossary' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<dt', '<dt epub:type="glossterm"', $block['innerHTML']);
+               }
+               break;
+
+            case 'cav/dd':
+               if ('glossary' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<dd', '<dd epub:type="glossdef"', $block['innerHTML']);
+               }
+               break;
+
+            case 'core/details':
+               $block['innerHTML'] = $block['innerContent'][0];
+               $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
+               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
+               break;
+
+            case null:
+            case 'core/code':
+            case 'core/heading':
+            case 'core/separator':
+            case 'core/html': // trust
+            case 'core/media-text': // later
+            case 'core/table':// later
+               break;
+
+            case 'core/embed':
+               $block['innerHTML'] = '';
+               break;
+
+            default:
+               debug($block);
+               break;
+         }
+         $content .= self::clean_content($block['innerHTML']);
+      }
+
+      return $content;
    }
 }

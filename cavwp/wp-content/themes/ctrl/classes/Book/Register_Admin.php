@@ -4,8 +4,8 @@ namespace ctrl\Book;
 
 class Register_Admin
 {
-   private string $ajax_url    = '';
-   private string $option_name = 'cav_hector_epub_style';
+   private string $ajax_url = '';
+   private $option_key      = 'cav_hector_epub_style';
 
    public function __construct()
    {
@@ -105,10 +105,12 @@ class Register_Admin
          return;
       }
 
+      $content = 'jQuery(function($){ wp.codeEditor.initialize("' . $this->option_key . '", %s); });';
+
       wp_add_inline_script(
          'code-editor',
          sprintf(
-            'jQuery(function($){ wp.codeEditor.initialize("custom_style_editor", %s); });',
+            $content,
             wp_json_encode($settings),
          ),
       );
@@ -192,20 +194,19 @@ class Register_Admin
    {
       register_setting(
          'hector',
-         $this->option_name,
+         $this->option_key,
       );
    }
 
    public function render_page(): void
    {
-      $value       = get_option($this->option_name, '');
       $image_sizes = [
          'medium' => 'Miniatura',
          'amazon' => 'KDP/Apple',
          'kobo'   => 'Kobo/Google',
       ];
 
-      $products = wc_get_products([
+      $products = \wc_get_products([
          'type'           => 'grouped',
          'posts_per_page' => -1,
          'orderby'        => 'title',
@@ -281,7 +282,7 @@ class Register_Admin
 
                $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()) . '.epub');
 
-                  if ($files) {
+                  if (!empty($files)) {
                      foreach ($files as $file) {
                         $filename = basename($file);
 
@@ -311,6 +312,29 @@ class Register_Admin
                   Gerar
                </button>
                <?php
+
+               $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id()) . '.pdf');
+
+                  if (!empty($files)) {
+                     foreach ($files as $file) {
+                        $filename = basename($file);
+
+                        foreach (HECTOR_PDF_FORMATS as $key => $title) {
+                           if (str_contains($filename, $key)) {
+                              ?>
+               <a class="button"
+                  download="<?php echo esc_attr($filename); ?>"
+                  href="<?php echo $this->ajax_url . '?' . http_build_query([
+                     'action' => 'hector_download_file',
+                     'file'   => $filename,
+                  ]); ?>">
+                  <?php echo esc_html($title); ?>
+               </a>
+               <?php
+                           }
+                        }
+                     }
+                  }
                }
             ?>
             </td>
@@ -318,18 +342,24 @@ class Register_Admin
          <?php } ?>
       </tbody>
    </table>
-
-   <h2>ePub Style</h2>
    <form method="post" action="options.php">
-      <?php settings_fields('hector'); ?>
+      <?php
 
-      <textarea
-                id="custom_style_editor"
-                name="<?php echo esc_attr($this->option_name); ?>"
-                rows="40"
-                style="width:100%;"><?php echo esc_textarea($value); ?></textarea>
+      $value  = get_option($this->option_key, '');
+      $option = esc_attr($this->option_key);
+      $value  = esc_textarea($value);
+      $submit = get_submit_button();
 
-      <?php submit_button(); ?>
+      ?>
+      <h2> Style </h2>
+      <?php settings_fields('hector');
+
+      echo <<<HTML
+         <textarea id="{$option}" name="{$option}" rows="40">{$value}</textarea>
+         {$submit}
+      HTML;
+
+      ?>
    </form>
 </div>
 <?php

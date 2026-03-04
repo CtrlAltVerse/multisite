@@ -133,6 +133,8 @@ class Register
          $books = [$books];
       }
 
+      sort($books);
+
       echo implode(', ', array_map(fn($book) => get_the_title($book), $books));
    }
 
@@ -194,7 +196,7 @@ class Register
             '<option value="%s" %s>%s</option>',
             $book->get_id(),
             selected($selected, $book->get_id(), false),
-            $book->get_name(),
+            apply_filters('the_title', $book->get_name(), $book->get_id()),
          );
       }
 
