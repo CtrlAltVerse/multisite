@@ -2,15 +2,22 @@
 
 namespace ctrl\Book;
 
-use cavWP\Models\User;
-use cavWP\Utils as CavWPUtils;
-use WP_Theme_JSON_Resolver;
 use ZipArchive;
 
 const EPUB_TEMPLATES = [
    'chapter' => [
       'role' => 'chapter',
       'type' => 'bodymatter',
+      'toc'  => true,
+   ],
+   'cover' => [
+      'role' => 'cover',
+      'type' => 'cover',
+      'toc'  => false,
+   ],
+   'titlepage' => [
+      'role' => 'titlepage',
+      'type' => 'frontmatter',
       'toc'  => true,
    ],
    'prologue' => [
@@ -108,52 +115,28 @@ const EPUB_TEMPLATES = [
    ],
 ];
 
-final class Epub
+final class Epub extends Book
 {
    private $count_chars = 0;
    private $count_key   = 'chars_count';
    private $folders     = [];
    private $images      = [];
-   private $info;
-   private $is_multipart;
-   private $lang;
-   private $site_domain;
-   private $site_link;
-   private $site_name;
    private $temp_folder;
-   private $title;
-   private $title_bio;
    private $uuid;
    private $version;
-   private $year;
 
-   public function __construct($version, $info)
+   private function setup($version)
    {
-      $this->info    = $info;
-      $this->title   = $info['title'];
-      $this->lang    = $info['attributes']['lang'] ?? 'pt';
       $this->version = $version;
-      $this->year    = date('Y', strtotime($info['release']));
+      $this->type    = 'epub';
 
-      if (count($this->info['authors']) === 1) {
-         $this->title_bio = esc_attr__('Sobre o autor', 'ctrl');
-      } else {
-         $this->title_bio = esc_attr__('Sobre os autores', 'ctrl');
+      $this->temp_folder = HECTOR_FOLDER . 'epub_' . $this->info['slug'] . '_' . $this->version;
+
+      if (is_dir($this->temp_folder)) {
+         return false;
       }
-      $this->is_multipart = count($this->info['parts']) > 1;
-
-      $this->site_name   = get_bloginfo('name');
-      $this->site_link   = home_url();
-      $this->site_domain = CavWPUtils::clean_domain($this->site_link);
 
       $this->uuid = wp_generate_uuid4();
-
-      $this->info['contributors'][] = [
-         'name' => 'CtrlAltVerso',
-         'role' => 'pbl',
-      ];
-
-      $this->temp_folder = HECTOR_FOLDER . 'epub_' . $info['slug'] . '_' . $version;
 
       $this->folders = [
          $this->temp_folder,
@@ -163,15 +146,6 @@ final class Epub
          $this->temp_folder . '/OEBPS/assets',
          $this->temp_folder . '/OEBPS/assets/images',
       ];
-   }
-
-   public function create()
-   {
-      switch_to_locale(LOCALES[$this->lang]);
-
-      if (is_dir($this->temp_folder)) {
-         return;
-      }
 
       foreach ($this->folders as $folder) {
          $folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
@@ -182,125 +156,77 @@ final class Epub
          }
       }
 
-      $this->create_file('/mimetype', 'application/epub+zip');
-      $this->add_css();
-      $this->add_images();
-      $this->add_container();
-      $this->add_opf();
-      $this->add_nav();
-      $this->add_ncx();
-      $this->add_cover();
-      $this->add_title();
-      $this->add_credits();
-
-      // ADD CONTENT SECTIONS
-      foreach ($this->info['parts'] as $part_key => $part) {
-         if ($this->is_multipart) {
-            $this->add_division($part_key, $part);
-         }
-
-         foreach ($part['spine'] as $key => $spine_item) {
-            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
-            $this->add_section($key, $spine_item);
-         }
-      }
-
-      $this->add_bio();
-      $this->add_cta();
-      $this->add_colophon();
-      restore_previous_locale();
-
-      if ('amazon' === $this->version) {
-         update_post_meta($this->info['ID'], $this->count_key, $this->count_chars);
-      }
-
-      return $this->zip();
+      return true;
    }
 
-   private function add_bio()
+   public function create($version)
    {
-      $content = '';
+      switch_to_locale(LOCALES[$this->lang]);
 
-      foreach ($this->info['authors'] as $author_ID => $author) {
-         $img = '../assets/images/avatar-' . $author_ID . '.jpg';
+      if (!$this->setup($version)) {
+         return;
+      }
 
-         $links = '';
+      $this->content();
 
-         if (!empty($author['link'])) {
-            $site_text = esc_html__('Site pessoal', 'ctrl');
-            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
-         }
+      restore_previous_locale();
 
-         $author_o = new User($author_ID);
-         $socials  = $author_o->get_socials(['amazon-profile']);
+      return $this->save();
+   }
 
-         foreach ($socials as $key => $social) {
-            if ('amazon' !== $this->version && 'amazon-profile' === $key) {
+   protected function save()
+   {
+      if (!extension_loaded('zip')) {
+         return debug('zip extension is not loaded');
+      }
+
+      $file_name = Utils::get_filename($this->info['ID'], $this->version) . '.epub';
+
+      $zip = new ZipArchive();
+
+      if (!$zip->open(HECTOR_FOLDER . $file_name, ZipArchive::CREATE)) {
+         return debug('Failed to create zip file.');
+      }
+
+      foreach ($this->folders as $folder) {
+         $files = scandir($folder);
+
+         foreach ($files as $file) {
+            if ('.' === $file || '..' === $file) {
                continue;
             }
 
-            $links .= "<li><a href=\"{$social['profile']}\" target=\"_blank\">{$social['name']}</a></li>";
-         }
+            $full_path = $folder . '/' . $file;
 
-         $bio_content = explode(PHP_EOL, $author['bio'][$this->lang]);
-         $bio         = implode(PHP_EOL, array_map(fn($line) => '<p class="has-text-align-left">' . $line . '</p>', $bio_content));
+            if (is_dir($full_path)) {
+               continue;
+            }
 
-         $content .= <<<XML
-         <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
-            <img src="{$img}" alt="" class="is-style-rounded" />
-            <h2>{$author['name']}</h2>
-            {$bio}
-            <ul>
-               {$links}
-            </ul>
-         </section>
-         XML;
-      }
+            $checks = explode('.', $file);
 
-      $this->add_section(997, [
-         'show_title'   => true,
-         'title'        => $this->title_bio,
-         'section_type' => 'bio',
-         'content'      => $content,
-      ], false, false);
-   }
+            if (empty($checks[1]) && 'mimetype' !== $file) {
+               continue;
+            }
 
-   private function add_colophon()
-   {
-      $title      = mb_strtoupper(esc_html__('Uma publicação', 'ctrl'));
-      $site_links = get_field('links', 'options')[0]['group'];
+            $zip->addFile($full_path, str_replace($this->temp_folder . '/', '', $full_path));
 
-      $links = '';
-
-      if (!empty($site_links)) {
-         foreach ($site_links as $site_link) {
-            $link_domain = CavWPUtils::clean_domain($site_link['link']);
-
-            $links .= <<<XML
-               <li><a href="{$site_link['link']}" target="_blank">{$link_domain}</a></li>
-            XML;
+            $files_to_delete[] = $full_path;
          }
       }
 
-      $content = <<<XML
-      <div class="page-bottom">
-      <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
-      <figure class="has-black-sky-background-color">
-         <a href="{$this->site_link}" target="_blank">
-            <img class="mx-auto" src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
-         </a>
-      </figure>
-      <ul class="list-none has-text-align-center">
-         <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
-         {$links}
-      </ul>
-      </div>
-      XML;
+      $zip->close();
 
-      $this->add_section(999, [
-         'section_type' => 'colophon',
-         'content'      => $content,
-      ], false);
+      foreach ($files_to_delete as $delete) {
+         unlink($delete);
+      }
+
+      $folders = array_reverse($this->folders);
+
+      foreach ($folders as $folder) {
+         rmdir($folder);
+      }
+
+      return $file_name;
    }
 
    private function add_container()
@@ -319,244 +245,56 @@ final class Epub
 
    private function add_cover()
    {
-      $content = <<<XML
-      <?xml version="1.0" encoding="utf-8"?>
-      <!DOCTYPE html>
+      $content = <<<'HTML'
+      <figure class="m-0 has-text-align-center is-style-portrait" id="cover">
+         <img role="doc-cover" src="../assets/images/cover.jpg" alt="" />
+      </figure>
+      HTML;
 
-      <html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="{$this->lang}" lang="{$this->lang}">
-      <head>
-         <meta charset="utf-8" />
-         <title>{$this->title}</title>
-         <link href="../assets/blitz.css" type="text/css" rel="stylesheet" />
-      </head>
-
-      <body class="page-center" xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="cover">
-         <figure class="m-0 has-text-align-center is-style-portrait" id="cover">
-            <img role="doc-cover" src="../assets/images/cover.jpg" alt="" />
-         </figure>
-      </body>
-      </html>
-      XML;
-
-      $this->create_file('/OEBPS/content/000-cover.xhtml', $content);
+      $this->add_section('000', [
+         'section_type' => 'cover',
+         'content'      => $content,
+      ], false, false);
    }
 
    private function add_credits()
    {
-      $list = '';
-
-      if (!empty($this->info['series']['title'])) {
-         if (!empty($this->info['series']['position'])) {
-            $series_title = sprintf(
-               esc_attr__('Livro %d da série', 'ctrl'),
-               $this->info['series']['position'],
-            );
-         } else {
-            $series_title = esc_attr__('Da série', 'ctrl');
-         }
-
-         $list .= <<<XML
-         <dt>{$series_title}</dt>
-         <dd>{$this->info['series']['title']}</dd>
-         XML;
-      }
-
-      if (!empty($this->info['contributors'])) {
-         $contributors = [];
-
-         foreach ($this->info['contributors'] as $contributor) {
-            if (in_array($contributor['role'], array_keys($contributors))) {
-               $contributors[$contributor['role']][] = $contributor['name'];
-            } else {
-               $contributors[$contributor['role']] = [$contributor['name']];
-            }
-         }
-
-         foreach ($contributors as $role => $contributors_names) {
-            $role  = Utils::get_roles($role);
-            $names = CavWPUtils::parse_titles($contributors_names);
-
-            $list .= <<<XML
-               <dt>{$role}</dt>
-               <dd>{$names}</dd>
-            XML;
-         }
-      }
+      $credits = $this->get_credits();
 
       if (!empty($this->info['isbn'])) {
-         $list .= <<<XML
-         <dt>ISBN</dt>
-         <dd>{$this->info['isbn']}</dd>
-         XML;
+         $credits['list'] .= <<<HTML
+            <dt>ISBN</dt>
+            <dd>{$this->info['isbn']}</dd>
+         HTML;
       }
 
-      $all_rights = esc_html__('Todos os direitos reservados.', 'ctrl');
-      $author     = rtrim($this->info['author'], '.');
-
-      $credits = <<<XML
-      <figure class="mt-0 has-black-sky-background-color has-text-align-center">
+      $content = <<<HTML
+      <figure class="mt-0 mb-8 has-black-sky-background-color has-text-align-center">
          <a href="{$this->site_link}" target="_blank">
-            <img class="mx-auto" src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
+            <img src="../assets/images/CtrlAltVerso.png" alt="{$this->site_name}" />
          </a>
       </figure>
       <section epub:type="copyright-page" id="copyright-page">
-      <dl>
-         <dt>{$this->title}</dt>
-         <dd>{$this->info['author']}</dd>
-
-         {$list}
+         {$credits['list']}
 
          <dt>{$this->site_name} • <a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></dt>
-         <dd>© {$this->year} {$author}. {$all_rights}</dd>
-      </dl>
+         <dd>{$credits['copyright']}</dd>
       </section>
-      XML;
+      HTML;
 
       $this->add_section('002', [
          'section_type' => 'other-credits',
-         'content'      => $credits,
-      ], false);
-   }
-
-   private function add_css()
-   {
-      $css = get_option('cav_hector_epub_style', '');
-
-      $settings = WP_Theme_JSON_Resolver::get_merged_data()->get_settings();
-      $colors   = array_merge($settings['color']['palette']['default'], $settings['color']['palette']['theme'] ?? []);
-
-      if (!empty($colors)) {
-         foreach ($colors as $color) {
-            $css .= <<<CSS
-            .has-{$color['slug']}-color {
-               color: {$color['color']};
-            }
-            .has-{$color['slug']}-background-color {
-               background-color: {$color['color']};
-            }
-            CSS;
-         }
-      }
-
-      $this->create_file('/OEBPS/assets/blitz.css', $css);
-   }
-
-   private function add_cta()
-   {
-      $link = '';
-
-      if (!empty($this->info['links'])) {
-         foreach ($this->info['links'] as $store_link) {
-            if (str_contains($store_link, $this->version)) {
-               break;
-            }
-         }
-
-         $link_text = sprintf(
-            esc_html__('%s na loja %s', 'ctrl'),
-            $this->title,
-            ucfirst($this->version),
-         );
-
-         $link = "<p class=\"has-text-align-justify mt-2\"><a href=\"{$store_link}\" target=\"_blank\">{$link_text}</a></p>";
-      }
-
-      $line1 = esc_html__('Agradecemos sua compra e principalmente pela leitura deste livro. Isto vale muito para nós. ', 'ctrl');
-      $line2 = esc_html__('Se puder, deixe sua avaliação e um comentário na loja que comprou.', 'ctrl');
-
-      $content = <<<XML
-         <p class="has-text-align-justify">{$line1}</p>
-         <p class="has-text-align-justify">{$line2}</p>
-         {$link}
-      XML;
-
-      $this->add_section(998, [
-         'show_title'   => true,
-         'title'        => esc_html__('Obrigado', 'ctrl'),
-         'section_type' => 'acknowledgments',
          'content'      => $content,
       ], false);
    }
 
    private function add_division($key, $part)
    {
-      $subtitle = '';
-
-      if (!empty($part['subtitle'])) {
-         $subtitle = "<p class=\"has-medium-font-size mt-2\">{$part['subtitle']}</p>";
-      }
-
-      $content = <<<XHTML
-      <div class="page-center">
-         <h1 class="has-large-font-size">{$part['title']}</h1>
-         {$subtitle}
-      </div>
-      XHTML;
-
       $key = str_pad($key + 1, 2, '0', STR_PAD_LEFT);
       $this->add_section($key, [
          'section_type' => 'division',
-         'content'      => $content,
+         'content'      => $this->get_division($part),
       ], false);
-   }
-
-   private function add_images()
-   {
-      if (!empty($this->info['cover'])) {
-         $this->save_image($this->info['cover'], 'cover.jpg', true);
-      }
-
-      $asterism = \get_field('asterism', 'options');
-
-      if (!empty($asterism)) {
-         $this->save_image(wp_get_attachment_image_url($asterism, 'full'), 'asterism.png');
-      }
-
-      $logo = \get_field('logo', 'options');
-
-      if (!empty($logo)) {
-         $this->save_image(wp_get_attachment_image_url($logo, 'full'), 'CtrlAltVerso.png');
-      }
-
-      if (!empty($this->info['authors'])) {
-         foreach ($this->info['authors'] as $author_ID => $_author) {
-            $avatar = get_avatar_url($author_ID, ['size' => 180]);
-            $this->save_image($avatar, 'avatar-' . $author_ID . '.jpg');
-         }
-      }
-
-      // SEARCH FOR IMAGENS IN THE CONTENT
-      foreach ($this->info['parts'] as $part) {
-         foreach ($part['spine'] as $spine_item) {
-            $found_images = preg_match_all(
-               '/(\<img.*?src=[\'|"])(.*?)([\'|"].*?\>)/mis',
-               $spine_item['content'],
-               $image_matches,
-            );
-
-            if (empty($found_images)) {
-               continue;
-            }
-
-            if (empty($image_matches[2])) {
-               continue;
-            }
-
-            foreach ($image_matches[2] as $url) {
-               if (is_environment('production')) {
-                  $url = str_replace($this->site_link . '/wp-content/uploads', 'https://cdn.altvers.net', $url);
-               }
-
-               $image_name = basename($url);
-
-               if (in_array($image_name, array_keys($this->images))) {
-                  continue;
-               }
-
-               $this->save_image($url);
-            }
-         }
-      }
    }
 
    private function add_nav()
@@ -609,7 +347,7 @@ final class Epub
       <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="{$this->lang}" lang="{$this->lang}">
       <head>
          <meta charset="utf-8" />
-         <link href="assets/blitz.css" type="text/css" rel="stylesheet" />
+         <link href="assets/hector.css" type="text/css" rel="stylesheet" />
          <title>{$this->title}</title>
       </head>
       <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="frontmatter">
@@ -935,7 +673,7 @@ final class Epub
             <item
                href="nav.xhtml" id="navid" media-type="application/xhtml+xml"
                properties="nav" />
-            <item href="assets/blitz.css" id="blitz.css" media-type="text/css" />
+            <item href="assets/hector.css" id="hector.css" media-type="text/css" />
 
             <item href="content/000-cover.xhtml"
                id="xhtml-000-cover"
@@ -977,62 +715,30 @@ final class Epub
    {
       $section_type = $spine_item['section_type'];
       $section      = EPUB_TEMPLATES[$section_type];
-      $body_type    = $section['type'];
-      $section_role = $section['role'];
+
+      $spine_item['body_type']    = $section['type'];
+      $spine_item['section_role'] = $section['role'];
 
       if ('epigraph' === $section_type) {
          $with_section = false;
       }
 
-      $content = '';
-
-      if ($spine_item['show_title'] ?? false && !empty($spine_item['title'])) {
-         $content .= "<h1>{$spine_item['title']}</h1>";
-      }
-
-      if ($spine_item['show_description'] ?? false && !empty($spine_item['excerpt'])) {
-         $content .= "<p class=\"section-description\">{$spine_item['excerpt']}</p>";
-      }
-
-      if ($spine_item['show_author'] ?? false && !empty($spine_item['author'])) {
-         $content .= "<p class=\"section-author\">{$spine_item['author']}</p>";
-      }
-
-      if ($apply_filter) {
-         $content .= Utils::parse_blocks($spine_item['content'], $section_type);
-
-         if (!empty($this->images)) {
-            foreach ($this->images as $new_image) {
-               $content = str_replace(
-                  $new_image['old'],
-                  $new_image['path'],
-                  $content,
-               );
-            }
+      if ($apply_filter && !empty($this->images)) {
+         foreach ($this->images as $new_image) {
+            $spine_item['content'] = str_replace(
+               $new_image['old'],
+               $new_image['path'],
+               $spine_item['content'],
+            );
          }
-      } else {
-         $content .= $spine_item['content'];
       }
 
-      if ($spine_item['show_date'] ?? false) {
-         $date_formats = [
-            'en' => 'F jS, Y',
-            'pt' => 'j \d\e F, Y',
-            'es' => 'j \d\e F, Y',
-         ];
+      $content = $this->get_section($spine_item, $with_section, $apply_filter);
 
-         $date = date_i18n($date_formats[$this->lang], $spine_item['date'], true);
+      $title = $spine_item['title'] ?? false;
 
-         $content .= "<p class=\"section-date\">{$date}</p>";
-      }
-
-      $section_start = '';
-      $section_end   = '';
-
-      if ($with_section) {
-         $section_start = "<section epub:type=\"{$section_type}\" role=\"doc-{$section_role}\" id=\"{$section_role}\">";
-
-         $section_end = '</section>';
+      if (empty($title)) {
+         $title = $this->title;
       }
 
       $template = <<<XML
@@ -1042,14 +748,12 @@ final class Epub
       <html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="{$this->lang}" lang="{$this->lang}">
       <head>
          <meta charset="utf-8" />
-         <title>{$this->title}</title>
-         <link href="../assets/blitz.css" type="text/css" rel="stylesheet" />
+         <title>{$title}</title>
+         <link href="../assets/hector.css" type="text/css" rel="stylesheet" />
       </head>
 
-      <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="{$body_type}">
-         {$section_start}
-            {$content}
-         {$section_end}
+      <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="{$spine_item['body_type']}">
+         {$content}
       </body>
       </html>
       XML;
@@ -1057,46 +761,69 @@ final class Epub
       $this->create_file("/OEBPS/content/{$key}-{$section_type}.xhtml", $template);
    }
 
-   private function add_title()
+   private function content()
    {
-      $subtitle = '';
+      // MIMETYPE
+      $this->create_file('/mimetype', 'application/epub+zip');
 
-      if (!empty($this->info['subtitle'])) {
-         $subtitle = <<<XML
-         <br /><span class="has-medium-font-size" epub:type="subtitle" role="doc-subtitle">{$this->info['subtitle']}</span>
-         XML;
+      // CSS
+      $style = $this->get_css();
+      $this->create_file('/OEBPS/assets/hector.css', $style);
+
+      // EPUB STUFF
+      $this->search_images();
+      $this->add_container();
+      $this->add_opf();
+      $this->add_nav();
+      $this->add_ncx();
+
+      // COVER
+      $this->add_cover();
+
+      // TITLE
+      $this->add_section('001', [
+         'section_type' => 'titlepage',
+         'content'      => $this->get_title(),
+      ], false);
+
+      // CREDITS
+      $this->add_credits();
+
+      // ADD CONTENT SECTIONS
+      foreach ($this->info['parts'] as $part_key => $part) {
+         if ($this->is_multipart) {
+            $this->add_division($part_key, $part);
+         }
+
+         foreach ($part['spine'] as $key => $spine_item) {
+            $key = str_pad($key + 3, 3, '0', STR_PAD_LEFT);
+            $this->add_section($key, $spine_item);
+         }
       }
 
-      $content = <<<XML
-      <?xml version="1.0" encoding="utf-8"?>
-      <!DOCTYPE html>
+      // BIO
+      $this->add_section(997, [
+         'title'        => $this->title_bio,
+         'section_type' => 'bio',
+         'content'      => $this->get_bio(false),
+      ], false, false);
 
-      <html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="{$this->lang}" lang="{$this->lang}">
-      <head>
-         <meta charset="utf-8" />
-         <title>{$this->title}</title>
-         <link href="../assets/blitz.css" type="text/css" rel="stylesheet" />
-      </head>
+      // CTA
+      $this->add_section(998, [
+         'title'        => $this->title_cta,
+         'section_type' => 'acknowledgments',
+         'content'      => $this->get_cta($this->version),
+      ], false);
 
-      <body xml:lang="{$this->lang}" lang="{$this->lang}" epub:type="frontmatter">
-         <section class="page-around" epub:type="titlepage" id="titlepage">
-            <h1 class="has-text-align-center" epub:type="fulltitle">
-               <span class="has-x-large-font-size" epub:type="title">{$this->title}</span>
-               {$subtitle}
-            </h1>
+      // COLOPHON
+      $this->add_section(999, [
+         'section_type' => 'colophon',
+         'content'      => $this->get_colophon(),
+      ], false);
 
-            <p class="has-text-align-center has-large-font-size">{$this->info['author']}</p>
-
-            <div>
-               <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
-               <p class="has-text-align-center has-medium-font-size">{$this->year}</p>
-            </div>
-         </section>
-      </body>
-      </html>
-      XML;
-
-      $this->create_file('/OEBPS/content/001-titlepage.xhtml', $content);
+      if ('amazon' === $this->version) {
+         update_post_meta($this->info['ID'], $this->count_key, $this->count_chars);
+      }
    }
 
    private function create_file($file, $content)
@@ -1110,7 +837,7 @@ final class Epub
       fclose($handle);
    }
 
-   private function save_image($url, $new_filename = null, $is_cover = false)
+   private function download_image($url, $new_filename = null, $is_cover = false)
    {
       $image_name = is_null($new_filename) ? basename($url) : $new_filename;
 
@@ -1136,58 +863,62 @@ final class Epub
       ];
    }
 
-   private function zip()
+   private function search_images()
    {
-      if (!extension_loaded('zip')) {
-         return debug('zip extension is not loaded');
+      if (!empty($this->info['cover'])) {
+         $this->download_image($this->info['cover'], 'cover.jpg', true);
       }
 
-      $file_name = Utils::get_filename($this->info['ID'], $this->version) . '.epub';
+      $asterism = \get_field('asterism', 'options');
 
-      $zip = new ZipArchive();
-
-      if (!$zip->open(HECTOR_FOLDER . $file_name, ZipArchive::CREATE)) {
-         return debug('Failed to create zip file.');
+      if (!empty($asterism)) {
+         $this->download_image(wp_get_attachment_image_url($asterism, 'full'), 'asterism.png');
       }
 
-      foreach ($this->folders as $folder) {
-         $files = scandir($folder);
+      $logo = \get_field('logo', 'options');
 
-         foreach ($files as $file) {
-            if ('.' === $file || '..' === $file) {
-               continue;
-            }
+      if (!empty($logo)) {
+         $this->download_image(wp_get_attachment_image_url($logo, 'full'), 'CtrlAltVerso.png');
+      }
 
-            $full_path = $folder . '/' . $file;
-
-            if (is_dir($full_path)) {
-               continue;
-            }
-
-            $checks = explode('.', $file);
-
-            if (empty($checks[1]) && 'mimetype' !== $file) {
-               continue;
-            }
-
-            $zip->addFile($full_path, str_replace($this->temp_folder . '/', '', $full_path));
-
-            $files_to_delete[] = $full_path;
+      if (!empty($this->info['authors'])) {
+         foreach ($this->info['authors'] as $author_ID => $_author) {
+            $avatar = get_avatar_url($author_ID, ['size' => 180]);
+            $this->download_image($avatar, 'avatar-' . $author_ID . '.jpg');
          }
       }
 
-      $zip->close();
+      // SEARCH FOR IMAGENS IN THE CONTENT
+      foreach ($this->info['parts'] as $part) {
+         foreach ($part['spine'] as $spine_item) {
+            $found_images = preg_match_all(
+               '/(\<img.*?src=[\'|"])(.*?)([\'|"].*?\>)/mis',
+               $spine_item['content'],
+               $image_matches,
+            );
 
-      foreach ($files_to_delete as $delete) {
-         unlink($delete);
+            if (empty($found_images)) {
+               continue;
+            }
+
+            if (empty($image_matches[2])) {
+               continue;
+            }
+
+            foreach ($image_matches[2] as $url) {
+               if (is_environment('production')) {
+                  $url = str_replace($this->site_link . '/wp-content/uploads', 'https://cdn.altvers.net', $url);
+               }
+
+               $image_name = basename($url);
+
+               if (in_array($image_name, array_keys($this->images))) {
+                  continue;
+               }
+
+               $this->download_image($url);
+            }
+         }
       }
-
-      $folders = array_reverse($this->folders);
-
-      foreach ($folders as $folder) {
-         rmdir($folder);
-      }
-
-      return $file_name;
    }
 }

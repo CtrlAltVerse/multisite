@@ -142,8 +142,6 @@ class Utils
 
       $content = '';
 
-      $image_local_url = home_url('/wp-content/uploads');
-
       foreach ($blocks as $block) {
          switch ($block['blockName']) {
             case 'core/paragraph':
@@ -153,30 +151,27 @@ class Utils
                   $align = $block['attrs']['align'] ?? 'justify';
 
                   if ('justify' === $align) {
-                     $block['innerHTML'] = str_replace('<p class="', '<p class="has-text-align-justify ', $block['innerHTML']);
-                     $block['innerHTML'] = str_replace('<p>', '<p class="has-text-align-justify">', $block['innerHTML']);
+                     $classes = 'has-text-align-justify';
+
+                     if (false !== $epub_type) {
+                        $classes .= ' hyphens-auto';
+                     }
+
+                     $block['innerHTML'] = str_replace('<p class="', "<p class=\"{$classes}", $block['innerHTML']);
+                     $block['innerHTML'] = str_replace('<p>', "<p class=\"{$classes}\">", $block['innerHTML']);
                   }
                }
                break;
 
             case 'core/list':
-               $block['innerHTML'] = $block['innerContent'][0];
-               $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
-               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
-               break;
-
-            case 'core/image':
-               if (is_environment('production')) {
-                  $block['innerHTML'] = str_replace($image_local_url, 'https://cdn.altvers.net', $block['innerHTML']);
-               }
-               break;
-
             case 'core/quote':
+            case 'core/details':
+            case 'core/group':
                $block['innerHTML'] = $block['innerContent'][0];
                $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
                $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
 
-               if ('epigraph' === $epub_type) {
+               if ('core/quote' === $block['blockName'] && 'epigraph' === $epub_type) {
                   $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
                }
 
@@ -200,13 +195,9 @@ class Utils
                }
                break;
 
-            case 'core/details':
-               $block['innerHTML'] = $block['innerContent'][0];
-               $block['innerHTML'] .= self::parse_blocks($block['innerBlocks'], $epub_type);
-               $block['innerHTML'] .= $block['innerContent'][count($block['innerContent']) - 1];
-               break;
-
             case null:
+            case 'core/verse':
+            case 'core/image':
             case 'core/code':
             case 'core/heading':
             case 'core/separator':

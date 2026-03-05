@@ -69,14 +69,14 @@ class Register_Admin
          wp_die();
       }
 
-      if (empty($_POST['type']) || empty($_POST['book_id']) || !is_numeric($_POST['book_id']) || !in_array($_POST['type'], ['epub', 'pdf'])) {
+      if (empty($_POST['type']) || empty($_POST['book_id']) || !is_numeric($_POST['book_id']) || !in_array($_POST['type'], ['epub', 'pdf', 'html'])) {
          return wp_send_json_error([], 403);
       }
 
       $book_id = (int) $_POST['book_id'];
       $type    = (string) $_POST['type'];
 
-      $book = new Book($book_id);
+      $book = new Book_Prep($book_id);
 
       if ('epub' === $type) {
          $filenames = $book->make_epub();
@@ -84,6 +84,10 @@ class Register_Admin
 
       if ('pdf' === $type) {
          $filenames = $book->make_pdf();
+      }
+
+      if ('html' === $type) {
+         $filenames = $book->make_html();
       }
 
       wp_send_json_success([
@@ -128,18 +132,19 @@ class Register_Admin
       }
 
       ?>
-<script>
+      <script>
          const ajaxUrl = '<?php echo esc_js($this->ajax_url); ?>';
          jQuery(function($) {
-            $('button[data-pdf],button[data-epub]').on('click', function() {
+            $('button[data-file]').on('click', function() {
                const button = $(this);
-               const bookId = button.data('pdf') ?? button.data('epub');
+               const bookId = button.data('file')
+               const type = button.data('type')
 
                button.prop('disabled', true).text('Gerando...');
 
                $.post(ajaxUrl, {
                   action: 'hector_generate_book',
-                  type: !!button.data('pdf') ? 'pdf' : 'epub',
+                  type,
                   book_id: bookId
                }).done(function() {
                   location.reload();
@@ -147,7 +152,7 @@ class Register_Admin
             });
          });
       </script>
-<?php
+      <?php
    }
 
    public function init()
@@ -223,17 +228,21 @@ class Register_Admin
       <thead>
          <tr>
             <th style="width: 15%">Produtos</th>
-            <th style="width: 20%">Capas</th>
-            <th style="width: 10%">Números</th>
-            <th style="width: 35%">EPUBs</th>
-            <th style="width: 20%">PDFs</th>
+            <th style="width: 18%">Capas</th>
+            <th style="width: 9%">Números</th>
+            <th style="width: 30%">EPUBs</th>
+            <th style="width: 9%">HTML</th>
+            <th style="width: 9%">PDF</th>
          </tr>
       </thead>
       <tbody>
          <?php foreach ($products as $product) { ?>
          <tr>
             <th>
-               <?php echo apply_filters('the_title', $product->get_name(), $product->get_id()); ?>
+               <a
+                  href="<?php echo get_edit_post_link($product->get_id()); ?>">
+                  <?php echo apply_filters('the_title', $product->get_name(), $product->get_id()); ?>
+               </a>
             </th>
             <td>
                <?php foreach ($image_sizes as $size => $label) {
@@ -275,7 +284,7 @@ class Register_Admin
             <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
-                       data-epub="<?php echo esc_attr($product->get_id()); ?>">
+                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="epub">
                   Gerar
                </button>
                <?php
@@ -305,10 +314,41 @@ class Register_Admin
                }
             ?>
             </td>
+
             <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
-                       data-pdf="<?php echo esc_attr($product->get_id()); ?>">
+                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="html">
+                  Gerar
+               </button>
+               <?php
+
+               $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id(), '') . '.html');
+
+                  if (!empty($files)) {
+                     foreach ($files as $file) {
+                        $filename = basename($file);
+
+                        ?>
+               <a class="button"
+                  download="<?php echo esc_attr($filename); ?>"
+                  href="<?php echo $this->ajax_url . '?' . http_build_query([
+                     'action' => 'hector_download_file',
+                     'file'   => $filename,
+                  ]); ?>">
+                  HTML
+               </a>
+               <?php
+
+                     }
+                  }
+               }
+            ?>
+            </td>
+            <td>
+               <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
+               <button class="button" type="button"
+                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="pdf">
                   Gerar
                </button>
                <?php

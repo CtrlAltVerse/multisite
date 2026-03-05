@@ -22,6 +22,10 @@ class Register
    {
       global $post;
 
+      if (empty($post)) {
+         return;
+      }
+
       if ('product' !== $post->post_type) {
          return;
       }
