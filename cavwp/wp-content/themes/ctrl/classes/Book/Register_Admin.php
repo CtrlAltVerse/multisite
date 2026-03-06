@@ -323,7 +323,7 @@ class Register_Admin
                </button>
                <?php
 
-               $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id(), '') . '.html');
+               $files = glob(HECTOR_FOLDER . Utils::get_filename($product->get_id(), 'print') . '.html');
 
                   if (!empty($files)) {
                      foreach ($files as $file) {

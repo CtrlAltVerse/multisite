@@ -173,6 +173,12 @@ class Book_Prep extends WC_Product_Grouped
          $section_type = 'chapter';
       }
 
+      $show_toc = get_field('show_toc', $chapter_ID);
+
+      if (!is_bool($show_toc)) {
+         $show_toc = true;
+      }
+
       return [
          'title'            => apply_filters('the_title', $chapter->post_title, $chapter_ID),
          'author'           => get_the_author_meta('display_name', $chapter->post_author),
@@ -181,7 +187,7 @@ class Book_Prep extends WC_Product_Grouped
          'show_title'       => get_field('show_title', $chapter_ID),
          'show_author'      => get_field('show_author', $chapter_ID),
          'show_description' => get_field('show_description', $chapter_ID),
-         'show_toc'         => get_field('show_toc', $chapter_ID),
+         'show_toc'         => $show_toc,
          'section_type'     => $section_type,
          'excerpt'          => $excerpt,
          'content'          => trim($chapter->post_content),

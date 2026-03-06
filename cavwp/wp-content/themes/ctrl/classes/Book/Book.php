@@ -17,6 +17,7 @@ class Book
    protected $title;
    protected $title_bio;
    protected $title_cta;
+   protected $title_nav;
    protected $type;
    protected $year;
 
@@ -38,6 +39,7 @@ class Book
       }
 
       $this->title_cta = esc_html__('Obrigado', 'ctrl');
+      $this->title_nav = esc_html__('Sumário', 'ctrl');
    }
 
    protected function get_bio()
@@ -124,7 +126,7 @@ class Book
          <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
          <figure class="{$bg_color} has-text-align-center no-reformat">
             <a href="{$this->site_link}" target="_blank">
-               <img class="mx-auto max-w-60" src="{$img}" />
+               <img class="mx-auto max-w-50" src="{$img}" />
             </a>
          </figure>
          <ul class="list-none has-text-align-center no-reformat">
@@ -199,13 +201,13 @@ class Book
       $isbn        = $this->info['isbn'] ?? '';
 
       $table = <<<HTML
-      <table class="has-monospace-font-family has-small-text-size border-y w-100 no-border mt-6 mb-6 max-w-table mx-auto">
+      <table class="has-monospace-font-family has-small-text-size border-y no-border mt-6 mb-6 max-w-table mx-auto">
          <tbody>
             <tr>
-               <td class="pt-5 pb-5 pr-6 pl-6 align-top">
+               <td class="pt-3 pl-4 align-top">
                   {$cutter}{$letter}
                </td>
-               <td class="pt-5 pb-5 pr-6 pl-6">
+               <td class="pt-3 pr-4 align-top">
                   <p>{$main_author}</p>
                   <p class="has-text-align-justify">{$title} / {$author}. - CtrlAltVerso, {$this->year}.</p>
                   <p class="has-text-align-justify">16 x 23cm</p>
@@ -217,7 +219,7 @@ class Book
             </tr>
             <tr>
                <td></td>
-               <td class="has-text-align-right">
+               <td class="pb-3 pr-4 has-text-align-right">
                   <p>CDD: </p>
                   <p>CDU: </p>
                </td>
@@ -291,7 +293,7 @@ class Book
       $subtitle = '';
 
       if (!empty($part['subtitle'])) {
-         $subtitle = "<p class=\"has-medium-font-size\">{$part['subtitle']}</p>";
+         $subtitle = "<p class=\"has-text-align-center has-medium-font-size\">{$part['subtitle']}</p>";
       }
 
       $spacing = '';
@@ -303,7 +305,7 @@ class Book
       return <<<HTML
       <div class="page-center">
          {$spacing}
-         <h1 class="has-large-font-size">{$part['title']}</h1>
+         <h1 class="has-text-align-center has-large-font-size mb-0 mt-0">{$part['title']}</h1>
          {$subtitle}
       </div>
       HTML;
@@ -315,7 +317,13 @@ class Book
 
       if ($with_section) {
          if ('epub' === $this->type) {
-            $content .= "<section epub:type=\"{$spine_item['body_type']}\" role=\"doc-{$spine_item['section_role']}\" id=\"{$spine_item['section_role']}\">";
+            $role = '';
+
+            if (!empty($spine_item['section_role'])) {
+               $role = "role=\"doc-{$spine_item['section_role']}\" id=\"{$spine_item['section_role']}\"";
+            }
+
+            $content .= "<section epub:type=\"{$spine_item['body_type']}\" {$role}>";
          } else {
             $content .= '<section>';
          }
@@ -404,7 +412,7 @@ class Book
       $spacing = '';
 
       if ('pdf' === $this->type) {
-         $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
+         $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
       }
 
       return <<<HTML
