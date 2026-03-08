@@ -238,8 +238,13 @@ class Book
                   ksort($candidates);
 
                   foreach ($candidates as $cdd => $label) {
-                     $categories_label .= ' 2. ' . $label;
-                     $category_cdd     .= '.' . $cdd;
+                     if (!empty($label)) {
+                        $categories_label .= ' 2. ' . $label;
+                     }
+
+                     if (!str_contains($category_cdd, '.')) {
+                        $category_cdd .= '.' . $cdd;
+                     }
                      break;
                   }
                }
