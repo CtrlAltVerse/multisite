@@ -1,6 +1,6 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;

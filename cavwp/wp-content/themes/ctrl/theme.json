@@ -21,10 +21,10 @@
          "fontStyle": false,
          "fontWeight": false,
          "letterSpacing": false,
-         "lineHeight": false,
+         "lineHeight": true,
          "textColumns": false,
          "textDecoration": false,
-         "textTransform": false,
+         "textTransform": true,
          "writingMode": false,
          "fontFamilies": [
             {
@@ -113,7 +113,6 @@
       "spacing": { "blockGap": "0.25rem" },
       "blocks": {
          "core/paragraph": {
-            "css": "&:not(.has-text-align-center,.has-text-align-left,.has-text-align-right){text-align:justify;text-indent:calc(var(--wp--style--block-gap) * 5);}",
             "variations": {
                "no-indent": {
                   "css": "text-indent:0;"
@@ -135,7 +134,7 @@
                "fontSize": "calc(var(--wp--style--block-gap) * 5))"
             },
             "spacing": { "margin": { "left": "auto", "right": "auto" } },
-            "css": "& em{font-style: normal}&{max-width: 560px}",
+            "css": "&{width: 90%} &.has-text-align-center{max-width: 650px}",
             "elements": {
                "cite": {
                   "typography": {

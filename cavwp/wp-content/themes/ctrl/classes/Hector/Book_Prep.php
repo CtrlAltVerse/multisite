@@ -1,6 +1,6 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 use WC_Product_Grouped;
 
@@ -45,6 +45,9 @@ class Book_Prep extends WC_Product_Grouped
       $info['subtitle']      = get_field('subtitle', $this->get_id());
       $info['short_title']   = get_field('short_title', $this->get_id());
       $info['edition_title'] = get_field('edition_title', $this->get_id());
+      $info['title_classes'] = get_field('title_classes', $this->get_id());
+      $info['edition']       = get_field('edition', $this->get_id());
+      $info['pages']         = get_field('pages', $this->get_id());
       $info['tags']          = $this->get_tag_ids();
       $info['release']       = get_post_meta($this->get_id(), 'release', true);
 

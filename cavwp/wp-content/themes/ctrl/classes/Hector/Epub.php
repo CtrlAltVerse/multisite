@@ -1,6 +1,6 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 use ZipArchive;
 
@@ -117,7 +117,7 @@ const EPUB_TEMPLATES = [
 final class Epub extends Book
 {
    private $count_chars = 0;
-   private $count_key   = 'chars_count';
+   private $count_words = 0;
    private $folders     = [];
    private $images      = [];
    private $temp_folder;
@@ -827,14 +827,19 @@ final class Epub extends Book
       ], false);
 
       if ('amazon' === $this->version) {
-         update_post_meta($this->info['ID'], $this->count_key, $this->count_chars);
+         update_post_meta($this->info['ID'], 'chars_count', $this->count_chars);
+         update_post_meta($this->info['ID'], 'words_count', $this->count_words);
       }
    }
 
    private function create_file($file, $content)
    {
       if (str_ends_with($file, '.xhtml') && 'amazon' === $this->version) {
-         $this->count_chars += strlen(trim(strip_tags($content)));
+         $text = trim(strip_tags($content));
+
+         $this->count_chars += strlen($text);
+         $this->count_words += str_word_count($text);
+         unset($text);
       }
 
       $handle = fopen($this->temp_folder . $file, 'w+');

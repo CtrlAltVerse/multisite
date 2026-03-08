@@ -1,11 +1,26 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 use cavWP\Utils as CavWPUtils;
 
 class Utils
 {
+   public static function add_fonts_google($echo = true)
+   {
+      $html = <<<'HTML'
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Jost:ital,wght@0,100..900;1,100..900&family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+      HTML;
+
+      if ($echo) {
+         echo $html;
+      } else {
+         return $html;
+      }
+   }
+
    public static function clean_content($content)
    {
       $content = str_replace('<br>', '<br/>', $content);
@@ -134,6 +149,7 @@ class Utils
 
       return "{$last}, {$names}";
    }
+
    public static function parse_blocks($blocks, $epub_type = false)
    {
       if (!is_array($blocks)) {
@@ -175,6 +191,12 @@ class Utils
                   $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
                }
 
+               break;
+
+            case 'core/pullquote':
+               if ('epigraph' === $epub_type) {
+                  $block['innerHTML'] = str_replace('<blockquote', '<blockquote epub:type="epigraph" role="doc-epigraph" id="epigraph"', $block['innerHTML']);
+               }
                break;
 
             case 'core/list-item':

@@ -1,15 +1,28 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 class Register
 {
    public function __construct()
    {
+      new Register_Admin();
+
       add_filter('acf/fields/post_object/query/name=part', [$this, 'filter_chapters'], 10, 3);
       add_filter('acf/load_field/name=role', [$this, 'set_contributors_choices']);
 
       add_filter('wp_get_attachment_image_src', [$this, 'set_attachment_url']);
+
+      add_action('admin_init', [$this, 'add_styles']);
+   }
+
+   public function add_styles()
+   {
+      foreach (BLOCK_STYLES as $block => $styles) {
+         foreach ($styles as $style) {
+            register_block_style($block, $style);
+         }
+      }
    }
 
    public function filter_chapters($field_args, $_field, $product_ID)

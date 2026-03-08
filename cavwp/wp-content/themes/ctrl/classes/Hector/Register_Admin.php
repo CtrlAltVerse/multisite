@@ -1,6 +1,6 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 class Register_Admin
 {
@@ -132,7 +132,7 @@ class Register_Admin
       }
 
       ?>
-      <script>
+<script>
          const ajaxUrl = '<?php echo esc_js($this->ajax_url); ?>';
          jQuery(function($) {
             $('button[data-file]').on('click', function() {
@@ -152,7 +152,7 @@ class Register_Admin
             });
          });
       </script>
-      <?php
+<?php
    }
 
    public function init()
@@ -266,17 +266,17 @@ class Register_Admin
                $chars_count = get_post_meta($product->get_id(), 'chars_count', true);
 
             if (!empty($chars_count)) {
-               echo $chars_count . ' caracteres';
+               echo number_format((int) $chars_count) . ' caracteres';
             }
 
-            $pages_count = get_post_meta($product->get_id(), 'pages_count', true);
+            $words_count = get_post_meta($product->get_id(), 'words_count', true);
 
-            if (!empty($chars_count) && !empty($pages_count)) {
+            if (!empty($chars_count) && !empty($words_count)) {
                echo '<br />';
             }
 
-            if (!empty($pages_count)) {
-               echo $pages_count . ' páginas';
+            if (!empty($words_count)) {
+               echo number_format((int) $words_count) . ' palavras';
             }
 
             ?>
@@ -284,7 +284,8 @@ class Register_Admin
             <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
-                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="epub">
+                       data-file="<?php echo esc_attr($product->get_id()); ?>"
+                       data-type="epub">
                   Gerar
                </button>
                <?php
@@ -318,7 +319,8 @@ class Register_Admin
             <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
-                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="html">
+                       data-file="<?php echo esc_attr($product->get_id()); ?>"
+                       data-type="html">
                   Gerar
                </button>
                <?php
@@ -348,7 +350,8 @@ class Register_Admin
             <td>
                <?php if (!empty(get_post_meta($product->get_id(), 'parts', true))) { ?>
                <button class="button" type="button"
-                       data-file="<?php echo esc_attr($product->get_id()); ?>" data-type="pdf">
+                       data-file="<?php echo esc_attr($product->get_id()); ?>"
+                       data-type="pdf">
                   Gerar
                </button>
                <?php

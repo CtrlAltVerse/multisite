@@ -2,21 +2,7 @@
 
 namespace ctrl;
 
-define('HECTOR_FOLDER', ABSPATH . 'hector' . DIRECTORY_SEPARATOR);
-define('HECTOR_EPUB_STORES', [
-   'amazon' => 'Amazon Kindle',
-   'kobo'   => 'Kobo',
-   'apple'  => 'Apple Books',
-   'google' => 'Google Books',
-]);
-define('HECTOR_PDF_FORMATS', [
-   'br' => '16×23cm',
-]);
-define('LOCALES', [
-   'en' => 'en_US',
-   'pt' => 'pt_BR',
-   'es' => 'es_ES',
-]);
+require 'constants.php';
 
 add_action('admin_init', function() {
    if (!is_dir(HECTOR_FOLDER)) {
@@ -37,8 +23,7 @@ function load_theme(): void
    new Register();
    new Product\Register();
    new Chapter\Register();
-   new Book\Register();
-   new Book\Register_Admin();
+   new Hector\Register();
    new tools\Register();
 }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace ctrl\Book;
+namespace ctrl\Hector;
 
 use cavWP\Models\User;
 use cavWP\Utils as CavWPUtils;
-use WP_Theme_JSON_Resolver;
+use NumberFormatter;
 
 class Book
 {
@@ -72,10 +72,12 @@ class Book
 
          $content .= <<<HTML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
-            <img src="{$img}" alt="" class="is-style-rounded" />
+            <figure class="wp-block-image is-style-rounded">
+               <img src="{$img}" alt="" />
+            </figure>
             <h2>{$author['name']}</h2>
             {$bio}
-            <ul>
+            <ul class="wp-block-list is-style-square">
                {$links}
             </ul>
          </section>
@@ -129,7 +131,7 @@ class Book
                <img class="mx-auto max-w-50" src="{$img}" />
             </a>
          </figure>
-         <ul class="list-none has-text-align-center no-reformat">
+         <ul class="wp-block-list is-style-none has-text-align-center no-reformat">
             <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
             {$links}
          </ul>
@@ -198,34 +200,82 @@ class Book
       $cutter      = get_user_meta(array_keys($this->info['authors'])[0], 'cutter', true);
       $letter      = strtolower(substr($this->title, 0, 1));
       $author      = rtrim($this->info['author'], '.');
-      $isbn        = $this->info['isbn'] ?? '';
+      $isbn        = '';
+
+      if (!empty($this->info['isbn'])) {
+         $isbn = 'ISBN: ' . $this->info['isbn'];
+      }
+      $edition = $this->info['edition'] ?? 1;
+      $pages   = $this->info['pages']   ?? 96;
+
+      $categories_label = '';
+      $category_cdd     = '';
+      $category_cdu     = '';
+
+      $main_category = $this->info['attributes']['tipo'] ?? false;
+
+      if (!empty($main_category)) {
+         $label = get_field('label', 'term:' . $main_category);
+
+         if (!empty($label)) {
+            $categories_label .= '1. ' . get_field('label', 'term:' . $main_category);
+            $category_cdd     .= get_field('cdd', 'term:' . $main_category);
+            $category_cdu     .= get_field('cdu', 'term:' . $main_category);
+
+            if (!empty($this->info['tags'])) {
+               foreach ($this->info['tags'] as $tag_ID) {
+                  $candidates[] = [
+                     'cdd'   => get_field('cdd', 'term:' . $tag_ID),
+                     'label' => get_field('label', 'term:' . $tag_ID),
+                  ];
+               }
+
+               if (!empty($candidates)) {
+                  $candidate = array_reduce($candidates, fn($carry, $candidate) => (int) $candidate['cdd'] < $carry, 9999);
+
+                  $categories_label .= ' 2. ' . $candidate['label'];
+                  $category_cdd     .= '.' . $candidate['cdd'];
+               }
+            }
+
+            if (!empty($category_cdd)) {
+               $category_cdd = 'CDD: ' . $category_cdd;
+            }
+
+            if (!empty($category_cdu)) {
+               $category_cdu = 'CDU: ' . $category_cdu;
+            }
+         }
+      }
 
       $table = <<<HTML
-      <table class="has-monospace-font-family has-small-text-size border-y no-border mt-6 mb-6 max-w-table mx-auto">
+      <figure class="wp-block-table is-style-filecard">
+      <table>
          <tbody>
             <tr>
                <td class="pt-3 pl-4 align-top">
                   {$cutter}{$letter}
                </td>
                <td class="pt-3 pr-4 align-top">
-                  <p>{$main_author}</p>
-                  <p class="has-text-align-justify">{$title} / {$author}. - CtrlAltVerso, {$this->year}.</p>
-                  <p class="has-text-align-justify">16 x 23cm</p>
+                  <div>{$main_author}</div>
+                  <div class="has-text-align-justify">{$title} / {$author}. - {$edition}ª ed. - CtrlAltVerso, {$this->year}.</div>
+                  <div class="has-text-align-justify">{$pages} p. 16 x 23cm</div>
                   <br/>
-                  <p>ISBN: {$isbn}</p>
+                  <div>{$isbn}</div>
                   <br/>
-                  <p>1. Ficção brasileira. I. Título.</p>
+                  <div>{$categories_label}. I. Título.</div>
                </td>
             </tr>
             <tr>
                <td></td>
                <td class="pb-3 pr-4 has-text-align-right">
-                  <p>CDD: </p>
-                  <p>CDU: </p>
+                  <p>{$category_cdd}</p>
+                  <p>{$category_cdu}</p>
                </td>
             </tr>
          </tbody>
       </table>
+      </figure>
       HTML;
 
       return [
@@ -239,21 +289,8 @@ class Book
    {
       $css = get_option('cav_hector_epub_style', '');
 
-      $settings = WP_Theme_JSON_Resolver::get_merged_data()->get_settings();
-      $colors   = array_merge($settings['color']['palette']['default'], $settings['color']['palette']['theme'] ?? []);
-
-      if (!empty($colors)) {
-         foreach ($colors as $color) {
-            $css .= <<<CSS
-            .has-{$color['slug']}-color {
-               color: {$color['color']};
-            }
-            .has-{$color['slug']}-background-color {
-               background-color: {$color['color']};
-            }
-            CSS;
-         }
-      }
+      $converter = new Theme_JSON_Converter();
+      $css .= $converter->get_css();
 
       return $css;
    }
@@ -374,10 +411,18 @@ class Book
          HTML;
       }
 
+      $title_classes = $this->info['title_classes'] ?? 'has-text-align-center mb-0 mt-0';
+
+      $title_main = $this->title;
+
+      if (str_contains($title_classes, 'spaces_to_nl')) {
+         $title_main = str_replace(' ', '<br/', $title_main);
+      }
+
       // TITLE
       $title = <<<HTML
-      <h1 class="has-text-align-center mb-0 mt-0" epub:type="fulltitle">
-         <span class="has-x-large-font-size" epub:type="title">{$this->title}</span>
+      <h1 class="{$title_classes}" epub:type="fulltitle">
+         <span class="has-x-large-font-size" epub:type="title">{$title_main}</span>
          {$subtitle}
       </h1>
       HTML;
@@ -386,6 +431,16 @@ class Book
       $author = <<<HTML
          <div class="has-text-align-center has-large-font-size mt-0 mb-0">{$this->info['author']}</div>
       HTML;
+
+      // EDITION
+      $formatter      = new NumberFormatter(LOCALES[$this->lang], NumberFormatter::ORDINAL);
+      $edition_number = $formatter->format($this->info['edition'] ?? 1);
+      $edition_number = str_replace('º', 'ª', $edition_number);
+
+      $edition = sprintf(
+         __('%s Edição', 'ctrl'),
+         $edition_number,
+      );
 
       $header = '';
       $footer = '';
@@ -404,7 +459,8 @@ class Book
          $footer = <<<HTML
          <div>
             <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
-            <p class="has-text-align-center has-medium-font-size">{$this->year}</p>
+            <p class="has-text-align-center">{$edition}</p>
+            <p class="has-text-align-center">{$this->year}</p>
          </div>
          HTML;
       }
@@ -415,8 +471,10 @@ class Book
          $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
       }
 
+      $classes = $face ? 'page-between' : 'page-center';
+
       return <<<HTML
-      <div class="page-between">
+      <div class="{$classes}">
          {$header}
          {$spacing}
          <div class="mt-8 mb-8">
