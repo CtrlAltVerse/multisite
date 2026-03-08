@@ -212,15 +212,16 @@ class Book
       $category_cdd     = '';
       $category_cdu     = '';
 
-      $main_category = $this->info['attributes']['tipo'] ?? false;
+      $main_category_slug = $this->info['attributes']['tipo'] ?? false;
 
-      if (!empty($main_category)) {
-         $label = get_field('label', 'term:' . $main_category);
+      if (!empty($main_category_slug)) {
+         $main_term = get_term_by('slug', $main_category_slug, 'pa_tipo');
+         $label     = get_field('label', 'term:' . $main_term->term_ID);
 
          if (!empty($label)) {
-            $categories_label .= '1. ' . get_field('label', 'term:' . $main_category);
-            $category_cdd     .= get_field('cdd', 'term:' . $main_category);
-            $category_cdu     .= get_field('cdu', 'term:' . $main_category);
+            $categories_label .= '1. ' . get_field('label', 'term:' . $main_term->term_ID);
+            $category_cdd     .= get_field('cdd', 'term:' . $main_term->term_ID);
+            $category_cdu     .= get_field('cdu', 'term:' . $main_term->term_ID);
 
             if (!empty($this->info['tags'])) {
                foreach ($this->info['tags'] as $tag_ID) {
