@@ -216,26 +216,32 @@ class Book
 
       if (!empty($main_category_slug)) {
          $main_term = get_term_by('slug', $main_category_slug, 'pa_tipo');
-         $label     = get_field('label', 'term:' . $main_term->term_ID);
+         $label     = get_field('label', 'term_' . $main_term->term_id);
 
          if (!empty($label)) {
-            $categories_label .= '1. ' . get_field('label', 'term:' . $main_term->term_ID);
-            $category_cdd     .= get_field('cdd', 'term:' . $main_term->term_ID);
-            $category_cdu     .= get_field('cdu', 'term:' . $main_term->term_ID);
+            $categories_label .= '1. ' . $label;
+            $category_cdd     .= get_field('cdd', 'term_' . $main_term->term_id);
+            $category_cdu     .= get_field('cdu', 'term_' . $main_term->term_id);
 
             if (!empty($this->info['tags'])) {
                foreach ($this->info['tags'] as $tag_ID) {
-                  $candidates[] = [
-                     'cdd'   => get_field('cdd', 'term:' . $tag_ID),
-                     'label' => get_field('label', 'term:' . $tag_ID),
-                  ];
+                  $cdd = get_field('cdd', 'term_' . $tag_ID);
+
+                  if (empty($cdd)) {
+                     continue;
+                  }
+
+                  $candidates[$cdd] = get_field('label', 'term_' . $tag_ID);
                }
 
                if (!empty($candidates)) {
-                  $candidate = array_reduce($candidates, fn($carry, $candidate) => (int) $candidate['cdd'] < $carry, 9999);
+                  ksort($candidates);
 
-                  $categories_label .= ' 2. ' . $candidate['label'];
-                  $category_cdd     .= '.' . $candidate['cdd'];
+                  foreach ($candidates as $cdd => $label) {
+                     $categories_label .= ' 2. ' . $label;
+                     $category_cdd     .= '.' . $cdd;
+                     break;
+                  }
                }
             }
 
