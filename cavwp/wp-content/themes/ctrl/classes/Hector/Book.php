@@ -416,7 +416,7 @@ class Book
       $title_main = $this->title;
 
       if (str_contains($title_classes, 'spaces_to_nl')) {
-         $title_main = str_replace(' ', '<br/', $title_main);
+         $title_main = str_replace(' ', '<br/>', $title_main);
       }
 
       // TITLE
