@@ -1,6 +1,6 @@
 <?php
 
-use ctrl\Book\Utils as BookUtils;
+use ctrl\Hector\Utils as BookUtils;
 
 get_component('header');
 

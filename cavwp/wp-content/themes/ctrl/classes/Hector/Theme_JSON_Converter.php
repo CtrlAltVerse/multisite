@@ -37,6 +37,11 @@ class Theme_JSON_Converter
 
    private function _style_for_block($block, $data, $variation = '', $element = '')
    {
+      $element = match ($element) {
+         'heading' => '.wp-block-heading',
+         default   => $element ,
+      };
+
       $element = match ($block) {
          'core/pullquote' => 'blockquote ',
          default          => '',
@@ -45,9 +50,9 @@ class Theme_JSON_Converter
       $block = str_replace('core/', '.wp-block-', $block);
 
       $block = match ($block) {
-         'link'    => 'a',
-         'heading' => '.wp-block-heading',
-         default   => $block,
+         'link' => 'a',
+
+         default => $block,
       };
 
       if (!empty($variation)) {

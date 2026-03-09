@@ -31,12 +31,14 @@ class HTML extends Book
       $credits = $this->get_credits();
 
       $content = <<<HTML
-      <section>
-         <p>{$credits['copyright']}</p>
+      <section class="page-between">
+         <div>
+            <p>{$credits['copyright']}</p>
 
-         <dl>
-            {$credits['list']}
-         </dl>
+            <dl>
+               {$credits['list']}
+            </dl>
+         </div>
 
          {$credits['table']}
       </section>

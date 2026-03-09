@@ -57,14 +57,16 @@ class Book
 
          if (!empty($author['link'])) {
             $site_text = esc_html__('Site pessoal', 'ctrl');
-            $links .= "<li><a href=\"{$author['link']}\" target=\"_blank\">{$site_text}</a></li>";
+            $link      = CavWPUtils::clean_domain($author['link']);
+            $links .= "<li><a href=\"{$author['link']}\" data-href=\"{$link}\" target=\"_blank\">{$site_text}</a></li>";
          }
 
          $author_o = new User($author_ID);
          $socials  = $author_o->get_socials();
 
          foreach ($socials as $social) {
-            $links .= "<li><a href=\"{$social['profile']}\" target=\"_blank\">{$social['name']}</a></li>";
+            $link = CavWPUtils::clean_domain($social['profile']);
+            $links .= "<li><a href=\"{$social['profile']}\" data-href=\"{$link}\" target=\"_blank\">{$social['name']}</a></li>";
          }
 
          $bio_content = explode(PHP_EOL, $author['bio'][$this->lang]);
@@ -431,6 +433,10 @@ class Book
          $title_main = str_replace(' ', '<br/>', $title_main);
       }
 
+      if ('epub' !== $this->type) {
+         $title_classes .= ' mt-12';
+      }
+
       // TITLE
       $title = <<<HTML
       <h1 class="{$title_classes}" epub:type="fulltitle">
@@ -468,11 +474,25 @@ class Book
             $middle = $title;
          }
 
+         $publisher      = '';
+         $publisher_logo = '';
+
+         if ('epub' === $this->type) {
+            $publisher = '<p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>';
+         } else {
+            $img = \wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'medium');
+
+            $publisher_logo = <<<HTML
+               <img class="block max-w-3xs mx-auto mt-12" src="{$img}" alt="CtrlAltVerso" />
+            HTML;
+         }
+
          $footer = <<<HTML
          <div>
-            <p class="has-text-align-center has-medium-font-size">CtrlAltVerso</p>
+            {$publisher}
             <p class="has-text-align-center">{$edition}</p>
             <p class="has-text-align-center">{$this->year}</p>
+            {$publisher_logo}
          </div>
          HTML;
       }
