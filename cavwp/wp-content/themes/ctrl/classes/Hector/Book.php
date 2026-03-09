@@ -483,7 +483,7 @@ class Book
             $img = \wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'medium');
 
             $publisher_logo = <<<HTML
-               <img class="block max-w-3xs mx-auto mt-12" src="{$img}" alt="CtrlAltVerso" />
+               <img class="block max-w-4xs mx-auto mt-12" src="{$img}" alt="CtrlAltVerso" />
             HTML;
          }
 

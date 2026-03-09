@@ -101,6 +101,8 @@ class Utils
          $user_unlocks = [];
       }
 
+      $rewards = [];
+
       foreach ($unlocks as $unlock) {
          $is_unlocked = in_array($unlock->ID, $user_unlocks);
          $objects     = get_field('object', $unlock->ID);
