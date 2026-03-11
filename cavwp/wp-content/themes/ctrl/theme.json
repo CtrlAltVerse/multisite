@@ -33,7 +33,7 @@
                "slug": "transitional"
             },
             {
-               "fontFamily": "'Inria Serif',Athelas, Literata, Bookerly, 'Merriweather Serif', Malabar, 'BN Malabar', Georgia, 'Droid Serif', serif;",
+               "fontFamily": "'Inria Serif',Athelas, Literata, Bookerly, 'Merriweather Serif', Malabar, 'BN Malabar', Georgia, 'Droid Serif', serif",
                "name": "Modern",
                "slug": "modern"
             },
@@ -43,12 +43,12 @@
                "slug": "neo-grotesque"
             },
             {
-               "fontFamily": "'Lato','Myriad Pro', Seravek, Ember, 'Trebuchet MS', 'BN Trebuchet MS', 'PT Sans', 'Frutiger Neue', Roboto, sans-serif;",
+               "fontFamily": "'Lato','Myriad Pro', Seravek, Ember, 'Trebuchet MS', 'BN Trebuchet MS', 'PT Sans', 'Frutiger Neue', Roboto, sans-serif",
                "name": "Humanist",
                "slug": "humanist"
             },
             {
-               "fontFamily": "'Jost',Futura, 'Century Gothic', 'Apple SD Gothic Neo', AppleGothic, sans-serif;",
+               "fontFamily": "'Jost',Futura, 'Century Gothic', 'Apple SD Gothic Neo', AppleGothic, sans-serif",
                "name": "Geometric",
                "slug": "geometric"
             },
@@ -98,6 +98,11 @@
          "core/pullquote": {
             "border": { "width": false, "radius": false }
          }
+      },
+      "custom": {
+         "images": {
+            "asterism": "https://cdn.altvers.net/sites/3/2026/02/asterism.png"
+         }
       }
    },
    "styles": {
@@ -115,7 +120,7 @@
          "core/paragraph": {
             "variations": {
                "no-indent": {
-                  "css": "text-indent:0;"
+                  "css": "text-indent:0"
                },
                "hanging": {
                   "spacing": {
@@ -123,7 +128,7 @@
                         "left": "calc(var(--wp--style--block-gap) * 5)"
                      }
                   },
-                  "css": "text-indent:calc(var(--wp--style--block-gap) * -5);"
+                  "css": "text-indent:calc(var(--wp--style--block-gap) * -5)"
                }
             }
          },
@@ -211,8 +216,7 @@
                      "fontStyle": "normal"
                   },
                   "color": {
-                     "text": "#000",
-                     "gradient": ""
+                     "text": "#000"
                   },
                   "background": {
                      "backgroundImage": "linear-gradient(90deg, rgb(234, 234, 234) 0%, rgb(255, 255, 255) 50%)"
@@ -319,7 +323,7 @@
                         "style": "solid"
                      }
                   },
-                  "css": "opacity: 0.5;"
+                  "css": "opacity: 0.5"
                },
                "asterism": {
                   "color": { "background": "transparent" },
@@ -335,9 +339,9 @@
                   "background": {
                      "backgroundRepeat": "no-repeat",
                      "backgroundPosition": "center",
-                     "backgroundImage": "url('https://cdn.altvers.net/sites/3/2026/02/asterism.png')"
+                     "backgroundImage": "url(var(--wp--custom--images--asterism))"
                   },
-                  "css": "opacity: 0.8;"
+                  "css": "opacity: 0.8"
                }
             }
          },
@@ -351,20 +355,20 @@
             "css": "& ol,ul{padding-left:calc(var(--wp--style--block-gap) * 4);margin: 0}",
             "variations": {
                "square": {
-                  "css": "list-style-type:square;"
+                  "css": "list-style-type:square"
                },
                "default": {
                   "css": "list-style-type:inherit"
                },
                "circle": {
-                  "css": "list-style-type:circle;"
+                  "css": "list-style-type:circle"
                },
                "none": {
                   "spacing": { "padding": { "left": "0" } },
                   "css": "list-style-type:none"
                },
                "horizontal": {
-                  "css": "display:flex; gap:calc(var(--wp--style--block-gap) * 4); list-style-type:none;"
+                  "css": "display:flex; gap:calc(var(--wp--style--block-gap) * 4); list-style-type:none"
                }
             }
          },

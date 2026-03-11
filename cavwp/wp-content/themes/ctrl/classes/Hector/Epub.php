@@ -119,7 +119,7 @@ final class Epub extends Book
    private $count_chars = 0;
    private $count_words = 0;
    private $folders     = [];
-   private $images      = [];
+
    private $temp_folder;
    private $uuid;
    private $version;
@@ -129,7 +129,7 @@ final class Epub extends Book
       $this->version = $version;
       $this->type    = 'epub';
 
-      $this->temp_folder = HECTOR_FOLDER . 'epub_' . $this->info['slug'] . '_' . $this->version;
+      $this->temp_folder = HECTOR_FOLDER . 'z_epub_' . $this->info['slug'] . '_' . $this->version;
 
       if (is_dir($this->temp_folder)) {
          return false;
@@ -769,7 +769,7 @@ final class Epub extends Book
       $this->create_file('/mimetype', 'application/epub+zip');
 
       // CSS
-      $style = $this->get_css();
+      $style = $this->get_css('epub');
       $this->create_file('/OEBPS/assets/hector.css', $style);
 
       // EPUB STUFF
@@ -847,23 +847,35 @@ final class Epub extends Book
       fclose($handle);
    }
 
-   private function download_image($url, $new_filename = null, $is_cover = false)
+   private function download_image($url, $new_filename = null, $is_cover = false, $add_extension = false)
    {
       $image_name = is_null($new_filename) ? basename($url) : $new_filename;
 
       $images_path = $this->temp_folder . '/OEBPS/assets/images/';
 
-      $image_type = @getimagesize($url);
+      if ($add_extension) {
+         $image_type = @getimagesize($url);
+
+         if (false === $image_type) {
+            return debug('Cannot get image type: ' . $url);
+         }
+
+         $image_name .= image_type_to_extension($image_type[2]);
+      }
+
+      if (!@copy($url, $images_path . $image_name)) {
+         return debug('Cannot copy ' . $url);
+      }
+
+      if (empty($image_type)) {
+         $image_type = getimagesize($images_path . $image_name);
+      }
 
       if (false === $image_type) {
          return debug('Cannot get image type: ' . $url);
       }
 
       $image_type = $image_type['mime'];
-
-      if (!@copy($url, $images_path . $image_name)) {
-         return debug('Cannot copy ' . $url);
-      }
 
       $this->images[$image_name] = [
          'old'   => $url,
@@ -894,7 +906,7 @@ final class Epub extends Book
       if (!empty($this->info['authors'])) {
          foreach ($this->info['authors'] as $author_ID => $_author) {
             $avatar = get_avatar_url($author_ID, ['size' => 180]);
-            $this->download_image($avatar, 'avatar-' . $author_ID . '.jpg');
+            $this->download_image($avatar, 'avatar-' . $author_ID, add_extension: true);
          }
       }
 

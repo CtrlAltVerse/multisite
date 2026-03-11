@@ -5,3 +5,4 @@ uploads/
 **/assets/*.min.*
 cavwp/ctrl_altvers_net.php
 wp-config.php
+cavwp/hector/*

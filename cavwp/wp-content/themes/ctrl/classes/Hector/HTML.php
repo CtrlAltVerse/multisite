@@ -67,7 +67,7 @@ class HTML extends Book
 
    private function add_header()
    {
-      $style = $this->get_css();
+      $style = $this->get_css('html');
 
       $this->content .= <<<HTML
       <!DOCTYPE html>

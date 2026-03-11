@@ -8,6 +8,8 @@ use NumberFormatter;
 
 class Book
 {
+   // epub only
+   protected $images = [];
    protected $info;
    protected $is_multipart;
    protected $lang;
@@ -45,10 +47,15 @@ class Book
    protected function get_bio()
    {
       $content = '';
+      $img     = '';
 
       foreach ($this->info['authors'] as $author_ID => $author) {
          if ('epub' === $this->type) {
-            $img = '../assets/images/avatar-' . $author_ID . '.jpg';
+            foreach ($this->images as $image_name => $image) {
+               if (str_starts_with($image_name, "avatar-{$author_ID}.")) {
+                  $img = $image['path'];
+               }
+            }
          } else {
             $img = get_avatar_url($author_ID, ['size' => 200]);
          }
@@ -74,12 +81,12 @@ class Book
 
          $content .= <<<HTML
          <section class="break-inside-avoid" epub:type="bio" role="doc-credit" id="bio-{$author_ID}">
-            <figure class="wp-block-image is-style-rounded">
+            <figure class="wp-block-image is-style-rounded mt-0 mb-0">
                <img src="{$img}" alt="" />
             </figure>
             <h2>{$author['name']}</h2>
             {$bio}
-            <ul class="wp-block-list is-style-square">
+            <ul class="wp-block-list is-style-square mb-0">
                {$links}
             </ul>
          </section>
@@ -299,11 +306,11 @@ class Book
       ];
    }
 
-   protected function get_css()
+   protected function get_css($target)
    {
       $css = get_option('cav_hector_epub_style', '');
 
-      $converter = new Theme_JSON_Converter();
+      $converter = new Theme_JSON_Converter($target);
       $css .= $converter->get_css();
 
       return $css;
@@ -315,18 +322,24 @@ class Book
 
       if (!empty($this->info['links'])) {
          foreach ($this->info['links'] as $stone_name => $store_link) {
+            if (empty($store_link)) {
+               continue;
+            }
+
             if (str_contains(strtolower($stone_name), $version) || str_contains($store_link, $version)) {
                break;
             }
          }
 
-         $link_text = sprintf(
-            esc_html__('%s na loja %s', 'ctrl'),
-            $this->title,
-            $stone_name,
-         );
+         if (!empty($store_link)) {
+            $link_text = sprintf(
+               esc_html__('%s na loja %s', 'ctrl'),
+               $this->title,
+               $stone_name,
+            );
 
-         $link = "<p class=\"has-text-align-justify mt-2\"><a href=\"{$store_link}\" target=\"_blank\">{$link_text}</a></p>";
+            $link = "<p class=\"has-text-align-justify mt-2\"><a href=\"{$store_link}\" target=\"_blank\">{$link_text}</a></p>";
+         }
       }
 
       $line1 = esc_html__('Agradecemos sua compra e principalmente pela leitura deste livro. Isto vale muito para nós. ', 'ctrl');

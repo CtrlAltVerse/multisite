@@ -125,7 +125,7 @@ final class Pdf extends Book
    private function content()
    {
       // CSS
-      $style = $this->get_css();
+      $style = $this->get_css('pdf');
       $this->mpdf->WriteHTML($style, HTMLParserMode::HEADER_CSS);
 
       // TITLE

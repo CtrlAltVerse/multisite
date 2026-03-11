@@ -19,6 +19,7 @@ class Theme_JSON_Converter
       $this->styles   = $theme_json['styles'];
 
       $this->_vars['--wp--style--block-gap'] = $this->styles['spacing']['blockGap'];
+      $this->populate_custom_vars();
    }
 
    public function get_css()
@@ -484,5 +485,27 @@ class Theme_JSON_Converter
       }
 
       $shadows = array_merge($this->settings['dimensions']['aspectRatios']['theme'] ?? [], $shadows);
+   }
+
+   private function populate_custom_vars()
+   {
+      if (empty($this->settings['custom'])) {
+         return;
+      }
+
+      foreach ($this->settings['custom'] as $major_key => $values) {
+         if (!is_array($values)) {
+            $this->_vars["--wp--custom--{$major_key}"] = $values;
+            continue;
+         }
+
+         foreach ($values as $minor_key => $value) {
+            if ('images' === $major_key && 'asterism' === $minor_key && 'epub' === $this->target) {
+               $value = 'images/asterism.png';
+            }
+
+            $this->_vars["--wp--custom--{$major_key}--{$minor_key}"] = $value;
+         }
+      }
    }
 }
