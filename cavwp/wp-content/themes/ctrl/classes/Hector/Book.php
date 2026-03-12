@@ -282,7 +282,7 @@ class Book
                   <div class="has-text-align-justify">{$title} / {$author}. - {$edition}ª ed. - CtrlAltVerso, {$this->year}.</div>
                   <div class="has-text-align-justify">{$pages} p. 16 x 23cm</div>
                   <br/>
-                  <div>{$isbn}</div>
+                  <div class="isbn">{$isbn}</div>
                   <br/>
                   <div>{$categories_label}. I. Título.</div>
                </td>
@@ -496,7 +496,7 @@ class Book
             $img = \wp_get_attachment_image_url(\get_field('logo_print', 'options'), 'medium');
 
             $publisher_logo = <<<HTML
-               <img class="block max-w-4xs mx-auto mt-12" src="{$img}" alt="CtrlAltVerso" />
+               <img class="block max-w-3xs mx-auto mt-9" src="{$img}" alt="CtrlAltVerso" />
             HTML;
          }
 

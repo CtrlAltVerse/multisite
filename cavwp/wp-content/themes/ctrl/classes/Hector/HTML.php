@@ -60,6 +60,16 @@ class HTML extends Book
    {
       $this->content .= <<<'HTML'
          </main>
+         <script>
+            const params = new URLSearchParams(location.search);
+            if(params.has('isbn')){
+               const mask = '###-#-########-#';
+               let isbn = params.get('isbn');
+               let i = 0;
+               document.querySelector('.isbn').textContent =
+                  'ISBN: ' + mask.split('').map((m) => '#'===m ? isbn[i++] : m).join('');
+            }
+         </script>
       </body>
       </html>
       HTML;

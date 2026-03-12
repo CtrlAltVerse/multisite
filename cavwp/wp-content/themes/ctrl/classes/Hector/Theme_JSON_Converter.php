@@ -414,15 +414,15 @@ class Theme_JSON_Converter
       $css = '';
 
       foreach ($families as $family) {
-         $css .= <<<CSS
-         .has-{$family['slug']}-font-family {
-            font-family: {$family['fontFamily']};
+         if ('pdf' === $this->target) {
+            $font_face = $family['slug'];
+         } else {
+            $font_face = $family['fontFamily'];
          }
 
-         @media print {
-            .has-{$family['slug']}-font-family {
-               font-family: {$family['slug']};
-            }
+         $css .= <<<CSS
+         .has-{$family['slug']}-font-family {
+            font-family: {$font_face};
          }
          CSS;
 
