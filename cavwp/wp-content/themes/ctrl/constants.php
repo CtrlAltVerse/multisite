@@ -76,14 +76,54 @@ define('BLOCK_STYLES', [
 ]);
 
 define('HECTOR_FOLDER', ABSPATH . 'hector' . DIRECTORY_SEPARATOR);
-define('HECTOR_EPUB_STORES', [
-   'amazon' => 'Amazon Kindle',
-   'kobo'   => 'Kobo',
-   'apple'  => 'Apple Books',
-   'google' => 'Google Books',
+define('HECTOR_EPUB_FORMATS', [
+   'amazon' => [
+      'label'     => 'Amazon Kindle',
+      'page_size' => 'Digital',
+   ],
+   'kobo' => [
+      'label'     => 'Kobo',
+      'page_size' => 'Digital',
+   ],
+   'apple' => [
+      'label'     => 'Apple Books',
+      'page_size' => 'Digital',
+   ],
+   'google' => [
+      'label'     => 'Google Books',
+      'page_size' => 'Digital',
+   ],
 ]);
 define('HECTOR_PDF_FORMATS', [
-   'br' => '16×23cm',
+   'a4' => [
+      'label'         => 'A4',
+      'page_size'     => '21×29.7cm',
+      'format'        => [210, 297],
+      'margin_top'    => 25,
+      'margin_bottom' => 35,
+      'margin_left'   => 20, // outer
+      'margin_right'  => 20, // inner
+   ],
+]);
+define('HECTOR_HTML_FORMATS', [
+   'us' => [
+      'label'         => 'KDP',
+      'page_size'     => '6×9in',
+      'format'        => [155.5, 228.6],
+      'margin_top'    => 13,
+      'margin_bottom' => 24,
+      'margin_left'   => 12, // outer
+      'margin_right'  => 10, // inner
+   ],
+   'br' => [
+      'label'         => 'Nacional',
+      'page_size'     => '16×23cm',
+      'format'        => [160,230],
+      'margin_top'    => 14.4,
+      'margin_bottom' => 24,
+      'margin_left'   => 14.5, // outer
+      'margin_right'  => 10, // inner
+   ],
 ]);
 define('LOCALES', [
    'en' => 'en_US',
