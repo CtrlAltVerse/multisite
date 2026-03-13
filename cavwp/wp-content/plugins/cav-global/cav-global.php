@@ -19,6 +19,7 @@ class CAV_Global
    public function __construct()
    {
       add_action('wp_dashboard_setup', [$this, 'register_widget']);
+      add_action('wp_user_dashboard_setup', [$this, 'register_widget']);
       add_action('wp_network_dashboard_setup', [$this, 'register_widget']);
 
       add_action('after_setup_theme', [$this, 'register_menu']);

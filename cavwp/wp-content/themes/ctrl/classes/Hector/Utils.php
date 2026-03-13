@@ -179,6 +179,12 @@ class Utils
                }
                break;
 
+            case 'core/nextpage':
+               if (false === $epub_type) {
+                  $block['innerHTML'] = '<div class="break-after-page break-after-always">&nbsp;</div>';
+               }
+               break;
+
             case 'core/list':
             case 'core/quote':
             case 'core/details':
