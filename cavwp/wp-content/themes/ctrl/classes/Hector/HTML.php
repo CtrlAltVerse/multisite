@@ -8,6 +8,8 @@ class HTML extends Book
 
    private function setup()
    {
+      $this->type = 'html';
+
       return is_dir(HECTOR_FOLDER);
    }
 
@@ -31,28 +33,28 @@ class HTML extends Book
       $credits = $this->get_credits();
 
       $content = <<<HTML
-      <section class="page-between">
-         <div>
-            <p>{$credits['copyright']}</p>
+      <div>
+         <p>{$credits['copyright']}</p>
 
-            <dl>
-               {$credits['list']}
-            </dl>
-         </div>
+         <dl>
+            {$credits['list']}
+         </dl>
+      </div>
 
-         {$credits['table']}
-      </section>
+      {$credits['table']}
       HTML;
 
       $this->add_section([
-         'content' => $content,
-      ], false);
+         'session_classes' => 'page-clean page-between break-before-always',
+         'content'         => $content,
+      ]);
    }
 
    private function add_division($part)
    {
       $this->add_section([
-         'content' => $this->get_division($part),
+         'session_classes' => 'page-clean page-center break-before-always',
+         'content'         => $this->get_division($part),
       ]);
    }
 
@@ -77,7 +79,7 @@ class HTML extends Book
 
    private function add_header()
    {
-      $style = $this->get_css('html');
+      $style = $this->get_css();
 
       $this->content .= <<<HTML
       <!DOCTYPE html>
@@ -89,7 +91,7 @@ class HTML extends Book
       HTML;
       $this->content .= Utils::add_fonts_google(false);
       $this->content .= <<<HTML
-         <title>{$this->title} — {$this->info['author']}</title>
+         <title>{$this->title}</title>
          <style type="text/css">
             {$style}
          </style>
@@ -99,10 +101,9 @@ class HTML extends Book
       HTML;
    }
 
-   private function add_section($snipe_item, $with_section = true, $apply_filter = true)
+   private function add_section($snipe_item)
    {
-      $this->content .= '<div class="break-before-always"></div>';
-      $this->content .= $this->get_section($snipe_item, $with_section, $apply_filter);
+      $this->content .= $this->get_section($snipe_item);
    }
 
    private function content()
@@ -111,7 +112,8 @@ class HTML extends Book
 
       // TITLE
       $this->add_section([
-         'content' => $this->get_title(false),
+         'session_classes' => 'page-clean page-center',
+         'content'         => $this->get_title(false),
       ]);
 
       // CREDITS
@@ -119,7 +121,8 @@ class HTML extends Book
 
       // FACE
       $this->add_section([
-         'content' => $this->get_title(),
+         'session_classes' => 'page-clean page-between break-before-always',
+         'content'         => $this->get_title(),
       ]);
 
       // ADD CONTENT SECTIONS
@@ -135,19 +138,22 @@ class HTML extends Book
 
       // BIO
       $this->add_section([
-         'title'   => $this->title_bio,
-         'content' => $this->get_bio(false),
-      ], false);
+         'session_classes' => 'page-clean break-before-right',
+         'title'           => $this->title_bio,
+         'content'         => $this->get_bio(false),
+      ]);
 
       // CTA
       $this->add_section([
-         'title'   => $this->title_cta,
-         'content' => $this->get_cta('CtrlAltVerso'),
+         'session_classes' => 'page-clean break-before-always',
+         'title'           => $this->title_cta,
+         'content'         => $this->get_cta('CtrlAltVerso'),
       ]);
 
       // COLOPHON
       $this->add_section([
-         'content' => $this->get_colophon(),
+         'session_classes' => 'page-clean break-before-left page-bottom',
+         'content'         => $this->get_colophon(),
       ]);
 
       $this->add_footer();
@@ -155,7 +161,7 @@ class HTML extends Book
 
    private function save()
    {
-      $filename = Utils::get_filename($this->info['ID'], 'print') . '.html';
+      $filename = Utils::get_filename($this->info['ID'], $this->version) . '.html';
 
       $handle = fopen(HECTOR_FOLDER . $filename, 'w+');
       fwrite($handle, $this->content);

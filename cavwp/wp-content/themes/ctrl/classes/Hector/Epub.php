@@ -84,13 +84,11 @@ const EPUB_TEMPLATES = [
       'type' => 'backmatter',
       'toc'  => false,
    ],
-   // blockquote p cite
    'epigraph' => [
       'role' => 'epigraph',
       'type' => 'frontmatter',
       'toc'  => false,
    ],
-   // dl dt dd
    'glossary' => [
       'role' => 'glossary',
       'type' => 'backmatter',
@@ -101,7 +99,6 @@ const EPUB_TEMPLATES = [
       'type' => 'backmatter',
       'toc'  => false,
    ],
-   // ul li
    'bibliography' => [
       'role' => 'bibliography',
       'type' => 'backmatter',
@@ -119,15 +116,12 @@ final class Epub extends Book
    private $count_chars = 0;
    private $count_words = 0;
    private $folders     = [];
-
    private $temp_folder;
    private $uuid;
-   private $version;
 
-   private function setup($version)
+   private function setup()
    {
-      $this->version = $version;
-      $this->type    = 'epub';
+      $this->type = 'epub';
 
       $this->temp_folder = HECTOR_FOLDER . 'z_epub_' . $this->info['slug'] . '_' . $this->version;
 
@@ -158,11 +152,11 @@ final class Epub extends Book
       return true;
    }
 
-   public function create($version)
+   public function create()
    {
       switch_to_locale(LOCALES[$this->lang]);
 
-      if (!$this->setup($version)) {
+      if (!$this->setup()) {
          return;
       }
 
@@ -769,7 +763,7 @@ final class Epub extends Book
       $this->create_file('/mimetype', 'application/epub+zip');
 
       // CSS
-      $style = $this->get_css('epub');
+      $style = $this->get_css();
       $this->create_file('/OEBPS/assets/hector.css', $style);
 
       // EPUB STUFF

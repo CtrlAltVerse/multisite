@@ -10,12 +10,10 @@ class Book_Prep extends WC_Product_Grouped
    {
       $info = $this->get_info('epub');
 
-      $versions = ['amazon', 'kobo', 'apple', 'google'];
-
-      foreach ($versions as $version) {
+      foreach (HECTOR_EPUB_FORMATS as $version => $config) {
          $info['cover'] = \get_the_post_thumbnail_url($this->get_id(), $version);
-         $epub          = new Epub($info);
-         $books[]       = $epub->create($version);
+         $epub          = new Epub($info, $version, $config);
+         $books[]       = $epub->create();
       }
 
       return $books;
@@ -24,17 +22,25 @@ class Book_Prep extends WC_Product_Grouped
    public function make_html()
    {
       $info = $this->get_info('print');
-      $html = new HTML($info);
 
-      return $html->create();
+      foreach (HECTOR_HTML_FORMATS as $version => $config) {
+         $html    = new HTML($info, $version, $config);
+         $books[] = $html->create();
+      }
+
+      return $books;
    }
 
    public function make_pdf()
    {
       $info = $this->get_info('print');
-      $pdf  = new Pdf($info);
 
-      return $pdf->create();
+      foreach (HECTOR_PDF_FORMATS as $version => $config) {
+         $pdf     = new PDF($info, $version, $config);
+         $books[] = $pdf->create();
+      }
+
+      return $books;
    }
 
    private function get_info($target = 'print')
@@ -168,7 +174,6 @@ class Book_Prep extends WC_Product_Grouped
    private function parse_chapter($chapter_ID)
    {
       $chapter = get_post($chapter_ID);
-      $excerpt = apply_filters('the_excerpt', trim($chapter->post_excerpt));
 
       $section_type = get_field('section_type', $chapter_ID);
 
@@ -191,8 +196,9 @@ class Book_Prep extends WC_Product_Grouped
          'show_author'      => get_field('show_author', $chapter_ID),
          'show_description' => get_field('show_description', $chapter_ID),
          'show_toc'         => $show_toc,
+         'session_classes'     => get_field('session_classes', $chapter_ID),
          'section_type'     => $section_type,
-         'excerpt'          => $excerpt,
+         'excerpt'          => apply_filters('the_excerpt', trim($chapter->post_excerpt)),
          'content'          => trim($chapter->post_content),
       ];
    }

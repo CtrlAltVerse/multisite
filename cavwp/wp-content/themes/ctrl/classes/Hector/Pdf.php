@@ -8,19 +8,16 @@ use Mpdf\Mpdf;
 require_once ABSPATH . 'vendor/autoload.php';
 
 const FONTS = [
-   // serif
    'default'      => 'Merriweather',
    'transitional' => 'SourceSerif4',
    'modern'       => 'InriaSerif',
-   // sans-serif
    'neogrotesque' => 'Inter',
    'humanist'     => 'Lato',
    'geometric'    => 'Jost',
-   // monospace
-   'monospace' => 'JetBrainsMono',
+   'monospace'    => 'JetBrainsMono',
 ];
 
-final class Pdf extends Book
+final class PDF extends Book
 {
    private $mpdf;
 
@@ -39,22 +36,21 @@ final class Pdf extends Book
          ];
       }
 
+      $config = $this->config;
+      unset($config['label']);
+
       $this->mpdf = new Mpdf([
          'mode'          => 'utf-8',
          'mirrorMargins' => 1,
-         'dpi'           => 200,
-         'img_dpi'       => 96,
-         'format'        => [160, 230],
+         'dpi'           => 300,
+         'img_dpi'       => 300,
          'margin_header' => 0,
          'margin_footer' => 0,
-         'margin_top'    => 14.4,
-         'margin_left'   => 11,
-         'margin_bottom' => 24,
-         'margin_right'  => 11,
          'tempDir'       => HECTOR_FOLDER,
          'fontDir'       => $fontDirs,
          'fontdata'      => $fontData,
          'default_font'  => 'pdffont0',
+         ...$config,
       ]);
 
       return true;
@@ -125,7 +121,7 @@ final class Pdf extends Book
    private function content()
    {
       // CSS
-      $style = $this->get_css('pdf');
+      $style = $this->get_css();
       $this->mpdf->WriteHTML($style, HTMLParserMode::HEADER_CSS);
 
       // TITLE
@@ -172,7 +168,7 @@ final class Pdf extends Book
 
    private function save()
    {
-      $filename = Utils::get_filename($this->info['ID'], 'br') . '.pdf';
+      $filename = Utils::get_filename($this->info['ID'], $this->version) . '.pdf';
 
       $this->mpdf->OutputFile(HECTOR_FOLDER . $filename);
 

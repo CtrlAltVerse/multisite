@@ -8,7 +8,9 @@ use NumberFormatter;
 
 class Book
 {
-   // epub only
+   protected $config;
+
+   /** ePub only */
    protected $images = [];
    protected $info;
    protected $is_multipart;
@@ -21,10 +23,13 @@ class Book
    protected $title_cta;
    protected $title_nav;
    protected $type;
+   protected $version;
    protected $year;
 
-   public function __construct($info)
+   public function __construct($info, $version, $config)
    {
+      $this->version      = $version;
+      $this->config       = $config;
       $this->info         = $info;
       $this->title        = $info['title'];
       $this->lang         = $info['attributes']['lang'] ?? 'pt';
@@ -132,19 +137,17 @@ class Book
       }
 
       return <<<HTML
-      <div class="page-bottom">
-         {$spacing}
-         <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
-         <figure class="{$bg_color} has-text-align-center no-reformat">
-            <a href="{$this->site_link}" target="_blank">
-               <img class="mx-auto max-w-50" src="{$img}" />
-            </a>
-         </figure>
-         <ul class="wp-block-list is-style-none has-text-align-center no-reformat">
-            <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
-            {$links}
-         </ul>
-      </div>
+      {$spacing}
+      <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
+      <figure class="{$bg_color} has-text-align-center no-reformat">
+         <a href="{$this->site_link}" target="_blank">
+            <img class="mx-auto max-w-50" src="{$img}" />
+         </a>
+      </figure>
+      <ul class="wp-block-list is-style-none has-text-align-center no-reformat">
+         <li><a href="{$this->site_link}" target="_blank">{$this->site_domain}</a></li>
+         {$links}
+      </ul>
       HTML;
    }
 
@@ -280,7 +283,7 @@ class Book
                <td class="pt-3 pr-4 align-top">
                   <div>{$main_author}</div>
                   <div class="has-text-align-justify">{$title} / {$author}. - {$edition}ª ed. - CtrlAltVerso, {$this->year}.</div>
-                  <div class="has-text-align-justify">{$pages} p. 16 x 23cm</div>
+                  <div class="has-text-align-justify">{$pages} p. {$this->config['page_size']}</div>
                   <br/>
                   <div class="isbn">{$isbn}</div>
                   <br/>
@@ -306,12 +309,30 @@ class Book
       ];
    }
 
-   protected function get_css($target)
+   protected function get_css()
    {
       $css = get_option('cav_hector_epub_style', '');
 
-      $converter = new Theme_JSON_Converter($target);
+      $converter = new Theme_JSON_Converter($this->type);
       $css .= $converter->get_css();
+
+      if ('html' === $this->type) {
+         $css .= <<<HTML
+         @media print{
+         @page {
+            size: {$this->config['format'][0]}mm {$this->config['format'][1]}mm;
+            margin-top: {$this->config['margin_top']}mm;
+            margin-bottom: {$this->config['margin_bottom']}mm;
+            margin-left: {$this->config['margin_left']}mm;
+            margin-right: {$this->config['margin_right']}mm;
+         }
+         @page :right {
+            margin-left: {$this->config['margin_right']}mm;
+            margin-right: {$this->config['margin_left']}mm;
+         }
+         }
+         HTML;
+      }
 
       return $css;
    }
@@ -338,7 +359,11 @@ class Book
                $stone_name,
             );
 
-            $link = "<p class=\"has-text-align-justify mt-2\"><a href=\"{$store_link}\" target=\"_blank\">{$link_text}</a></p>";
+            $store_link_lite = CavWPUtils::clean_domain($store_link);
+
+            $link = <<<HTML
+            <p class="has-text-align-justify mt-2"><a href="{$store_link}" data-href="{$store_link_lite}" target="_blank">{$link_text}</a></p>
+            HTML;
          }
       }
 
@@ -367,17 +392,17 @@ class Book
       }
 
       return <<<HTML
-      <div class="page-center">
-         {$spacing}
-         <h1 class="has-text-align-center has-large-font-size mb-0 mt-0">{$part['title']}</h1>
-         {$subtitle}
-      </div>
+      {$spacing}
+      <h1 class="has-text-align-center has-large-font-size mb-0 mt-0">{$part['title']}</h1>
+      {$subtitle}
       HTML;
    }
 
-   protected function get_section($spine_item, $with_section = true, $apply_filter = true)
+   protected function get_section($spine_item, $with_section = true)
    {
       $content = '';
+
+      $classes = $spine_item['session_classes'] ?? '';
 
       if ($with_section) {
          if ('epub' === $this->type) {
@@ -387,14 +412,14 @@ class Book
                $role = "role=\"doc-{$spine_item['section_role']}\" id=\"{$spine_item['section_role']}\"";
             }
 
-            $content .= "<section epub:type=\"{$spine_item['body_type']}\" {$role}>";
+            $content .= "<section class=\"{$classes}\" epub:type=\"{$spine_item['body_type']}\" {$role}>";
          } else {
-            $content .= '<section>';
+            $content .= "<section class=\"{$classes}\">";
          }
       }
 
       if ($spine_item['show_title'] ?? true && !empty($spine_item['title'])) {
-         $content .= "<h1>{$spine_item['title']}</h1>";
+         $content .= "<h1 class=\"session-title\">{$spine_item['title']}</h1>";
       }
 
       if ($spine_item['show_description'] ?? false && !empty($spine_item['excerpt'])) {
@@ -516,18 +541,14 @@ class Book
          $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
       }
 
-      $classes = $face ? 'page-between' : 'page-center';
-
       return <<<HTML
-      <div class="{$classes}">
-         {$header}
-         {$spacing}
-         <div class="mt-8 mb-8">
-            {$middle}
-         </div>
-         {$spacing}
-         {$footer}
+      {$header}
+      {$spacing}
+      <div class="mt-8 mb-8">
+         {$middle}
       </div>
+      {$spacing}
+      {$footer}
       HTML;
    }
 }
