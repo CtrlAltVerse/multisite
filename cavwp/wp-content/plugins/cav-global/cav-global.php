@@ -24,7 +24,7 @@ class CAV_Global
 
       add_action('after_setup_theme', [$this, 'register_menu']);
 
-      if (is_environment('local')) {
+      if (wp_get_environment_type() === 'local') {
          add_filter('acf/settings/show_admin', '__return_false');
       }
    }
