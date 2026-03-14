@@ -121,7 +121,7 @@ class HTML extends Book
 
       // FACE
       $this->add_section([
-         'layout'  => ['page-clean', 'page-between', 'break-before-always'],
+         'layout'  => ['page-clean', 'page-between', 'break-before-always', 'blank-before'],
          'content' => $this->get_title(),
       ]);
 
