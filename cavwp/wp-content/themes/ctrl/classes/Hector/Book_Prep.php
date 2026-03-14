@@ -52,6 +52,7 @@ class Book_Prep extends WC_Product_Grouped
       $info['short_title']   = get_field('short_title', $this->get_id());
       $info['edition_title'] = get_field('edition_title', $this->get_id());
       $info['title_classes'] = get_field('title_classes', $this->get_id());
+      $info['extra_pages'] = get_field('extra_pages', $this->get_id());
       $info['edition']       = get_field('edition', $this->get_id());
       $info['pages']         = get_field('pages', $this->get_id());
       $info['tags']          = $this->get_tag_ids();

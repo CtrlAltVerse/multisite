@@ -126,6 +126,12 @@ class Book
 
       $spacing = '';
 
+      if ('html' === $this->type && !empty($info['extra_pages'])) {
+         for ($i = 0; $i < (int) $info['extra_pages']; $i++) {
+            $spacing .= '<div class="break-after-always"></div>';
+         }
+      }
+
       if ('pdf' === $this->type) {
          $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
       }
