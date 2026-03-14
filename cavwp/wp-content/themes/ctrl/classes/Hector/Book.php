@@ -392,6 +392,14 @@ class Book
    {
       $spine_item['layout'] = empty($spine_item['layout']) ? [] : $spine_item['layout'];
 
+      foreach ($spine_item['layout'] as $key => $class) {
+         if (in_array($class, ['page-center', 'page-bottom', 'page-top', 'page-between', 'page-around'])) {
+            $page_layout = $class;
+            unset($spine_item['layout'][$key]);
+            break;
+         }
+      }
+
       $content = '';
       $classes = implode(' ', $spine_item['layout']);
 
@@ -411,6 +419,10 @@ class Book
 
       if (in_array('blank-before', $spine_item['layout']) && 'epub' !== $this->type) {
          $content .= '<div class="break-after-always"></div>';
+      }
+
+      if (!empty($page_layout)) {
+         $content .= "<div class=\"{$page_layout}\">";
       }
 
       if ($spine_item['show']['title'] ?? true && !empty($spine_item['title'])) {
@@ -439,8 +451,12 @@ class Book
          $content .= "<p class=\"section-date\">{$date}</p>";
       }
 
+      if (!empty($page_layout)) {
+         $content .= '</div>';
+      }
+
       if (in_array('blank-after', $spine_item['layout']) && 'epub' !== $this->type) {
-         $content .= '<div class="page-clean break-before-always"></div>';
+         $content .= '<div class="break-before-always"></div>';
       }
 
       if (in_array('add-extra-pages', $spine_item['layout']) && 'html' === $this->type && !empty($this->info['extra_pages'])) {
