@@ -109,30 +109,34 @@ class Book_Prep extends WC_Product_Grouped
 
       if (!empty($products)) {
          foreach ($products as $product) {
-            $product = wc_get_product($product);
+            $product    = wc_get_product($product);
+            $attributes = $product->get_attributes();
 
-            $cat  = $product->get_category_ids()[0];
-            $type = get_term($cat, 'product_cat')->slug;
+            if (empty($attributes['pa_store'])) {
+               continue;
+            }
 
-            if ($target === $type) {
-               $date_created = $product->get_date_created();
+            $store = $attributes['pa_store']->get_terms()[0];
 
-               if (!empty($date_created)) {
-                  $info['release'] = $date_created->date('Y-m-d\TH:i:s\Z');
-               }
+            $info['versions'][$store->slug]['name'] = $store->name;
 
-               if (!empty($isbn = $product->get_global_unique_id())) {
-                  $info['isbn'] = $isbn;
-               }
+            $date_created = $product->get_date_created();
+
+            if (!empty($date_created)) {
+               $info['versions'][$store->slug]['release'] = $date_created->date('Y-m-d\TH:i:s\Z');
+            }
+
+            if (!empty($isbn = $product->get_global_unique_id())) {
+               $info['versions'][$store->slug]['isbn'] = $isbn;
             }
 
             if ('external' === $product->get_type()) {
                /** @disregard */
-               $info['links'][$product->get_name()] = $product->get_product_url();
+               $info['versions'][$store->slug]['link'] = $product->get_product_url();
             }
 
             if ('single' === $product->get_type()) {
-               $info['links']['CtrlAltVerso'] = get_permalink($this->get_id());
+               $info['versions'][$store->slug]['link'] = get_permalink($this->get_id());
             }
          }
       }
@@ -181,25 +185,23 @@ class Book_Prep extends WC_Product_Grouped
          $section_type = 'chapter';
       }
 
-      $show_toc = get_field('show_toc', $chapter_ID);
+      $layout = get_field('layout', $chapter_ID);
 
-      if (!is_bool($show_toc)) {
-         $show_toc = true;
+      if (empty($layout)) {
+         $layout = [];
+      } else {
+         $layout = array_keys(array_filter($layout));
       }
 
       return [
-         'title'            => apply_filters('the_title', $chapter->post_title, $chapter_ID),
-         'author'           => get_the_author_meta('display_name', $chapter->post_author),
-         'date'             => $chapter->post_date_gmt,
-         'show_date'        => get_field('show_date', $chapter_ID),
-         'show_title'       => get_field('show_title', $chapter_ID),
-         'show_author'      => get_field('show_author', $chapter_ID),
-         'show_description' => get_field('show_description', $chapter_ID),
-         'show_toc'         => $show_toc,
-         'session_classes'     => get_field('session_classes', $chapter_ID),
-         'section_type'     => $section_type,
-         'excerpt'          => apply_filters('the_excerpt', trim($chapter->post_excerpt)),
-         'content'          => trim($chapter->post_content),
+         'title'        => apply_filters('the_title', $chapter->post_title, $chapter_ID),
+         'author'       => get_the_author_meta('display_name', $chapter->post_author),
+         'excerpt'      => apply_filters('the_excerpt', trim($chapter->post_excerpt)),
+         'content'      => trim($chapter->post_content),
+         'date'         => $chapter->post_date_gmt,
+         'section_type' => $section_type,
+         'show'         => get_field('show', $chapter_ID),
+         'layout'       => $layout,
       ];
    }
 }

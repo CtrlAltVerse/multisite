@@ -254,10 +254,10 @@ final class Epub extends Book
    {
       $credits = $this->get_credits();
 
-      if (!empty($this->info['isbn'])) {
+      if (!empty($this->info['versions'][$this->version]['isbn'])) {
          $credits['list'] .= <<<HTML
             <dt>ISBN</dt>
-            <dd>{$this->info['isbn']}</dd>
+            <dd>{$this->info['versions'][$this->version]['isbn']}</dd>
          HTML;
       }
 
@@ -310,7 +310,7 @@ final class Epub extends Book
          }
 
          foreach ($part['spine'] as $key => $spine_item) {
-            if (empty($spine_item['show_toc'])) {
+            if (empty($spine_item['show']['toc'])) {
                continue;
             }
 
@@ -382,7 +382,7 @@ final class Epub extends Book
          }
 
          foreach ($part['spine'] as $key => $spine_item) {
-            if (empty($spine_item['show_toc'])) {
+            if (empty($spine_item['show']['toc'])) {
                continue;
             }
 
@@ -448,9 +448,9 @@ final class Epub extends Book
 
       $isbn = '';
 
-      if (!empty($this->info['isbn'])) {
+      if (!empty($this->info['versions'][$this->version]['isbn'])) {
          $isbn .= <<<XML
-         <meta refines="#BookId" property="identifier-type" scheme="onix:codelist5">{$this->info['isbn']}</meta>
+         <meta refines="#BookId" property="identifier-type" scheme="onix:codelist5">{$this->info['versions'][$this->version]['isbn']}</meta>
          XML;
       }
 
@@ -811,7 +811,7 @@ final class Epub extends Book
       $this->add_section(998, [
          'title'        => $this->title_cta,
          'section_type' => 'acknowledgments',
-         'content'      => $this->get_cta($this->version),
+         'content'      => $this->get_cta(),
       ], false);
 
       // COLOPHON

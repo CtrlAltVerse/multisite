@@ -78,20 +78,24 @@ define('BLOCK_STYLES', [
 define('HECTOR_FOLDER', ABSPATH . 'hector' . DIRECTORY_SEPARATOR);
 define('HECTOR_EPUB_FORMATS', [
    'amazon' => [
-      'label'     => 'Amazon Kindle',
-      'page_size' => 'Digital',
+      'label'        => 'Kindle',
+      'page_size'    => 'Digital',
+      'product_name' => 'Amazon',
    ],
    'kobo' => [
-      'label'     => 'Kobo',
-      'page_size' => 'Digital',
+      'label'        => 'Kobo',
+      'page_size'    => 'Digital',
+      'product_name' => 'Kobo',
    ],
    'apple' => [
-      'label'     => 'Apple Books',
-      'page_size' => 'Digital',
+      'label'        => 'Apple Books',
+      'page_size'    => 'Digital',
+      'product_name' => 'Apple',
    ],
    'google' => [
-      'label'     => 'Google Books',
-      'page_size' => 'Digital',
+      'label'        => 'Google Books',
+      'page_size'    => 'Digital',
+      'product_name' => 'Google',
    ],
 ]);
 define('HECTOR_PDF_FORMATS', [
@@ -108,8 +112,10 @@ define('HECTOR_PDF_FORMATS', [
 define('HECTOR_HTML_FORMATS', [
    'us' => [
       'label'         => 'KDP',
+      'product_name'  => 'Importado',
+      'product_type'  => 'external',
       'page_size'     => '6×9in',
-      'format'        => [155.5, 228.6],
+      'format'        => [155.5, '228.6'],
       'margin_top'    => 13,
       'margin_bottom' => 24,
       'margin_left'   => 12, // outer
@@ -117,8 +123,10 @@ define('HECTOR_HTML_FORMATS', [
    ],
    'br' => [
       'label'         => 'Nacional',
+      'product_name'  => 'Impresso',
+      'product_type'  => 'simple',
       'page_size'     => '16×23cm',
-      'format'        => [160,230],
+      'format'        => [160, 230],
       'margin_top'    => 14.4,
       'margin_bottom' => 24,
       'margin_left'   => 14.5, // outer

@@ -181,7 +181,7 @@ class Utils
 
             case 'core/nextpage':
                if (false === $epub_type) {
-                  $block['innerHTML'] = '<div class="break-after-page break-after-always">&nbsp;</div>';
+                  $block['innerHTML'] = '<div class="break-after-always">&nbsp;</div>';
                }
                break;
 
@@ -225,6 +225,7 @@ class Utils
 
             case null:
             case 'core/verse':
+            case 'core/spacer':
             case 'core/image':
             case 'core/code':
             case 'core/heading':

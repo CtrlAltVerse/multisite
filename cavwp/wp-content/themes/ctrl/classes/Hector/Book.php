@@ -214,8 +214,8 @@ class Book
       $author      = rtrim($this->info['author'], '.');
       $isbn        = '';
 
-      if (!empty($this->info['isbn'])) {
-         $isbn = 'ISBN: ' . $this->info['isbn'];
+      if (!empty($this->info['versions'][$this->version]['isbn'])) {
+         $isbn = 'ISBN: ' . $this->info['versions'][$this->version]['isbn'];
       }
       $edition = $this->info['edition'] ?? 1;
       $pages   = $this->info['pages']   ?? 96;
@@ -319,17 +319,17 @@ class Book
       if ('html' === $this->type) {
          $css .= <<<HTML
          @media print{
-         @page {
-            size: {$this->config['format'][0]}mm {$this->config['format'][1]}mm;
-            margin-top: {$this->config['margin_top']}mm;
-            margin-bottom: {$this->config['margin_bottom']}mm;
-            margin-left: {$this->config['margin_left']}mm;
-            margin-right: {$this->config['margin_right']}mm;
-         }
-         @page :right {
-            margin-left: {$this->config['margin_right']}mm;
-            margin-right: {$this->config['margin_left']}mm;
-         }
+            @page{
+               size: {$this->config['format'][0]}mm {$this->config['format'][1]}mm;
+               margin-top: {$this->config['margin_top']}mm;
+               margin-bottom: {$this->config['margin_bottom']}mm;
+               margin-left: {$this->config['margin_left']}mm;
+               margin-right: {$this->config['margin_right']}mm;
+            }
+            @page :right {
+               margin-left: {$this->config['margin_right']}mm;
+               margin-right: {$this->config['margin_left']}mm;
+            }
          }
          HTML;
       }
@@ -337,34 +337,24 @@ class Book
       return $css;
    }
 
-   protected function get_cta($version)
+   protected function get_cta()
    {
       $link = '';
 
-      if (!empty($this->info['links'])) {
-         foreach ($this->info['links'] as $stone_name => $store_link) {
-            if (empty($store_link)) {
-               continue;
-            }
+      if (!empty($this->info['versions'][$this->version]['link'])) {
+         $store_link = $this->info['versions'][$this->version]['link'];
 
-            if (str_contains(strtolower($stone_name), $version) || str_contains($store_link, $version)) {
-               break;
-            }
-         }
+         $link_text = sprintf(
+            esc_html__('%s na loja %s', 'ctrl'),
+            $this->title,
+            $this->info['versions'][$this->version]['name'],
+         );
 
-         if (!empty($store_link)) {
-            $link_text = sprintf(
-               esc_html__('%s na loja %s', 'ctrl'),
-               $this->title,
-               $stone_name,
-            );
+         $store_link_lite = CavWPUtils::clean_domain($store_link);
 
-            $store_link_lite = CavWPUtils::clean_domain($store_link);
-
-            $link = <<<HTML
-            <p class="has-text-align-justify mt-2"><a href="{$store_link}" data-href="{$store_link_lite}" target="_blank">{$link_text}</a></p>
-            HTML;
-         }
+         $link = <<<HTML
+         <p class="has-text-align-justify mt-2"><a href="{$store_link}" data-href="{$store_link_lite}" target="_blank">{$link_text}</a></p>
+         HTML;
       }
 
       $line1 = esc_html__('Agradecemos sua compra e principalmente pela leitura deste livro. Isto vale muito para nós. ', 'ctrl');
@@ -400,9 +390,10 @@ class Book
 
    protected function get_section($spine_item, $with_section = true)
    {
-      $content = '';
+      $spine_item['layout'] = empty($spine_item['layout']) ? [] : $spine_item['layout'];
 
-      $classes = $spine_item['session_classes'] ?? '';
+      $content = '';
+      $classes = implode(' ', $spine_item['layout']);
 
       if ($with_section) {
          if ('epub' === $this->type) {
@@ -418,21 +409,25 @@ class Book
          }
       }
 
-      if ($spine_item['show_title'] ?? true && !empty($spine_item['title'])) {
+      if (in_array('blank-before', $spine_item['layout']) && 'epub' !== $this->type) {
+         $content .= '<div class="break-after-always"></div>';
+      }
+
+      if ($spine_item['show']['title'] ?? true && !empty($spine_item['title'])) {
          $content .= "<h1 class=\"session-title\">{$spine_item['title']}</h1>";
       }
 
-      if ($spine_item['show_description'] ?? false && !empty($spine_item['excerpt'])) {
+      if ($spine_item['show']['description'] ?? false && !empty($spine_item['excerpt'])) {
          $content .= "<p class=\"section-description\">{$spine_item['excerpt']}</p>";
       }
 
-      if ($spine_item['show_author'] ?? false && !empty($spine_item['author'])) {
+      if ($spine_item['show']['author'] ?? false && !empty($spine_item['author'])) {
          $content .= "<p class=\"section-author\">{$spine_item['author']}</p>";
       }
 
       $content .= Utils::parse_blocks($spine_item['content']);
 
-      if ($spine_item['show_date'] ?? false) {
+      if ($spine_item['show']['date'] ?? false) {
          $date_formats = [
             'en' => 'F jS, Y',
             'pt' => 'j \d\e F, Y',
@@ -442,6 +437,10 @@ class Book
          $date = date_i18n($date_formats[$this->lang], $spine_item['date'], true);
 
          $content .= "<p class=\"section-date\">{$date}</p>";
+      }
+
+      if (in_array('blank-after', $spine_item['layout']) && 'epub' !== $this->type) {
+         $content .= '<div class="page-clean break-before-always"></div>';
       }
 
       if ($with_section) {

@@ -22,7 +22,7 @@ $products = \wc_get_products([
    </h1>
    <h2>Download de Arquivos</h2>
    <table class="widefat striped">
-      <thead>
+         <thead>
          <tr>
             <th style="width: 15%">Produtos</th>
             <th style="width: 18%">Capas</th>
@@ -41,8 +41,13 @@ $products = \wc_get_products([
                      href="<?php echo get_edit_post_link($product_ID); ?>">
                      <?php echo apply_filters('the_title', $product->get_name(), $product_ID); ?>
                   </a></strong><br />
-               <em><a
-                     href="<?php echo admin_url("edit.php?post_type=chapter&book={$product_ID}"); ?>">(Capítulos)</a></em>
+               <em>
+                  <a
+                     href="<?php echo admin_url("edit.php?post_type=chapter&book={$product_ID}"); ?>">Capítulos</a>
+                     &bull;
+                  <a
+                     href="<?php echo admin_url("edit.php?post_type=product&book={$product_ID}"); ?>">Lojas</a>
+               </em>
             </th>
             <td>
                <?php foreach ($image_sizes as $size => $label) { ?>

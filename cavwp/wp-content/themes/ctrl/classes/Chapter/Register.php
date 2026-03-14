@@ -189,7 +189,7 @@ class Register
       ]);
 
       echo '<select name="book">';
-      echo '<option value="">Todos os livros</option>';
+      echo '<option value="">Filtrar por livro</option>';
 
       foreach ($books as $book) {
          printf(

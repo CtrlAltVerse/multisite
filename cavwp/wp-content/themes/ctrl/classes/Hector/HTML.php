@@ -45,16 +45,16 @@ class HTML extends Book
       HTML;
 
       $this->add_section([
-         'session_classes' => 'page-clean page-between break-before-always',
-         'content'         => $content,
+         'layout'  => ['page-clean', 'page-between', 'break-before-always'],
+         'content' => $content,
       ]);
    }
 
    private function add_division($part)
    {
       $this->add_section([
-         'session_classes' => 'page-clean page-center break-before-always',
-         'content'         => $this->get_division($part),
+         'layout'  => ['page-clean', 'page-center', 'break-before-always'],
+         'content' => $this->get_division($part),
       ]);
    }
 
@@ -112,8 +112,8 @@ class HTML extends Book
 
       // TITLE
       $this->add_section([
-         'session_classes' => 'page-clean page-center',
-         'content'         => $this->get_title(false),
+         'layout'  => ['page-clean', 'page-center'],
+         'content' => $this->get_title(false),
       ]);
 
       // CREDITS
@@ -121,8 +121,8 @@ class HTML extends Book
 
       // FACE
       $this->add_section([
-         'session_classes' => 'page-clean page-between break-before-always',
-         'content'         => $this->get_title(),
+         'layout'  => ['page-clean', 'page-between', 'break-before-always'],
+         'content' => $this->get_title(),
       ]);
 
       // ADD CONTENT SECTIONS
@@ -138,22 +138,22 @@ class HTML extends Book
 
       // BIO
       $this->add_section([
-         'session_classes' => 'page-clean break-before-right',
-         'title'           => $this->title_bio,
-         'content'         => $this->get_bio(false),
+         'layout'  => ['page-clean', 'break-before-right'],
+         'title'   => $this->title_bio,
+         'content' => $this->get_bio(false),
       ]);
 
       // CTA
       $this->add_section([
-         'session_classes' => 'page-clean break-before-always',
-         'title'           => $this->title_cta,
-         'content'         => $this->get_cta('CtrlAltVerso'),
+         'layout'  => ['page-clean', 'break-before-always'],
+         'title'   => $this->title_cta,
+         'content' => $this->get_cta('CtrlAltVerso'),
       ]);
 
       // COLOPHON
       $this->add_section([
-         'session_classes' => 'page-clean break-before-left page-bottom',
-         'content'         => $this->get_colophon(),
+         'layout'  => ['page-clean', 'break-before-left', 'page-bottom'],
+         'content' => $this->get_colophon(),
       ]);
 
       $this->add_footer();
