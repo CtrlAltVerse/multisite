@@ -138,7 +138,7 @@ class Book
 
       return <<<HTML
       {$spacing}
-      <p class="has-medium-font-size has-text-align-center"><strong>{$title}</strong></p>
+      <p class="has-medium-font-size has-text-align-center has-monospace-font-family"><strong>{$title}</strong></p>
       <figure class="{$bg_color} has-text-align-center no-reformat">
          <a href="{$this->site_link}" target="_blank">
             <img class="mx-auto max-w-50" src="{$img}" />
@@ -456,12 +456,12 @@ class Book
       }
 
       if (in_array('blank-after', $spine_item['layout']) && 'epub' !== $this->type) {
-         $content .= '<div class="break-before-always"></div>';
+         $content .= '<div class="break-before-always page-clean"></div>';
       }
 
       if (in_array('add-extra-pages', $spine_item['layout']) && 'html' === $this->type && !empty($this->info['extra_pages'])) {
          for ($i = 0; $i < $this->info['extra_pages']; $i++) {
-            $content .= '<div class="break-before-always"></div>';
+            $content .= '<div class="break-before-always page-clean"></div>';
          }
       }
 

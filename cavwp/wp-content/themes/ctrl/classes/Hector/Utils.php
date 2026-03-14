@@ -173,7 +173,7 @@ class Utils
                         $classes .= ' hyphens-auto';
                      }
 
-                     $block['innerHTML'] = str_replace('<p class="', "<p class=\"{$classes}", $block['innerHTML']);
+                     $block['innerHTML'] = str_replace('<p class="', "<p class=\"{$classes} ", $block['innerHTML']);
                      $block['innerHTML'] = str_replace('<p>', "<p class=\"{$classes}\">", $block['innerHTML']);
                   }
                }
