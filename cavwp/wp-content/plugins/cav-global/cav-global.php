@@ -23,6 +23,10 @@ class CAV_Global
       add_action('wp_network_dashboard_setup', [$this, 'register_widget']);
 
       add_action('after_setup_theme', [$this, 'register_menu']);
+
+      if (is_environment('local')) {
+         add_filter('acf/settings/show_admin', '__return_false');
+      }
    }
 
    public function register_menu()

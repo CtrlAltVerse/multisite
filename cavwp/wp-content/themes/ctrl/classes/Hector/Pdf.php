@@ -157,7 +157,7 @@ final class PDF extends Book
       // CTA
       $this->add_section([
          'title'   => $this->title_cta,
-         'content' => $this->get_cta('CtrlAltVerso'),
+         'content' => $this->get_cta(),
       ]);
 
       // COLOPHON

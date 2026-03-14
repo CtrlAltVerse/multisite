@@ -126,12 +126,6 @@ class Book
 
       $spacing = '';
 
-      if ('html' === $this->type && !empty($info['extra_pages'])) {
-         for ($i = 0; $i < (int) $info['extra_pages']; $i++) {
-            $spacing .= '<div class="break-after-always"></div>';
-         }
-      }
-
       if ('pdf' === $this->type) {
          $spacing = '<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
       }
@@ -447,6 +441,12 @@ class Book
 
       if (in_array('blank-after', $spine_item['layout']) && 'epub' !== $this->type) {
          $content .= '<div class="page-clean break-before-always"></div>';
+      }
+
+      if (in_array('add-extra-pages', $spine_item['layout']) && 'html' === $this->type && !empty($info['extra_pages'])) {
+         for ($i = 0; $i < (int) $info['extra_pages']; $i++) {
+            $content .= '<div class="break-before-always"></div>';
+         }
       }
 
       if ($with_section) {

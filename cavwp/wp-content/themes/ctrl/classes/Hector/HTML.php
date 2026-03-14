@@ -145,9 +145,9 @@ class HTML extends Book
 
       // CTA
       $this->add_section([
-         'layout'  => ['page-clean', 'break-before-always'],
+         'layout'  => ['page-clean', 'break-before-always', 'add-extra-pages'],
          'title'   => $this->title_cta,
-         'content' => $this->get_cta('CtrlAltVerso'),
+         'content' => $this->get_cta(),
       ]);
 
       // COLOPHON
