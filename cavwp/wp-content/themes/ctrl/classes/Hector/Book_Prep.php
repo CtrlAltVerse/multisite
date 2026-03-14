@@ -2,6 +2,7 @@
 
 namespace ctrl\Hector;
 
+use cavWP\Utils as cavWPUtils;
 use WC_Product_Grouped;
 
 class Book_Prep extends WC_Product_Grouped
@@ -128,7 +129,7 @@ class Book_Prep extends WC_Product_Grouped
             }
 
             if (!empty($isbn = $product->get_global_unique_id())) {
-               $info['versions'][$store->slug]['isbn'] = $isbn;
+               $info['versions'][$store->slug]['isbn'] = cavWPUtils::apply_mask($isbn, '###-#-########-#');
             }
 
             if ('external' === $product->get_type()) {
