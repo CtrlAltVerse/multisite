@@ -443,8 +443,8 @@ class Book
          $content .= '<div class="page-clean break-before-always"></div>';
       }
 
-      if (in_array('add-extra-pages', $spine_item['layout']) && 'html' === $this->type && !empty($info['extra_pages'])) {
-         for ($i = 0; $i < (int) $info['extra_pages']; $i++) {
+      if (in_array('add-extra-pages', $spine_item['layout']) && 'html' === $this->type && !empty($this->info['extra_pages'])) {
+         for ($i = 0; $i < $this->info['extra_pages']; $i++) {
             $content .= '<div class="break-before-always"></div>';
          }
       }
