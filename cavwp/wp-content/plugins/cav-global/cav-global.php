@@ -54,9 +54,14 @@ class CAV_Global
    {
       switch_to_blog(1);
 
+      echo '<div style="font-size:125%">';
+
       wp_nav_menu([
-         'menu' => 'admin_links',
+         'menu'      => 'admin_links',
+         'container' => '',
       ]);
+
+      echo '</div>';
 
       restore_current_blog();
    }
