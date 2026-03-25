@@ -28,4 +28,5 @@ function load_theme(): void
 
    new Rewards\Register();
    new Shortlink\Register();
+   new Login\Register();
 }

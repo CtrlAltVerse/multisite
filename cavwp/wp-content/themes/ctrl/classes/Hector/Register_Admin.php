@@ -188,7 +188,7 @@ class Register_Admin
       add_menu_page(
          'Hector',
          'Hector',
-         'manage_options',
+         'edit_posts',
          'hector',
          [$this, 'render_page'],
          'dashicons-book',
