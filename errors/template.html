@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt">
+<head>
+   <meta charset="UTF-8" />
+   <meta name="robots" content="noindex,nofollow" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>%%TITLE%%</title>
+   <style>
+      * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+      }
+
+      html,
+      body {
+         min-height: 100dvh;
+      }
+
+      body {
+         background-color: #131314;
+         color: #fff;
+         line-height: 1.35;
+         font-size: 1.25rem;
+         font-family:
+            'JetBrains Mono',
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            'Liberation Mono',
+            'Courier New',
+            monospace,
+            Apple Color Emoji,
+            Segoe UI Emoji,
+            Segoe UI Symbol,
+            Noto Color Emoji;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-direction: column;
+      }
+
+      main {
+         width: 100%;
+         max-width: 920px;
+         display: flex;
+         flex-direction: column;
+         gap: 0.5rem;
+         padding: 3rem;
+         background-color: #131314;
+         border: 6px solid var(--main-color, #fff);
+         border-radius: 6px;
+      }
+
+      h1 {
+         display: flex;
+         align-items: center;
+         gap: 1rem;
+         font-size: 2.5rem;
+         font-weight: normal;
+         color: var(--main-color, #fff);
+      }
+
+      p {
+         display: block;
+         font-size: 1.5rem;
+         margin-top: 1rem;
+         margin-bottom: 1.5rem;
+      }
+
+      ol,
+      ul {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 1rem;
+         list-style: none;
+      }
+
+      ul li {
+         margin-top: 0.5rem;
+         margin-bottom: 0.5rem;
+      }
+
+      a {
+         color: inherit;
+         text-decoration: none;
+      }
+
+      form {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         gap: 1rem;
+         font-size: 1.25rem;
+         margin-top: 1.5rem;
+         padding: 0.5rem 1rem;
+         background-color: var(--main-color, #fff);
+         border-radius: 0.25rem;
+      }
+
+      input,
+      button,
+      .btn {
+         border: none;
+         font-size: inherit;
+         font-family: inherit;
+         padding: 0.5rem 1rem;
+         border: 1px solid var(--main-color, #fff);
+         border-radius: 0.25rem;
+         transition: background-color 222ms;
+      }
+
+      .btn:hover {
+         background-color: var(--main-color, #fff);
+      }
+
+      input {
+         width: 100%;
+         flex-grow: 1;
+      }
+
+      button {
+         display: flex;
+         align-items: center;
+         gap: 1rem;
+      }
+
+      .logo {
+         margin-top: 2.5rem;
+         margin-bottom: 2.5rem;
+         margin-left: auto;
+         margin-right: auto;
+      }
+
+      .icon {
+         width: 1.25em;
+         height: 1.25em;
+      }
+
+      .bg-space {
+         background: linear-gradient(-45deg, #0b0232, #16043b, #000, #16043b, #0b0232);
+         background-size: 616% 616%;
+         animation: 15s infinite spacing;
+      }
+
+      @keyframes spacing {
+         0% {
+            background-position: 0% 50%;
+         }
+
+         50% {
+            background-position: 100% 50%;
+         }
+
+         100% {
+            background-position: 0% 50%;
+         }
+      }
+
+      @media screen and (max-width: 560px) {
+         html {
+            font-size: 80%;
+         }
+
+         form {
+            flex-direction: column;
+         }
+      }
+   </style>
+   <script
+         defer
+         src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.9/dist/cdn.min.js"></script>
+</head>
+<body class="bg-space">
+   <main x-data="main" x-bind:style="`--main-color: ${color}`">
+      <nav>
+         <ol>
+            <li>
+               <a href="/" x-text="sitename"></a>
+            </li>
+            <li>Erro %%CODE%%</li>
+         </ol>
+      </nav>
+      <hgroup>
+         <h1>
+            <svg
+                 class="icon"
+                 xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24"
+                 fill="currentColor"
+                 aria-hidden="true">
+               <path
+                     d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 15V17H13V15H11ZM11 7V13H13V7H11Z">
+               </path>
+            </svg>
+            %%TITLE%%
+         </h1>
+         <p class="description">%%DESCRIPTION%%</p>
+      </hgroup>
+      <nav>
+         <ul>
+            <li>
+               <a class="btn" href="/">Página inicial</a>
+            </li>
+            <template x-for="{text,href} in links">
+               <li>
+                  <a class="btn" x-bind:href="href" x-bind:target="href.startsWith('https') ? '_target' : '_self'"
+                     x-text="text"></a>
+               </li>
+            </template>
+         </ul>
+      </nav>
+      <template x-if="search">
+         <form action="/" method="GET">
+            <input
+                   type="search"
+                   name="s"
+                   placeholder="Faça uma busca no site"
+                   autofocus="" />
+            <button type="submit" aria-label="Buscar">
+               <svg
+                    class="icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor">
+                  <path
+                        d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z">
+                  </path>
+               </svg>
+            </button>
+         </form>
+      </template>
+   </main>
+   <a class="logo" href="https://ctrl.altvers.net/" target="_blank">
+      <img
+           src="https://cdn.altvers.net/cav_icon.svg"
+           alt="CtrlAltVerso"
+           width="64"
+           height="64" />
+   </a>
+   <script>
+         document.addEventListener('alpine:init', () => {
+            Alpine.data('main', () => ({
+               sitename: '',
+               color: '#fff',
+               search: true,
+               links: [],
+
+               init() {
+                  switch (location.hostname) {
+
+                     case 'altvers.net':
+                        this.sitename = 'CtrlAltVersœ'
+                        this.search = false
+                        break
+                        case '127.0.0.1':
+                     case 'dbands.com.br':
+                        this.sitename = 'Deutsche Bands'
+                        this.color = '#dc3545'
+                        this.links = [
+                           { text: 'Equipe', href: '/sobre' },
+                           {
+                              text: 'Todas as Bandas',
+                              href: '/indice-bandas-alemas',
+                           },
+                           { text: 'TV', href: '/tv' },
+                           {
+                              text: 'Instagram',
+                              href: 'https://www.instagram.com/dbands_com_br/',
+                           },
+                           {
+                              text: 'Facebook',
+                              href: 'https://www.facebook.com/dbands',
+                           },
+                           {
+                              text: ' X/Twitter',
+                              href: 'https://x.com/dbands_com_br',
+                           },
+                           {
+                              text: 'Feed RSS',
+                              href: 'https://feeds.feedburner.com/dbands',
+                           },
+                        ]
+                        break
+                     case 'fagnerjb.com':
+                        this.sitename = 'Fagner JB.'
+                        this.search = false
+                        this.color = '#f55'
+                        break
+                     case 'acampamento.altvers.net':
+                        this.sitename = 'Acampamento de Escritores'
+                        this.color = '#754d37'
+                        this.links = [{ text: 'Textos recentes', href: '/texto' }]
+                        break
+                     case 'ctrl.altvers.net':
+                        this.sitename = 'CtrlAltVersœ'
+                        this.color = '#480af4'
+                        break
+                     case 'plaza.altvers.net':
+                        this.sitename = 'Secret Plaza'
+                        break
+
+                     default:
+                        break
+                  }
+               },
+            }))
+         })
+      </script>
+</body>
+</html>
