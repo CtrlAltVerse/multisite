@@ -273,6 +273,20 @@
                "color": "currentColor"
             }
          },
+         "core/preformatted": {
+            "typography": {
+               "fontFamily": "var(--wp--preset--font-family--monospace)",
+               "fontSize": "1rem"
+            },
+            "spacing": {
+               "margin": {
+                  "top": "calc(var(--wp--style--block-gap) * 4)",
+                  "bottom": "calc(var(--wp--style--block-gap) * 4)",
+                  "left": "0",
+                  "right": "0"
+               }
+            }
+         },
          "core/image": {
             "dimensions": { "height": "auto", "width": "auto" },
             "border": { "style": "none" },
@@ -442,7 +456,7 @@
       "elements": {
          "h1": {
             "typography": {
-               "fontSize": "calc(var(--wp--style--block-gap) * 10)",
+               "fontSize": "calc(var(--wp--style--block-gap) * 8)",
                "lineHeight": "1.35"
             },
             "spacing": {

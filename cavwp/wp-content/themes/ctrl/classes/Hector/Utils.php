@@ -224,15 +224,16 @@ class Utils
                break;
 
             case null:
-            case 'core/verse':
-            case 'core/spacer':
-            case 'core/image':
             case 'core/code':
             case 'core/heading':
-            case 'core/separator':
             case 'core/html': // trust
+            case 'core/image':
             case 'core/media-text': // later
+            case 'core/preformatted':
+            case 'core/separator':
+            case 'core/spacer':
             case 'core/table':// later
+            case 'core/verse':
                break;
 
             case 'core/embed':

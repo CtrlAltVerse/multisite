@@ -238,9 +238,11 @@ final class Epub extends Book
 
    private function add_cover()
    {
-      $content = <<<'HTML'
+      $cover_name = basename($this->info['cover']);
+
+      $content = <<<HTML
       <figure class="m-0 has-text-align-center is-style-portrait" id="cover">
-         <img role="doc-cover" src="../assets/images/cover.jpg" alt="" />
+         <img role="doc-cover" src="../assets/images/{$cover_name}" alt="" />
       </figure>
       HTML;
 
@@ -596,6 +598,8 @@ final class Epub extends Book
          $description = '<dc:description>' . strip_tags($this->info['description']) . '</dc:description>';
       }
 
+      $cover_name = basename($this->info['cover']);
+
       $opf = <<<XML
       <?xml version="1.0" encoding="utf-8" standalone="no"?>
       <package
@@ -629,7 +633,7 @@ final class Epub extends Book
 
             {$subjects}
 
-            <meta name="cover" content="cover.jpg" />
+            <meta name="cover" content="{$cover_name}" />
 
             <meta property="rendition:layout">reflowable</meta>
       		<meta property="rendition:flow">auto</meta>
@@ -882,7 +886,7 @@ final class Epub extends Book
    private function search_images()
    {
       if (!empty($this->info['cover'])) {
-         $this->download_image($this->info['cover'], 'cover.jpg', true);
+         $this->download_image($this->info['cover'], null, true);
       }
 
       $asterism = \get_field('asterism', 'options');
