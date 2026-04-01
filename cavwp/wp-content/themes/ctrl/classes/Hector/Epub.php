@@ -300,7 +300,7 @@ final class Epub extends Book
          $division_key = '';
 
          if ($this->is_multipart && !empty($part['title'])) {
-            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_RIGHT);
+            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
 
             $nav_itens .= <<<HTML
             <li>
@@ -370,7 +370,7 @@ final class Epub extends Book
          $division_key = '';
 
          if ($this->is_multipart && !empty($part['title'])) {
-            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_RIGHT);
+            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
 
             $toc_itens .= <<<XML
             <navPoint id="part-{$division_key}">
@@ -549,7 +549,7 @@ final class Epub extends Book
          $division_key = '';
 
          if ($this->is_multipart && !empty($part['title'])) {
-            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_RIGHT);
+            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
 
             $manifest_itens .= <<<XML
             <item href="content/{$division_key}-division.xhtml" id="division-{$division_key}" media-type="application/xhtml+xml" />
@@ -790,7 +790,7 @@ final class Epub extends Book
          $division_key = '';
 
          if ($this->is_multipart && !empty($part['title'])) {
-            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_RIGHT);
+            $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
             $this->add_division($division_key, $part);
          }
 
@@ -858,7 +858,7 @@ final class Epub extends Book
       }
 
       if (!@copy($url, $images_path . $image_name)) {
-         return debug('Cannot copy ' . $url);
+         return debug(error_get_last());
       }
 
       if (empty($image_type)) {

@@ -58,7 +58,7 @@
          display: flex;
          align-items: center;
          gap: 1rem;
-         font-size: 2.5rem;
+         font-size: 2.4rem;
          font-weight: normal;
          color: var(--main-color, #fff);
       }
@@ -175,14 +175,7 @@
 </head>
 <body class="bg-space">
    <main x-data="main" x-bind:style="`--main-color: ${color}`">
-      <nav>
-         <ol>
-            <li>
-               <a href="/" x-text="sitename"></a>
-            </li>
-            <li>Erro %%CODE%%</li>
-         </ol>
-      </nav>
+      <div><a href="/" x-text="sitename">Carregando...</a></div>
       <hgroup>
          <h1>
             <svg
@@ -195,6 +188,7 @@
                      d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 15V17H13V15H11ZM11 7V13H13V7H11Z">
                </path>
             </svg>
+            Erro %%CODE%%:
             %%TITLE%%
          </h1>
          <p class="description">%%DESCRIPTION%%</p>
@@ -241,73 +235,72 @@
            height="64" />
    </a>
    <script>
-         document.addEventListener('alpine:init', () => {
-            Alpine.data('main', () => ({
-               sitename: '',
-               color: '#fff',
-               search: true,
-               links: [],
+      document.addEventListener('alpine:init', () => {
+         Alpine.data('main', () => ({
+            sitename: '',
+            color: '#fff',
+            search: true,
+            links: [],
 
-               init() {
-                  switch (location.hostname) {
+            init() {
+               switch (location.hostname) {
 
-                     case 'altvers.net':
-                        this.sitename = 'CtrlAltVersœ'
-                        this.search = false
-                        break
-                        case '127.0.0.1':
-                     case 'dbands.com.br':
-                        this.sitename = 'Deutsche Bands'
-                        this.color = '#dc3545'
-                        this.links = [
-                           { text: 'Equipe', href: '/sobre' },
-                           {
-                              text: 'Todas as Bandas',
-                              href: '/indice-bandas-alemas',
-                           },
-                           { text: 'TV', href: '/tv' },
-                           {
-                              text: 'Instagram',
-                              href: 'https://www.instagram.com/dbands_com_br/',
-                           },
-                           {
-                              text: 'Facebook',
-                              href: 'https://www.facebook.com/dbands',
-                           },
-                           {
-                              text: ' X/Twitter',
-                              href: 'https://x.com/dbands_com_br',
-                           },
-                           {
-                              text: 'Feed RSS',
-                              href: 'https://feeds.feedburner.com/dbands',
-                           },
-                        ]
-                        break
-                     case 'fagnerjb.com':
-                        this.sitename = 'Fagner JB.'
-                        this.search = false
-                        this.color = '#f55'
-                        break
-                     case 'acampamento.altvers.net':
-                        this.sitename = 'Acampamento de Escritores'
-                        this.color = '#754d37'
-                        this.links = [{ text: 'Textos recentes', href: '/texto' }]
-                        break
-                     case 'ctrl.altvers.net':
-                        this.sitename = 'CtrlAltVersœ'
-                        this.color = '#480af4'
-                        break
-                     case 'plaza.altvers.net':
-                        this.sitename = 'Secret Plaza'
-                        break
+                  case 'altvers.net':
+                     this.sitename = 'CtrlAltVersœ'
+                     this.search = false
+                     break
+                  case 'dbands.com.br':
+                     this.sitename = 'Deutsche Bands'
+                     this.color = '#dc3545'
+                     this.links = [
+                        { text: 'Equipe', href: '/sobre' },
+                        {
+                           text: 'Todas as Bandas',
+                           href: '/indice-bandas-alemas',
+                        },
+                        { text: 'TV', href: '/tv' },
+                        {
+                           text: 'Instagram',
+                           href: 'https://www.instagram.com/dbands_com_br/',
+                        },
+                        {
+                           text: 'Facebook',
+                           href: 'https://www.facebook.com/dbands',
+                        },
+                        {
+                           text: ' X/Twitter',
+                           href: 'https://x.com/dbands_com_br',
+                        },
+                        {
+                           text: 'Feed RSS',
+                           href: 'https://feeds.feedburner.com/dbands',
+                        },
+                     ]
+                     break
+                  case 'fagnerjb.com':
+                     this.sitename = 'Fagner JB.'
+                     this.search = false
+                     this.color = '#f55'
+                     break
+                  case 'acampamento.altvers.net':
+                     this.sitename = 'Acampamento de Escritores'
+                     this.color = '#754d37'
+                     this.links = [{ text: 'Textos recentes', href: '/texto' }]
+                     break
+                  case 'ctrl.altvers.net':
+                     this.sitename = 'CtrlAltVersœ'
+                     this.color = '#480af4'
+                     break
+                  case 'plaza.altvers.net':
+                     this.sitename = 'Secret Plaza'
+                     break
 
-                     default:
-                        break
-                  }
-               },
-            }))
-         })
-      </script>
+                  default:
+                     break
+               }
+            },
+         }))
+      })
+   </script>
 </body>
 </html>
