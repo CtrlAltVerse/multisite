@@ -306,7 +306,7 @@ final class Epub extends Book
 
             $nav_itens .= <<<HTML
             <li>
-               <a href="content/{$division_key}-division.xhtml">{$part['title']}</a>
+               <a href="content/{$division_key}000-division.xhtml">{$part['title']}</a>
                <ol>
             HTML;
          }
@@ -375,7 +375,7 @@ final class Epub extends Book
             $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
 
             $toc_itens .= <<<XML
-            <navPoint id="part-{$division_key}">
+            <navPoint id="part-{$division_key}000">
                <navLabel>
                   <text>{$part['title']}</text>
                </navLabel>
@@ -554,12 +554,12 @@ final class Epub extends Book
             $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
 
             $manifest_itens .= <<<XML
-            <item href="content/{$division_key}-division.xhtml" id="division-{$division_key}" media-type="application/xhtml+xml" />
+            <item href="content/{$division_key}000-division.xhtml" id="division-{$division_key}000" media-type="application/xhtml+xml" />
 
             XML;
 
             $spine_itens .= <<<XML
-            <itemref idref="division-{$division_key}" />
+            <itemref idref="division-{$division_key}000" />
 
             XML;
          }
@@ -795,7 +795,7 @@ final class Epub extends Book
 
          if ($this->is_multipart && !empty($part['title'])) {
             $division_key .= str_pad($part_key + 1, 3, '0', STR_PAD_LEFT);
-            $this->add_division($division_key, $part);
+            $this->add_division($division_key.'000', $part);
          }
 
          foreach ($part['spine'] as $key => $spine_item) {
