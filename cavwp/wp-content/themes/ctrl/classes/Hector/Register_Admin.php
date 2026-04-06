@@ -11,9 +11,7 @@ class Register_Admin
    {
       $this->ajax_url = admin_url('admin-ajax.php');
 
-      add_action('init', [$this, 'init']);
-
-      add_action('admin_menu', [$this, 'register_page']);
+      add_action('admin_menu', [$this, 'register_pages']);
       add_action('admin_init', [$this, 'register_setting']);
       add_action('admin_footer', [$this, 'footer_content']);
       add_action('admin_enqueue_scripts', [$this, 'enqueue_codemirror']);
@@ -131,9 +129,9 @@ class Register_Admin
          return;
       }
 
-      ?>
-<script>
-         const ajaxUrl = '<?php echo esc_js($this->ajax_url); ?>';
+      echo <<<HTML
+      <script>
+         const ajaxUrl = '{$this->ajax_url}';
          jQuery(function($) {
             $('button[data-file]').on('click', function() {
 
@@ -153,46 +151,29 @@ class Register_Admin
             });
          });
       </script>
-<?php
+      HTML;
    }
 
-   public function init()
-   {
-      register_block_style(
-         'core/image',
-         [
-            'name'  => 'portrait',
-            'label' => __('Retrato', 'ctrl'),
-         ],
-      );
-
-      register_block_style(
-         'core/separator',
-         [
-            'name'  => 'asterism',
-            'label' => __('Asteriscos', 'ctrl'),
-         ],
-      );
-
-      register_block_style(
-         'core/separator',
-         [
-            'name'  => 'transition',
-            'label' => __('Espaço vazio', 'ctrl'),
-         ],
-      );
-   }
-
-   public function register_page(): void
+   public function register_pages(): void
    {
       add_menu_page(
-         'Hector',
+         'Arquivos',
          'Hector',
          'edit_posts',
          'hector',
-         [$this, 'render_page'],
+         [$this, 'render_files'],
          'dashicons-book',
          0,
+      );
+
+      add_submenu_page(
+         'hector',
+         'Preços',
+         'Preços',
+         'edit_posts',
+         'hector_prices',
+         [$this, 'render_prices'],
+         2,
       );
    }
 
@@ -204,12 +185,16 @@ class Register_Admin
       );
    }
 
-   public function render_page(): void
+   public function render_files(): void
    {
-      get_component('hector-admin', [
+      get_component('hector-files', [
          'option_key' => $this->option_key,
          'ajax_url'   => $this->ajax_url,
       ]);
    }
+
+   public function render_prices()
+   {
+      get_component('hector-prices');
+   }
 }
-?>

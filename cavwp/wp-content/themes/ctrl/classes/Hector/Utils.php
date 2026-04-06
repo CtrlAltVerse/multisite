@@ -3,6 +3,7 @@
 namespace ctrl\Hector;
 
 use cavWP\Utils as CavWPUtils;
+use WP_Error;
 
 class Utils
 {
@@ -65,7 +66,7 @@ class Utils
       $title  = $product->get_slug();
       $author = '';
 
-      $authors = get_field('authors', $product_ID);
+      $authors = \get_field('authors', $product_ID);
 
       if (!empty($authors)) {
          foreach ($authors as $author) {

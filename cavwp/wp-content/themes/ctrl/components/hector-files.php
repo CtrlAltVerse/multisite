@@ -18,7 +18,7 @@ $products = \wc_get_products([
 ?>
 <div class="wrap">
    <h1>
-      <?php esc_html_e('Hector', 'ctrl'); ?>
+      <?php echo get_admin_page_title(); ?>
    </h1>
    <h2>Download de Arquivos</h2>
    <table class="widefat striped">
@@ -26,7 +26,6 @@ $products = \wc_get_products([
          <tr>
             <th style="width: 15%">Produtos</th>
             <th style="width: 18%">Capas</th>
-            <th style="width: 9%">Números</th>
             <th style="width: 30%">EPUBs</th>
             <th style="width: 19%">HTML</th>
             <th style="width: 9%">PDF</th>
@@ -62,9 +61,6 @@ $products = \wc_get_products([
                <?php } ?>
                <?php }?>
             </td>
-            <td>
-               <?php book_numbers($product_ID); ?>
-            </td>
             <?php foreach (['epub', 'html', 'pdf'] as $type) { ?>
             <td>
                <?php book_buttons($product_ID, $type, $args); ?>
@@ -91,24 +87,6 @@ $value       = esc_textarea($value);
    </form>
 </div>
 <?php
-
-function book_numbers($product_ID)
-{
-   $chars_count = get_post_meta($product_ID, 'chars_count', true);
-   $words_count = get_post_meta($product_ID, 'words_count', true);
-
-   if (!empty($chars_count)) {
-      echo number_format((int) $chars_count) . ' caracteres';
-   }
-
-   if (!empty($chars_count) && !empty($words_count)) {
-      echo '<br />';
-   }
-
-   if (!empty($words_count)) {
-      echo number_format((int) $words_count) . ' palavras';
-   }
-}
 
 function book_buttons($product_ID, $type, $args)
 {
