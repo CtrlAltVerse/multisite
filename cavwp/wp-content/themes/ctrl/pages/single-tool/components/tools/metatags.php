@@ -83,8 +83,8 @@
 </script>
 <div x-data="toolMetatags" class="flex gap-4 flex-col lg:flex-row">
    <form class="flex flex-col gap-3 lg:w-1/3">
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="title">Título</label>
+      <div class="form-item">
+         <label for="title">Título</label>
          <p class="text-xs">
             Título do conteúdo. Veja boas práticas em
             <a href="https://developers.google.com/search/docs/appearance/title-link?hl=pt-br"
@@ -95,11 +95,11 @@
             Com <span x-text="metas.title.length"></span> caracteres. Recomendado: até 70
             caracteres.
          </p>
-         <input id="title" class="input mt-1 w-full" type="text" x-model.trim="metas.title" />
+         <input id="title" type="text" x-model.trim="metas.title" />
       </div>
 
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="description">Descrição</label>
+      <div class="form-item">
+         <label for="description">Descrição</label>
          <p class="text-xs">
             Resumo do conteúdo. Veja boas práticas
             em
@@ -112,11 +112,11 @@
             Com <span x-text="metas.description.length"></span> caracteres. Recomendado: até 200
             caracteres.
          </p>
-         <textarea id="description" class="input w-full" x-model.trim="metas.description"></textarea>
+         <textarea id="description" x-model.trim="metas.description"></textarea>
       </div>
 
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="site">Site</label>
+      <div class="form-item">
+         <label for="site">Site</label>
          <p class="text-xs">
             Nome do site. Veja boas práticas em <a
                href="https://developers.google.com/search/docs/appearance/site-names?hl=pt-br"
@@ -124,32 +124,32 @@
             <br>
             Com <span x-text="metas.site.length"></span> caracteres.
          </p>
-         <input id="site" class="input mt-1 w-full" type="text" x-model.trim="metas.site" />
+         <input id="site" type="text" x-model.trim="metas.site" />
       </div>
 
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="url">URL</label>
+      <div class="form-item">
+         <label for="url">URL</label>
          <p class="text-xs">
             Endereço da página.
          </p>
-         <input id="url" class="input mt-1 w-full" type="url" x-model.validate.trim="metas.url" />
+         <input id="url" type="url" x-model.validate.trim="metas.url" />
       </div>
 
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="img">Imagem</label>
+      <div class="form-item">
+         <label for="img">Imagem</label>
          <p class="text-xs">
             Endereço absoluto de imagem que ilustre o conteúdo.
          </p>
-         <input id="img" class="input w-full" type="url" x-model.validate.trim="metas.img" />
+         <input id="img" type="url" x-model.validate.trim="metas.img" />
       </div>
 
-      <div class="flex flex-col gap-0.5">
-         <label class="font-semibold" for="type">Tipo de conteúdo</label>
+      <div class="form-item">
+         <label for="type">Tipo de conteúdo</label>
          <p class="text-xs">
             Tipo do conteúdo de acordo com o <a href="https://ogp.me/#types" target="_blank" rel="help"
                tabindex="-1">Open Graph</a>.
          </p>
-         <select id="type" class="input w-full" id="ob-types" x-model.trim="metas.type">
+         <select id="type" id="ob-types" x-model.trim="metas.type">
             <option></option>
             <option>website</option>
             <option>article</option>
@@ -172,21 +172,21 @@
             <p class="text-xs">Formato, site, autor.</p>
          </summary>
          <div class="pt-4 flex flex-col gap-3">
-            <div class="flex flex-col gap-0.5">
-               <label class="font-semibold" for="twSite">Site</label>
+            <div class="form-item">
+               <label for="twSite">Site</label>
                <p class="text-xs">
                   Perfil que representa o site.
                </p>
-               <input id="twSite" class="input w-full" type="text" x-model.trim="metas.twSite" />
+               <input id="twSite" type="text" x-model.trim="metas.twSite" />
             </div>
-            <div class="flex flex-col gap-0.5">
-               <label class="font-semibold" for="twCreator">Autor</label>
+            <div class="form-item">
+               <label for="twCreator">Autor</label>
                <p class="text-xs">
                   Perfil do autor do conteúdo, geralmente um artigo. Usado em summary_large_image.
                </p>
-               <input id="twCreator" class="input w-full" type="text" x-model.trim="metas.twCreator" />
+               <input id="twCreator" type="text" x-model.trim="metas.twCreator" />
             </div>
-            <div class="flex flex-col gap-0.5">
+            <div class="form-item">
                <label class="font-semibold" for="twCard">Formato</label>
                <p class="text-xs">
                   Formato da prévia no X, que pode variar de acordo com o dispositivo.
@@ -197,7 +197,7 @@
                         <input type="radio" value="summary" x-model.trim="metas.twCard">
                         summary
                      </div>
-                     <p class="text-xs">Padrão. Imagem 1:1, mínimo 144x144.<br><a
+                     <p class="text-xs">Padrão. Imagem 1:1, mínimo 144x144. <a
                            href="https://developer.x.com/en/docs/x-for-websites/cards/overview/summary"
                            target="_blank" rel="help" tabindex="-1">Documentação</a>.</p>
                   </label>
@@ -207,7 +207,7 @@
                         <input type="radio" value="summary_large_image" x-model.trim="metas.twCard">
                         summary_large_image
                      </div>
-                     <p class="text-xs">Imagem 2:1, mínimo 300x157.<br><a
+                     <p class="text-xs">Imagem 2:1, mínimo 300x157. <a
                            href="https://developer.x.com/en/docs/x-for-websites/cards/overview/summary-card-with-large-image"
                            target="_blank" rel="help" tabindex="-1">Documentação</a>.</p>
                   </label>

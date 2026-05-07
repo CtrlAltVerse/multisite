@@ -7,6 +7,7 @@
 @import './tools';
 @import './wc';
 @import './animations';
+@import './form';
 
 @source inline("ri-book-open-fill ri-instagram-line ri-twitter-x-line ri-facebook-box-fill ri-check-fill ri-mail-fill ri-gamepad-fill ri-medium-fill ri-news-line ri-links-fill ri-tools-fill ri-article-line");
 @source "../";
@@ -118,9 +119,4 @@
    &.active::before {
       @apply bg-neutral-100 h-1.5 mt-0 opacity-100;
    }
-}
-
-button,
-label {
-   @apply cursor-pointer disabled:cursor-not-allowed;
 }

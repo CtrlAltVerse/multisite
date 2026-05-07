@@ -225,7 +225,7 @@
    <div class="flex gap-4">
       <div>
          <h2 class="font-bold text-lg mb-3">
-            Produto 1
+            Produto A
             <span x-show="cheapest === 'product1'" x-cloak>
                é mais barato
             </span>
@@ -234,7 +234,7 @@
       </div>
       <div>
          <h2 class="font-bold text-lg mb-3">
-            Produto 2
+            Produto B
             <span x-show="cheapest === 'product2'" x-cloak>
                é mais barato
             </span>

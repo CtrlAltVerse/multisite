@@ -16,7 +16,7 @@
    "devDependencies": {
       "@alpinejs/mask": "^3.15.0",
       "@alpinejs/persist": "^3.15.0",
-      "@ctrlaltvers/alpine": "^1.1.3",
+      "@ctrlaltvers/alpine": "^1.2.0",
       "@ctrlaltvers/tailwind": "^1.1.2",
       "@tailwindcss/cli": "^4.1.13",
       "@types/alpinejs": "^3.13.11",

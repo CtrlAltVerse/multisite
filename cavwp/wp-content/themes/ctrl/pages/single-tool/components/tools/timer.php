@@ -108,15 +108,29 @@
    <div id="Timer" class="relative flex portrait:flex-col w-full h-dvh font-bold">
       <div class="absolute top-4 portrait:top-1/2 left-1/2 inset-x-0 portrait:-translate-y-1/2 -translate-x-1/2 w-full text-lg">
          <div class="flex justify-center gap-4">
-            <button class="btn" type="button" x-show="current>0" x-on:click.prevent="reset()">Reiniciar</button>
-            <label class="input flex flex-col" x-show="current<=0">
-               <span class="whitespace-nowrap text-sm">Tempo inicial</span>
-               <span class="items-center gap-1 whitespace-nowrap"><i class="ri-time-line"></i> <input class="w-8 sm:w-12" type="number" min="1" max="99" x-model.number="initial" aria-label="Tempo inicial em minutos" />min</span>
-            </label>
-            <label class="input flex flex-col" x-show="current<=0">
-               <span class="whitespace-nowrap text-sm">Incremento</span>
-               <span class="items-center gap-1 whitespace-nowrap"><i class="ri-add-box-line"></i> <input class="w-8 sm:w-12" type="number" min="0" max="60" step="15" x-model.number="increment" aria-label="Incremento em segundos" />seg</span>
-            </label>
+            <button class="btn" type="button" x-show="current>0" x-on:click.prevent="reset()">
+               <i class="ri-arrow-go-back-fill"></i>
+               Reiniciar
+            </button>
+
+            <div class="form-item !w-40 text-sm">
+               <label x-show="current<=0">Tempo inicial</span></label>
+               <div class="input">
+                  <span class="pre-input"><i class="ri-time-line"></i></span>
+                  <input class="bg-neutral-800" type="number" min="1" max="99" x-model.number="initial" aria-label="Tempo inicial em minutos" />
+                  <span class="post-input">min</span>
+               </div>
+            </div>
+
+            <div class="form-item !w-40 text-sm">
+               <label x-show="current<=0">Incremento</label>
+               <div class="input">
+               <span class="pre-input"><i class="ri-add-box-line"></i></span>
+               <input class="bg-neutral-800" type="number" min="0" max="60" step="15" x-model.number="increment" aria-label="Incremento em segundos" />
+               <span class="post-input">seg</span>
+               </div>
+            </div>
+
             <button class="btn" x-on:click.prevent="toggleFullscreen()" aria-label="Alternar tela cheia">
                <i x-bind:class="isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-fill'"></i>
                <span class="hidden sm:inline">Tela cheia</span>

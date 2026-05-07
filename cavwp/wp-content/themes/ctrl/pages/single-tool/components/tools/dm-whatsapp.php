@@ -56,13 +56,13 @@
 </script>
 <div x-data="toolWaDm" class="flex flex-col gap-4 lg:flex-row">
    <form class="flex flex-col gap-3 lg:w-1/3">
-      <div class="flex flex-col gap-1 lg:">
-         <label class="font-semibold" for="phone">Número de celular</label>
-         <input id="phone" class="input" type="tel" x-model="phone" x-mask="(99) 99999-9999">
+      <div class="form-item">
+         <label for="phone">Número de celular</label>
+         <input id="phone" type="tel" x-model="phone" x-mask="(99) 99999-9999">
       </div>
-      <div class="flex flex-col gap-1">
-         <label class="font-semibold" for="msg">Mensagem inicial</label>
-         <textarea id="msg" class="input" x-model="msg"></textarea>
+      <div class="form-item">
+         <label for="msg">Mensagem inicial</label>
+         <textarea id="msg" x-model="msg"></textarea>
       </div>
    </form>
    <div class="flex flex-col gap-3 lg:w-2/3" x-show="link.length" x-cloak>
