@@ -11,7 +11,7 @@ $post_slug = $post->post_name;
 ?>
 <div x-data="tools" class=" text-base min-w-xs">
    <div class="container mx-auto flex flex-col min-h-dvh">
-      <header class="flex gap-2 justify-between items-start px-4 py-3">
+      <header class="flex gap-2 justify-between items-start py-3">
          <hgroup>
             <h1><?php the_title(); ?></h1>
             <?php the_excerpt(); ?>
@@ -24,7 +24,7 @@ $post_slug = $post->post_name;
          <?php get_page_component(__FILE__, 'menu'); ?>
       </header>
       <div class="grow">
-         <main class="my-6 px-3.5">
+         <main class="my-6">
             <?php get_page_component(__FILE__, 'tools/' . $post_slug); ?>
          </main>
       </div>

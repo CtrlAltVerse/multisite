@@ -30,10 +30,22 @@
                2: 'Supermercado'
             }).as('tools-product-list-tags'),
             repeatUnits: {
-               days: 'dia(s)',
-               weeks: 'semana(s)',
-               months: 'mês(es)',
-               years: 'ano(s)',
+               days: {
+                  singular: 'dia',
+                  plural: 'dias',
+               },
+               weeks: {
+                  singular: 'semana',
+                  plural: 'semanas',
+               },
+               months: {
+                  singular: 'mês',
+                  plural: 'meses',
+               },
+               years: {
+                  singular: 'ano',
+                  plural: 'anos',
+               },
             },
             sizeUnits: {
                un: 'un',
@@ -93,7 +105,7 @@
             },
 
             setEditing(index) {
-               if(index === false){
+               if (index === false) {
                   return
                }
 
@@ -117,7 +129,7 @@
                document.getElementById('sizeUnit').value = sizeUnit
                document.getElementById('repeatUnit').value = repeatUnit
 
-                document.getElementsByName('tags').forEach(tagEl => tagEl.checked = false)
+               document.getElementsByName('tags').forEach(tagEl => tagEl.checked = false)
 
                tags.forEach(tag =>
                   document.getElementById(`tag-${tag}`).checked = true
@@ -129,7 +141,7 @@
 
                let tags = []
                document.getElementsByName('tags').forEach(tagEl => {
-                  if(tagEl.checked){
+                  if (tagEl.checked) {
                      tags.push(tagEl.value)
                   }
                })
@@ -179,7 +191,7 @@
 
                let tags = []
                document.getElementsByName('tags').forEach(tagEl => {
-                  if(tagEl.checked){
+                  if (tagEl.checked) {
                      tags.push(tagEl.value)
                   }
                })
@@ -191,12 +203,16 @@
                e.currentTarget.reset()
             },
 
-            removeProduct(productIndex) {
+            removeProduct(productIndex, fromForm = false) {
                if (!confirm(`Remover ${this.list[productIndex].name} da lista?`)) {
                   return
                }
 
                this.list.splice(productIndex, 1)
+
+               if (fromForm) {
+                  document.getElementById('addProduct').reset()
+               }
             },
 
             addTag() {
@@ -227,15 +243,20 @@
             },
 
             remainingDays(productIndex) {
-               const { nextCheck } = this.list[productIndex]
+               const {
+                  nextCheck
+               } = this.list[productIndex]
 
                if (nextCheck) {
-                  const { amount, metric } = this.$time.diff(nextCheck)
+                  const {
+                     amount,
+                     metric
+                  } = this.$time.diff(nextCheck)
 
                   if (['seconds', 'minutes', 'hours'].includes(metric)) {
                      this.patchProduct(productIndex, 'lastCheck', false)
                   } else {
-                     return `Em ${amount} ${this.repeatUnits[metric]}`
+                     return `Em ${amount} ${this.repeatUnits[metric][amount === 1 ? 'singular' : 'plural']}`
                   }
                }
 
@@ -249,7 +270,7 @@
    <div class="flex flex-col gap-4">
       <div class="form-item">
          <span class="label">Filtrar</span>
-         <ul class="flex flex-wrap items-center gap-1">
+         <ul class="flex flex-wrap items-center gap-1 text-sm sm:text-base">
             <template x-for="{key, name, count} in filter" x-bind:key="key">
                <li>
                   <button class="btn-outline input" type="button" x-bind:class="{'btn': currentTag === key}" x-on:click="filterTag(key)">
@@ -261,43 +282,41 @@
          </ul>
       </div>
 
-      <ul class="flex flex-col gap-3 sm:text-lg">
+      <ul class="flex flex-col gap-3 text-sm sm:text-lg">
          <template x-for="(item, index) in refreshList" x-bind:key="index">
             <li class="flex items-center gap-1" x-bind:class="{'opacity-75': item.lastCheck}">
-               <button class="btn-alt" type="button" x-on:click.prevent="removeProduct(index)">
-                  <i class="ri-delete-bin-2-line"></i>
+               <button class="btn-alt hidden sm:inline" type="button" x-on:click.prevent="removeProduct(index)">
+                  <i class="ri-delete-bin-2-line text-lg sm:text-2xl"></i>
                </button>
                <button class="btn-alt" type="button" x-on:click.prevent="editing = index">
-                  <i class="ri-edit-box-line"></i>
+                  <i class="ri-edit-box-line text-lg sm:text-2xl"></i>
                </button>
-               <div class="form-item !w-21">
-                  <input class="text-center font-semibold sm:text-lg" type="number" step="1" max="999" x-bind:value="item.quantity" x-on:input.prevent="patchProduct(index,'quantity',$el.value)" />
-               </div>
-               <div class="flex gap-2 items-end shrink-0 grow">
-                  <span class="sm:text-xl truncate" x-text="item.name"></span>
-                  <span class="text-base text-neutral-500" x-show="item.sizeValue" x-text="`${item.sizeValue}${item.sizeUnit}`" x-cloak></span>
+               <div class="flex gap-1 sm:gap-2 items-baseline grow min-w-0">
+                  <span class="font-semibold text-xs sm:text-base text-neutral-500" x-text="`${item.quantity}x`"></span>
+                  <span class="text-sm sm:text-xl truncate" x-text="item.name"></span>
+                  <span class="text-xs sm:text-base text-neutral-500" x-show="item.sizeValue" x-text="`${item.sizeValue}${item.sizeUnit}`" x-cloak></span>
                   </span>
                </div>
-               <div class="form-item !w-45">
+               <div class="form-item !w-22 sm:!w-40 flex-none">
                   <div class="input">
                      <span class="pre-input">R$</span>
-                     <input class="text-center font-semibold sm:text-lg" type="number" step="0.5" x-bind:value="item.lowestPrice" maxlength="4" x-on:input.prevent="patchProduct(index,'lowestPrice',$el.value)" />
+                     <input class="text-center font-semibold sm:text-lg" type="number" step="0.01" x-bind:value="item.lowestPrice" maxlength="4" x-on:input.prevent="patchProduct(index,'lowestPrice',$el.value)" />
                   </div>
                </div>
 
-               <button class="btn-alt w-22" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', 0)" x-show="item.lastCheck && !item.nextCheck" x-cloak>
-                  <i class="ri-arrow-up-line text-2xl"></i>
+               <button class="btn-alt" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', 0)" x-show="item.lastCheck && !item.nextCheck" x-cloak>
+                  <i class="ri-arrow-up-line text-lg sm:text-2xl"></i>
                </button>
 
-               <button class="btn-alt w-22 leading-1" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', Date.now())" x-show="!item.lastCheck || item.nextCheck" x-cloak>
-                  <i class="ri-shopping-cart-line text-2xl" x-show="!item.lastCheck" x-cloak></i>
+               <button class="btn-alt max-w-16 sm:max-w-20 leading-1" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', Date.now())" x-show="!item.lastCheck || item.nextCheck" x-cloak>
+                  <i class="ri-shopping-cart-line text-lg sm:text-2xl" x-show="!item.lastCheck" x-cloak></i>
                   <span class="text-xs" x-text="remainingDays(index)"></span>
                </button>
             </li>
          </template>
       </ul>
       <hr class="border-neutral-600" />
-      <form class="flex flex-col gap-3 p-4" x-on:submit.prevent="editing !== false ? putProduct : addProduct">
+      <form id="addProduct" class="flex flex-col gap-3 p-4" x-on:submit.prevent="editing !== false ? putProduct : addProduct">
          <h2 class="sr-only" x-text="editing !== false ? 'Editar produto' : 'Adicionar produto'"></h2>
 
          <div class="flex gap-1 w-full">
@@ -307,7 +326,7 @@
             </div>
 
             <div class="form-item grow">
-               <label for="name">Produto</label>
+               <label for="name">Produto*</label>
                <input id="name" name="name" type="text" placeholder="Produto" required />
             </div>
          </div>
@@ -315,7 +334,7 @@
          <div class="grid md:grid-cols-3 gap-1 w-full">
             <div class="form-item">
                <label for="lowestPrice">Preço mais baixo</label>
-               <input id="lowestPrice" name="lowestPrice" type="number" placeholder="Preço" />
+               <input id="lowestPrice" name="lowestPrice" type="number" min="0.01" step="0.01" placeholder="Preço" />
             </div>
 
             <div class="form-item">
@@ -336,7 +355,7 @@
                   <input id="repeatValue" name="repeatValue" type="number" min="1" step="1" placeholder="Repetição" />
                   <select id="repeatUnit" name="repeatUnit" class="post-input">
                      <template x-for="[unitKey, unitLabel] in Object.entries(repeatUnits)" :key="unitKey">
-                        <option x-bind:value="unitKey" x-text="unitLabel"></option>
+                        <option x-bind:value="unitKey" x-text="unitLabel.plural"></option>
                      </template>
                   </select>
                </div>
@@ -347,7 +366,7 @@
             <span class="label">Tags</span>
             <ul class="flex flex-wrap items-center gap-1">
                <template x-for="[tagIndex, tag] of Object.entries(tags)" x-bind:key="tagIndex">
-                  <li>
+                  <li class="my-1">
                      <input name="tags" x-bind:id="`tag-${tagIndex}`" class="hidden" type="checkbox" x-bind:value="tagIndex" />
                      <label x-bind:for="`tag-${tagIndex}`" class="btn-outline" x-on:contextmenu.prevent="removeTag(tagIndex)">
                         <i class="checked-on ri-checkbox-circle-fill"></i>
@@ -364,7 +383,13 @@
             </ul>
          </div>
 
-         <button class="btn mx-auto" type="submit" x-text="editing !== false ? 'Editar produto' : 'Adicionar produto'"></button>
+         <div class="flex justify-center gap-2">
+            <button class="btn" type="submit" x-text="editing !== false ? 'Editar' : 'Adicionar'"></button>
+
+            <button class="btn-alt" type="button" x-show="editing !== false" x-on:click.prevent="removeProduct(editing, true)" x-cloak>
+               <i class="ri-delete-bin-2-line"></i> Apagar
+            </button>
+         </div>
       </form>
 
    </div>
