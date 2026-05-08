@@ -3,8 +3,9 @@
       Alpine.data('toolProductList', function() {
          return {
             list: this.$persist([{
+               id: 1,
                name: 'Arroz',
-               lowestPrice: 20,
+               lowestPrice: 20.99,
                tags: ['2'],
                quantity: 1,
                sizeValue: 5,
@@ -14,8 +15,9 @@
                lastCheck: 0,
                nextCheck: 0,
             }, {
+               id: 2,
                name: 'Feijão',
-               lowestPrice: 10,
+               lowestPrice: 10.99,
                tags: ['1'],
                quantity: 1,
                sizeValue: 1,
@@ -64,33 +66,20 @@
                this.$watch('list', () => this.updateFilter())
                this.$watch('tags', () => this.updateFilter())
 
-               this.refreshList = this.list
+               this.list = this.list.map((product, idx) => {
+                  if (!product.id) {
+                     product.id = idx
+                  }
+
+                  return product
+               })
+
+               this.updateList()
                this.$watch('list', () => this.updateList())
                this.$watch('tags', () => this.updateList())
                this.$watch('currentTag', () => this.updateList())
 
                this.$watch('editing', (id) => this.setEditing(id))
-            },
-
-            updateFilter() {
-               const tags = Object.entries(this.tags).map(([tagIndex, tag]) =>
-                  ({
-                     key: tagIndex,
-                     name: tag,
-                     count: this.list.filter((product) => product.tags.includes(tagIndex)).length
-                  })
-               )
-
-               this.filter = tags.filter((tag) => tag.count > 0)
-            },
-
-            filterTag(key) {
-               if (key === this.currentTag) {
-                  this.currentTag = false
-                  return
-               }
-
-               this.currentTag = key
             },
 
             updateList() {
@@ -104,10 +93,12 @@
                this.refreshList = list
             },
 
-            setEditing(index) {
-               if (index === false) {
+            setEditing(id) {
+               if (id === false) {
                   return
                }
+
+               const productIdx = this.findIndexProduct(id)
 
                const {
                   name,
@@ -118,7 +109,7 @@
                   sizeUnit,
                   repeatValue,
                   repeatUnit
-               } = this.list[this.editing]
+               } = this.list[productIdx]
 
                document.getElementById('name').value = name
                document.getElementById('lowestPrice').value = lowestPrice
@@ -134,6 +125,12 @@
                tags.forEach(tag =>
                   document.getElementById(`tag-${tag}`).checked = true
                );
+
+               this.$do('scroll','#addProduct')
+            },
+
+            findIndexProduct(id) {
+               return this.list.findIndex((product) => id === product.id);
             },
 
             addProduct(e) {
@@ -147,6 +144,7 @@
                })
 
                this.list.push({
+                  id: Date.now(),
                   name: formData.get('name'),
                   lowestPrice: formData.get('lowestPrice'),
                   tags,
@@ -162,32 +160,35 @@
                e.currentTarget.reset()
             },
 
-            patchProduct(productIndex, key, value) {
-               this.list[productIndex][key] = value
+            patchProduct(id, key, value) {
+               const productIdx = this.findIndexProduct(id)
+
+               this.list[productIdx][key] = value
                const {
                   lastCheck,
                   repeatValue,
                   repeatUnit
-               } = this.list[productIndex]
+               } = this.list[productIdx]
 
                if (!lastCheck) {
-                  this.list[productIndex]['nextCheck'] = 0
+                  this.list[productIdx]['nextCheck'] = 0
                } else {
                   if (lastCheck && repeatValue && repeatUnit) {
-                     this.list[productIndex]['nextCheck'] = this.$time.plus(lastCheck, repeatValue, repeatUnit)
+                     this.list[productIdx]['nextCheck'] = this.$time.plus(lastCheck, repeatValue, repeatUnit)
                   }
                }
             },
 
             putProduct(e) {
+               const productIdx = this.findIndexProduct(this.editing)
                const formData = new FormData(e.currentTarget)
 
-               this.list[this.editing]['lowestPrice'] = formData.get('lowestPrice')
-               this.list[this.editing]['quantity'] = formData.get('quantity')
-               this.list[this.editing]['sizeValue'] = formData.get('sizeValue')
-               this.list[this.editing]['sizeUnit'] = formData.get('sizeUnit')
-               this.list[this.editing]['repeatValue'] = formData.get('repeatValue')
-               this.list[this.editing]['repeatUnit'] = formData.get('repeatUnit')
+               this.list[productIdx]['lowestPrice'] = formData.get('lowestPrice')
+               this.list[productIdx]['quantity'] = formData.get('quantity')
+               this.list[productIdx]['sizeValue'] = formData.get('sizeValue')
+               this.list[productIdx]['sizeUnit'] = formData.get('sizeUnit')
+               this.list[productIdx]['repeatValue'] = formData.get('repeatValue')
+               this.list[productIdx]['repeatUnit'] = formData.get('repeatUnit')
 
                let tags = []
                document.getElementsByName('tags').forEach(tagEl => {
@@ -195,7 +196,7 @@
                      tags.push(tagEl.value)
                   }
                })
-               this.list[this.editing]['tags'] = tags
+               this.list[productIdx]['tags'] = tags
 
                this.patchProduct(this.editing, 'name', formData.get('name'))
 
@@ -203,12 +204,14 @@
                e.currentTarget.reset()
             },
 
-            removeProduct(productIndex, fromForm = false) {
-               if (!confirm(`Remover ${this.list[productIndex].name} da lista?`)) {
+            removeProduct(id, fromForm = false) {
+               const productIdx = this.findIndexProduct(id)
+
+               if (!confirm(`Remover ${this.list[productIdx].name} da lista?`)) {
                   return
                }
 
-               this.list.splice(productIndex, 1)
+               this.list.splice(productIdx, 1)
 
                if (fromForm) {
                   document.getElementById('addProduct').reset()
@@ -230,22 +233,50 @@
                })
             },
 
-            removeTag(tagIndex) {
-               if (!confirm(`Remover tag ${this.tags[tagIndex]} de todos os produtos?`)) {
+            removeTag(tagIdx) {
+               if (!confirm(`Remover tag ${this.tags[tagIdx]} de todos os produtos?`)) {
                   return
                }
 
-               delete this.tags[tagIndex]
+               delete this.tags[tagIdx]
 
-               this.list.forEach(item => {
-                  delete item.tags[item.tags.indexOf(tagIndex)]
+               this.list = this.list.map(item => {
+                  item.tags.splice(item.tags.indexOf(tagIdx), 1)
+                  return item
                })
+
+               if(tagIdx===this.currentTag){
+                  this.currentTag = false
+               }
             },
 
-            remainingDays(productIndex) {
+            updateFilter() {
+               const tags = Object.entries(this.tags).map(([tagIdx, tag]) =>
+                  ({
+                     key: tagIdx,
+                     name: tag,
+                     count: this.list.filter((product) => product.tags.includes(tagIdx)).length
+                  })
+               )
+
+               this.filter = tags.filter((tag) => tag.count > 0)
+            },
+
+            filterTag(key) {
+               if (key === this.currentTag) {
+                  this.currentTag = false
+                  return
+               }
+
+               this.currentTag = key
+            },
+
+            remainingDays(id) {
+               const productIdx = this.findIndexProduct(id)
+
                const {
                   nextCheck
-               } = this.list[productIndex]
+               } = this.list[productIdx]
 
                if (nextCheck) {
                   const {
@@ -254,7 +285,7 @@
                   } = this.$time.diff(nextCheck)
 
                   if (['seconds', 'minutes', 'hours'].includes(metric)) {
-                     this.patchProduct(productIndex, 'lastCheck', false)
+                     this.patchProduct(id, 'lastCheck', false)
                   } else {
                      return `Em ${amount} ${this.repeatUnits[metric][amount === 1 ? 'singular' : 'plural']}`
                   }
@@ -283,34 +314,34 @@
       </div>
 
       <ul class="flex flex-col gap-3 text-sm sm:text-lg">
-         <template x-for="(item, index) in refreshList" x-bind:key="index">
+         <template x-for="item in refreshList" x-bind:key="item.id">
             <li class="flex items-center gap-1" x-bind:class="{'opacity-75': item.lastCheck}">
-               <button class="btn-alt hidden sm:inline" type="button" x-on:click.prevent="removeProduct(index)">
+               <button class="btn-alt hidden sm:inline" type="button" x-on:click.prevent="removeProduct(item.id)">
                   <i class="ri-delete-bin-2-line text-lg sm:text-2xl"></i>
                </button>
-               <button class="btn-alt" type="button" x-on:click.prevent="editing = index">
+               <button class="btn-alt" type="button" x-on:click.prevent="editing = item.id">
                   <i class="ri-edit-box-line text-lg sm:text-2xl"></i>
                </button>
                <div class="flex gap-1 sm:gap-2 items-baseline grow min-w-0">
                   <span class="font-semibold text-xs sm:text-base text-neutral-500" x-text="`${item.quantity}x`"></span>
                   <span class="text-sm sm:text-xl truncate" x-text="item.name"></span>
-                  <span class="text-xs sm:text-base text-neutral-500" x-show="item.sizeValue" x-text="`${item.sizeValue}${item.sizeUnit}`" x-cloak></span>
                   </span>
                </div>
-               <div class="form-item !w-22 sm:!w-40 flex-none">
+               <div class="form-item !w-fit flex-none">
                   <div class="input">
                      <span class="pre-input">R$</span>
-                     <input class="text-center font-semibold sm:text-lg" type="number" step="0.01" x-bind:value="item.lowestPrice" maxlength="4" x-on:input.prevent="patchProduct(index,'lowestPrice',$el.value)" />
+                     <input class="text-center font-semibold sm:text-lg max-w-20 sm:max-w-25" type="number" step="0.01" x-bind:value="item.lowestPrice" maxlength="4" x-on:blur.prevent="patchProduct(item.id,'lowestPrice', Number($el.value).toFixed(2))" />
+                     <span class="post-input" x-show="item.sizeValue" x-text="`/${item.sizeValue}${item.sizeUnit}`" x-cloak></span>
                   </div>
                </div>
 
-               <button class="btn-alt" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', 0)" x-show="item.lastCheck && !item.nextCheck" x-cloak>
+               <button class="btn-alt" type="button" x-on:click.prevent="patchProduct(item.id, 'lastCheck', 0)" x-show="item.lastCheck && !item.nextCheck" x-cloak>
                   <i class="ri-arrow-up-line text-lg sm:text-2xl"></i>
                </button>
 
-               <button class="btn-alt max-w-16 sm:max-w-20 leading-1" type="button" x-on:click.prevent="patchProduct(index, 'lastCheck', Date.now())" x-show="!item.lastCheck || item.nextCheck" x-cloak>
+               <button class="btn-alt max-w-16 sm:max-w-20 leading-1" type="button" x-on:click.prevent="patchProduct(item.id, 'lastCheck', Date.now())" x-show="!item.lastCheck || item.nextCheck" x-cloak>
                   <i class="ri-shopping-cart-line text-lg sm:text-2xl" x-show="!item.lastCheck" x-cloak></i>
-                  <span class="text-xs" x-text="remainingDays(index)"></span>
+                  <span class="text-xs" x-text="remainingDays(item.id)"></span>
                </button>
             </li>
          </template>
@@ -342,7 +373,7 @@
                <div class="input">
                   <input id="sizeValue" name="sizeValue" type="number" placeholder="Tamanho" />
                   <select id="sizeUnit" name="sizeUnit" class="post-input">
-                     <template x-for="[unitKey, unitLabel] in Object.entries(sizeUnits)" :key="unitKey">
+                     <template x-for="[unitKey, unitLabel] in Object.entries(sizeUnits)" x-bind:key="unitKey">
                         <option x-bind:value="unitKey" x-text="unitLabel"></option>
                      </template>
                   </select>
@@ -365,10 +396,10 @@
          <div class="form-item">
             <span class="label">Tags</span>
             <ul class="flex flex-wrap items-center gap-1">
-               <template x-for="[tagIndex, tag] of Object.entries(tags)" x-bind:key="tagIndex">
+               <template x-for="[tagIdx, tag] of Object.entries(tags)" x-bind:key="tagIdx">
                   <li class="my-1">
-                     <input name="tags" x-bind:id="`tag-${tagIndex}`" class="hidden" type="checkbox" x-bind:value="tagIndex" />
-                     <label x-bind:for="`tag-${tagIndex}`" class="btn-outline" x-on:contextmenu.prevent="removeTag(tagIndex)">
+                     <input name="tags" x-bind:id="`tag-${tagIdx}`" class="hidden" type="checkbox" x-bind:value="tagIdx" />
+                     <label x-bind:for="`tag-${tagIdx}`" class="btn-outline" x-on:contextmenu.prevent="removeTag(tagIdx)">
                         <i class="checked-on ri-checkbox-circle-fill"></i>
                         <i class="checked-off ri-checkbox-blank-circle-fill"></i>
                         <span x-text="tag"></span>
