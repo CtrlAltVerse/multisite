@@ -60,6 +60,7 @@
             editing: false,
             filter: [],
             currentTag: false,
+            showingUnitPrice: [],
 
             init() {
                this.updateFilter()
@@ -126,7 +127,7 @@
                   document.getElementById(`tag-${tag}`).checked = true
                );
 
-               this.$do('scroll','#addProduct')
+               this.$do('scroll', '#addProduct')
             },
 
             findIndexProduct(id) {
@@ -158,6 +159,7 @@
                })
 
                e.currentTarget.reset()
+               document.getElementById('name').focus()
             },
 
             patchProduct(id, key, value) {
@@ -202,6 +204,7 @@
 
                this.editing = false
                e.currentTarget.reset()
+               document.getElementById('name').focus()
             },
 
             removeProduct(id, fromForm = false) {
@@ -216,6 +219,56 @@
                if (fromForm) {
                   document.getElementById('addProduct').reset()
                }
+            },
+
+            togglePrice(product) {
+               if (product.sizeValue === 1 && ['un', 'l', 'kg'].includes(product.sizeUnit)) {
+                  return
+               }
+
+               if (this.showingUnitPrice.includes(product.id)) {
+                  this.showingUnitPrice.splice(this.showingUnitPrice.indexOf(product.id), 1)
+               } else {
+                  this.showingUnitPrice.push(product.id)
+               }
+            },
+
+            priceUnit(product, place = 'price') {
+               if (place === 'label') {
+                  let unit = product.sizeUnit
+                  switch (product.sizeUnit) {
+                     case 'g':
+                     case 'mg':
+                        unit = 'kg'
+                        break;
+
+                     case 'ml':
+                        unit = 'l'
+                        break;
+
+                     default:
+                        break;
+                  }
+                  return `/1${unit} <i class="ri-record-circle-line"></i>`
+               }
+
+               let price
+               switch (product.sizeUnit) {
+                  case 'g':
+                  case 'ml':
+                     price = product.lowestPrice / product.sizeValue * 1000
+                     break
+
+                  case 'mg':
+                     price = product.lowestPrice / product.sizeValue * 1000000
+                     break;
+
+                  default:
+                     price = product.lowestPrice / product.sizeValue
+                     break;
+               }
+
+               return price.toFixed(2)
             },
 
             addTag() {
@@ -245,7 +298,7 @@
                   return item
                })
 
-               if(tagIdx===this.currentTag){
+               if (tagIdx === this.currentTag) {
                   this.currentTag = false
                }
             },
@@ -330,8 +383,10 @@
                <div class="form-item !w-fit flex-none">
                   <div class="input">
                      <span class="pre-input">R$</span>
-                     <input class="text-center font-semibold sm:text-lg max-w-20 sm:max-w-25" type="number" step="0.01" x-bind:value="item.lowestPrice" maxlength="4" x-on:blur.prevent="patchProduct(item.id,'lowestPrice', Number($el.value).toFixed(2))" />
-                     <span class="post-input" x-show="item.sizeValue" x-text="`/${item.sizeValue}${item.sizeUnit}`" x-cloak></span>
+
+                     <input class="text-center font-semibold sm:text-lg max-w-15 sm:max-w-25" type="number" step="0.01" x-bind:value="showingUnitPrice.includes(item.id) ? priceUnit(item) : Number(item.lowestPrice).toFixed(2)" maxlength="4" x-on:blur.prevent="patchProduct(item.id,'lowestPrice', $el.value)" x-bind:disabled="showingUnitPrice.includes(item.id)" />
+
+                     <button class="post-input" type="button" x-show="item.sizeValue" x-html="showingUnitPrice.includes(item.id) ? priceUnit(item, 'label') : `/${item.sizeValue}${item.sizeUnit} <i class=ri-checkbox-blank-circle-line></i>`" x-on:click.prevent="togglePrice(item)" x-cloak></button>
                   </div>
                </div>
 
@@ -358,7 +413,7 @@
 
             <div class="form-item grow">
                <label for="name">Produto*</label>
-               <input id="name" name="name" type="text" placeholder="Produto" required />
+               <input id="name" name="name" type="text" placeholder="Produto" autofocus required autocapitalize="words" />
             </div>
          </div>
 
@@ -415,7 +470,10 @@
          </div>
 
          <div class="flex justify-center gap-2">
-            <button class="btn" type="submit" x-text="editing !== false ? 'Editar' : 'Adicionar'"></button>
+            <button class="btn" type="submit">
+               <i class="ri-checkbox-circle-line"></i>
+               <span x-text="editing !== false ? 'Atualizar' : 'Adicionar'"></span>
+            </button>
 
             <button class="btn-alt" type="button" x-show="editing !== false" x-on:click.prevent="removeProduct(editing, true)" x-cloak>
                <i class="ri-delete-bin-2-line"></i> Apagar
