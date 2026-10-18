@@ -19,6 +19,15 @@ if (!current_user_can('author')) {
    update_post_meta($post_ID, 'views', $views);
 }
 
+if (get_field('is_random')) {
+   $links  = get_field('links');
+   $target = $links[array_rand($links)]['url'];
+
+   if (wp_redirect($target)) {
+      exit;
+   }
+}
+
 get_component('header');
 
 ?>
